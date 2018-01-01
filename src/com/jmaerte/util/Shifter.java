@@ -67,16 +67,16 @@ public class Shifter {
         }
     }
 
-    public <V extends Vector<V>> Simplex<V> wrap(int[] IDs, VertexFactory<V> factory, Metric<V> d) {
-        int[] ids = new int[CURRENT_K];
-        for(int i = 0, l = 0; i < shift.length; i++) {
-            if(shift[i]) {
-                ids[l] = IDs[i];
-                l++;
-            }
-        }
-        return new Simplex<>(ids, factory, d);
-    }
+//    public <V extends Vector<V>> Simplex<V> wrap(int[] IDs, VertexFactory<V> factory, Metric<V> d) {
+//        int[] ids = new int[CURRENT_K];
+//        for(int i = 0, l = 0; i < shift.length; i++) {
+//            if(shift[i]) {
+//                ids[l] = IDs[i];
+//                l++;
+//            }
+//        }
+//        return new Simplex<>(ids, factory, d);
+//    }
 
     public void print() {
         String s = "}";
