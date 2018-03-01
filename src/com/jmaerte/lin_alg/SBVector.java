@@ -40,7 +40,7 @@ public class SBVector {
     /** Sets the entry at position pos of the vector to 0.
      *  Note that this is in general not the position pos of the array "entries".
      *
-     * @param pos position of the vector to set to 0.
+     * @param pos position of the vector to point_set to 0.
      */
     public void remove(int pos) {
         int k = index(pos);

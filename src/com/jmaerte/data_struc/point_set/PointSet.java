@@ -1,4 +1,4 @@
-package com.jmaerte.data_struc.set;
+package com.jmaerte.data_struc.point_set;
 
 /**
  * An instance that stores an <i>n</i> point subset of the <i>same</i> euclidean space(meaning that their dimension has
@@ -24,7 +24,7 @@ public interface PointSet {
      */
     double get(int i, int j) throws Exception;
 
-    /**Providing an overview on the cardinality of the point set.
+    /**Providing an overview on the cardinality of the point point_set.
      *
      * @return card(S)
      */

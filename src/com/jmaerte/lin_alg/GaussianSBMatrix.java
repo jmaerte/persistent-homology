@@ -10,7 +10,7 @@ import com.jmaerte.util.Search;
  */
 public class GaussianSBMatrix {
 
-    // Rank attribute of the matrix. It is initially set to -1.
+    // Rank attribute of the matrix. It is initially point_set to -1.
     private int rank;
 
     // temp caches that are used before smith algorithm ran.

@@ -1,12 +1,12 @@
-package com.jmaerte.data_struc.set;
+package com.jmaerte.data_struc.point_set;
 
 /**An implementation of the PointSet, that stores the Points of the Set as a double[].
  * An instance of this realizes a {@link PointSet} with cardinality <i>n</i> in euclidean <i>R^d</i>.
  */
 public class PointArray implements PointSet {
 
-    private int d, n;
-    private double[] values;
+    private final int d, n;
+    private final double[] values;
 
     public PointArray(int d, int n) {
         this.d = d;
@@ -17,6 +17,11 @@ public class PointArray implements PointSet {
     public double get(int i, int j) throws Exception {
         if(i < 0 || i >= n || j < 0 || j >= d) throw new Exception("Dimension mismatch or cardinality out of bounds.");
         return values[i * d + j];
+    }
+
+    public void set(int i, int j, double val) throws Exception {
+        if(i < 0 || i >= n || j < 0 || j >= d) throw new Exception("Dimension mismatch or cardinality out of bounds.");
+        values[i * d + j] = val;
     }
 
     public int dimension() {
