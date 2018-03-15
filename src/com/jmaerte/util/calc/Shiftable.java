@@ -1,6 +1,5 @@
 package com.jmaerte.util.calc;
 
-import com.jmaerte.data_struc.complex.Simplex;
 import com.jmaerte.data_struc.point_set.PointSet;
 
 /**
@@ -8,17 +7,14 @@ import com.jmaerte.data_struc.point_set.PointSet;
  */
 public class Shiftable {
 
-    private final PointSet set;
-
     // tools
     boolean[] shift;
     public int CURRENT_K = 0;
     public int lowest = 0;
     boolean finished = false;
 
-    public Shiftable(PointSet set) {
-        this.set = set;
-        shift = new boolean[set.card()];
+    public Shiftable(int n) {
+        shift = new boolean[n];
     }
 
     public void reset(int k) {
@@ -79,16 +75,16 @@ public class Shiftable {
         System.out.println("{" + s);
     }
 
-    public Simplex get()
-    {
-        int[] result = new int[CURRENT_K];
-        for(int i = 0, x = 0; i < set.card(); i++)
-        {
-            if(shift[i])
-            {
-                result[x++] = i;
-            }
-        }
-        return new Simplex(set, result);
-    }
+//    public Simplex get()
+//    {
+//        int[] result = new int[CURRENT_K];
+//        for(int i = 0, x = 0; i < set.card(); i++)
+//        {
+//            if(shift[i])
+//            {
+//                result[x++] = i;
+//            }
+//        }
+//        return new Simplex(set, result);
+//    }
 }

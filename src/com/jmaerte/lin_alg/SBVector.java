@@ -24,7 +24,7 @@ public class SBVector {
         this.occupation = occupation;
     }
 
-    private int index(int pos) {
+    public int index(int pos) {
         if(occupation == 0 || entries[occupation - 1] < pos) return occupation;
         int min = 0;
         int max = occupation;
@@ -35,6 +35,10 @@ public class SBVector {
             else return mid;
         }
         return min;
+    }
+
+    public boolean isZero() {
+        return occupation == 0;
     }
 
     /** Sets the entry at position pos of the vector to 0.
@@ -69,11 +73,12 @@ public class SBVector {
     }
 
     public int getEntry(int i) {
+        assert i < occupation;
         return entries[i];
     }
 
     private void mkPlace() {
-        int[] newEntries = new int[Math.min(occupation * 2 + 5, dimension)];
+        int[] newEntries = new int[Math.max(occupation * 2 + 5, dimension)];
         System.arraycopy(entries, 0, newEntries, 0, occupation);
         this.entries = newEntries;
     }
@@ -107,9 +112,9 @@ public class SBVector {
     public String toString() {
         String s = "[";
         for(int i = 0; i < occupation; i++) {
-            s += entries[i] + (i == occupation - 1 ? "]" : ", ");
+            s += entries[i] + (i == occupation - 1 ? "" : ", ");
         }
-        return s;
+        return s + "]";
     }
 
     public int occupation() {

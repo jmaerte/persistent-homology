@@ -24,4 +24,8 @@ public class Logger {
         System.out.println("[Info] - " + info);
     }
 
+    public static void log(String msg) {
+        if(!log) return;
+        System.out.println(msg);
+    }
 }

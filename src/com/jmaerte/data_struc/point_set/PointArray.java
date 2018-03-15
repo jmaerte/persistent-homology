@@ -1,9 +1,13 @@
 package com.jmaerte.data_struc.point_set;
 
+import java.text.DecimalFormat;
+
 /**An implementation of the PointSet, that stores the Points of the Set as a double[].
  * An instance of this realizes a {@link PointSet} with cardinality <i>n</i> in euclidean <i>R^d</i>.
  */
 public class PointArray implements PointSet {
+
+    private static DecimalFormat df2 = new DecimalFormat("0.##");
 
     private final int d, n;
     private final double[] values;
@@ -30,6 +34,17 @@ public class PointArray implements PointSet {
 
     public int card() {
         return n;
+    }
+
+    public String toString() {
+        String s = "";
+        for(int j = 0; j < d; j++) {
+            for(int i = 0; i < n; i++) {
+                s += df2.format(values[i * d + j]) + "\t";
+            }
+            s+= "\n";
+        }
+        return s;
     }
 
 }

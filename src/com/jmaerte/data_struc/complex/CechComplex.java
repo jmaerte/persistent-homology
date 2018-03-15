@@ -36,15 +36,15 @@ public class CechComplex {
     }
 
     private void generate() {
-        Shiftable shift = new Shiftable(S);
-        for(int k = 0; k <= S.card(); k++) {
-            int n = 0;
-            shift.reset(k);
-            while(!shift.isMax()) {
-                Simplex s = simplices[kReg[k] + n++] = shift.get();
-                shift.shift();
-            }
-        }
+//        Shiftable shift = new Shiftable(S);
+//        for(int k = 0; k <= S.card(); k++) {
+//            int n = 0;
+//            shift.reset(k);
+//            while(!shift.isMax()) {
+//                Simplex s = simplices[kReg[k] + n++] = shift.get();
+//                shift.shift();
+//            }
+//        }
     }
 
 
