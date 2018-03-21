@@ -135,7 +135,7 @@ public class Main {
 //        }
 //        System.out.println(System.currentTimeMillis() - ms + "ms");
 
-        PointArray S = new PointArray(2, 5);
+        PointArray S = new PointArray(2, 4);
         try {
             S.set(0, 0, 0);
             S.set(0, 1, 0);
@@ -146,11 +146,8 @@ public class Main {
             S.set(2, 0, 0.25);
             S.set(2, 1, 1.75);
 
-            S.set(3, 0, -0.25);
-            S.set(3, 1, 0.5);
-
-            S.set(4, 0, -2);
-            S.set(4, 1, -1);
+            S.set(3, 0, 4);
+            S.set(3, 1, 2);
         }catch(Exception e) {
             e.printStackTrace();
         }
@@ -159,7 +156,7 @@ public class Main {
 //            PointSet S = PointSetUtils.randomPointSet(100, 5, -1_000, 1_000);
             NeighborhoodFiltration nf = new NeighborhoodFiltration(WeightedGraph.vietoris(new Euclidean(S)), 2);
             Persistence p = new Persistence(nf, 20);
-//            System.out.println(p);
+            System.out.println(p);
         }catch(Exception e) {
             e.printStackTrace();
         }
