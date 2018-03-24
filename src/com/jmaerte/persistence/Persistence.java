@@ -17,6 +17,7 @@ public class Persistence {
     private int occupation;
     private int[] lowCount;
     private int[] zeroCount;
+    private Diagram[] diagram;
 
     public Persistence(Filtration f, int initCap) {
         this.f = f;
@@ -32,9 +33,14 @@ public class Persistence {
             System.out.format("%13d | %15d", i-1, zeroCount[i] - lowCount[i]);
             System.out.println();
         }
+        this.diagram = new Diagram[f.dimension() + 2];
+        for(int i = 0; i < diagram.length; i++) {
+            diagram[i] = new Diagram();
+        }
     }
 
     private void generate() {
+        int i = 0;
         while(f.hasNext()) {
             SBVector v = f.next();
             int p = v.occupation();
@@ -73,9 +79,11 @@ public class Persistence {
                 low[k] = v.getEntry( v.occupation() - 1);
                 occupation++;
                 lowCount[f.get(low[k]).dim() + 1]++;
+                diagram[p].put(f.get(low[k]).getWeight(), f.get(i).getWeight());
             }else {
                 zeroCount[p]++;
             }
+            i++;
         }
     }
 

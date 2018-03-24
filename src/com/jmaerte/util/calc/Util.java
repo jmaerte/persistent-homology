@@ -32,6 +32,24 @@ public class Util {
         return binarySearch(j, arr, 0, arr.length);
     }
 
+    public static int binarySearch(double j, double[] arr, int minimum, int maximum) {
+        if(maximum == 0 || arr[maximum - 1] < j) return maximum;
+        if(arr[minimum] > j) return minimum;
+        int min = minimum;
+        int max = maximum;
+        while(min < max) {
+            int mid = (min + max)/2;
+            if(arr[mid] < j) min = mid + 1;
+            else if(arr[mid] > j) max = mid;
+            else return mid;
+        }
+        return min;
+    }
+
+    public static int binarySearch(double j, double[] arr) {
+        return binarySearch(j, arr, 0, arr.length);
+    }
+
     public static int[] intersection(int[] a, int[] b) {
         return Arrays.stream(a)
                 .distinct()
