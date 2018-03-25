@@ -21,7 +21,7 @@ public abstract class Filtration implements Iterator<SBVector> {
     public SBVector next() {
         int[] faces = faces(i);
         Arrays.sort(faces);
-        int[] entries = new int[Math.max(size() / 10, faces.length)];
+        int[] entries = new int[faces.length];
         System.arraycopy(faces, 0, entries, 0, faces.length);
         i++;
         return new SBVector(size(), entries, faces.length);

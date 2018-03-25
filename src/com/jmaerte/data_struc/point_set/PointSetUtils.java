@@ -1,6 +1,7 @@
 package com.jmaerte.data_struc.point_set;
 
 import java.util.Random;
+import java.util.concurrent.ThreadLocalRandom;
 
 public class PointSetUtils {
 
@@ -46,6 +47,26 @@ public class PointSetUtils {
             }
         }
         return pa;
+    }
+
+    /**Generates sphere-like data for testing purposes.
+     *
+     * @return
+     */
+    public static Euclidean getSphereData(int d, int n, double eps) throws Exception {
+        PointArray res = new PointArray(d, n);
+        for(int i = 0; i < n; i++) {
+            double sum = 0;
+            double[] noise = new double[d];
+            double curr = 0;
+            for(int p = 0; p < d; p++) {
+                noise[p] = ThreadLocalRandom.current().nextDouble(-eps, eps);
+                curr = (p + 1 != d) ? ThreadLocalRandom.current().nextDouble(sum - 1, 1 - sum) : Math.sqrt(1-sum);
+                sum += curr * curr;
+                res.set(i, p, curr * curr + noise[p]);
+            }
+        }
+        return new Euclidean(res);
     }
 
 }

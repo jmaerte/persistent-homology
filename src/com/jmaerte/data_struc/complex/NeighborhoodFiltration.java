@@ -45,7 +45,7 @@ public class NeighborhoodFiltration extends Filtration {
             tau[sigma[i]] = i;
         }
 
-        System.out.println(simplices);
+//        System.out.println(simplices);
     }
 
     /**Binary searches for s without its j-th element in the ArrayList.

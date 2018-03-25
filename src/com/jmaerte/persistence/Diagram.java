@@ -2,12 +2,26 @@ package com.jmaerte.persistence;
 
 import com.jmaerte.util.calc.Util;
 
+import java.util.Arrays;
+
 public class Diagram {
 
-    private Node[] nodes;
-    private int occ;
+    protected Node[] nodes;
+    protected int occ;
+    private final String INFINITY;
 
-    protected Diagram() {}
+    protected Diagram(double max) {
+        this(""+max);
+    }
+
+    protected Diagram() {
+        this("inf");
+    }
+
+    private Diagram(String inf) {
+        this.INFINITY = inf;
+        nodes = new Node[2];
+    }
 
     /**Adds the tuple (a,b) to the diagram.
      *
@@ -15,11 +29,12 @@ public class Diagram {
      * @param b death time
      */
     public void put(double a, double b) {
+        if(a == b) return;
         int k = binarySearch(a);
         if(k < occ && nodes[k].a == a) {
             nodes[k].add(b);
         }else {
-            if(occ + 1 != nodes.length) mkPlace();
+            if(occ + 1 == nodes.length) mkPlace();
             if(k != occ) {
                 System.arraycopy(nodes, k, nodes, k + 1, occ - k);
             }
@@ -38,7 +53,7 @@ public class Diagram {
         if(k < occ && nodes[k].a == a) {
             nodes[k].inf();
         }else {
-            if(occ + 1 != nodes.length) mkPlace();
+            if(occ + 1 == nodes.length) mkPlace();
             if(k != occ) {
                 System.arraycopy(nodes, k, nodes, k + 1, occ - k);
             }
@@ -67,18 +82,18 @@ public class Diagram {
         return min;
     }
 
-    private class Node {
-        private static final int initCap = 4;
+    protected class Node {
+        private static final int initCap = 1;
 
         // birth coefficient
-        private double a;
+        protected double a;
         // death coefficients
-        private double[] b;
+        protected double[] b;
         // Multiplicity of coefficient tuples
-        private int[] multiplicity;
-        private int infMultiplicity;
+        protected int[] multiplicity;
+        protected int infMultiplicity;
         // Occupation of the b and multiplicity arrays.
-        private int occ;
+        protected int occ;
 
         private Node(double a) {
             this.a = a;
@@ -115,5 +130,19 @@ public class Diagram {
             this.b = b;
             this.multiplicity = multiplicity;
         }
+    }
+
+    public String toString() {
+        String s = "[";
+        for(int i = 0; i < occ; i++) {
+            Node n = nodes[i];
+            for(int j = 0; j < n.occ; j++) {
+                s += "(" + n.a + ", " + n.b[j] + ") : " + n.multiplicity[j] + (j + 1 == n.occ && n.infMultiplicity == 0  ? "" : ", ");
+            }
+            if(n.infMultiplicity != 0) {
+                s += "(" + n.a + ", " + INFINITY + ") : " + n.infMultiplicity + (i + 1 != occ ? ", " : "");
+            }else if(i + 1 != occ) s += ", ";
+        }
+        return s + "]";
     }
 }

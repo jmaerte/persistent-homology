@@ -1,6 +1,8 @@
 package com.jmaerte.test;
 
+import com.jmaerte.data_struc.complex.Filtration;
 import com.jmaerte.data_struc.complex.NeighborhoodFiltration;
+import com.jmaerte.data_struc.complex.Simplex;
 import com.jmaerte.data_struc.graph.WeightedGraph;
 import com.jmaerte.data_struc.point_set.*;
 import com.jmaerte.persistence.Persistence;
@@ -135,32 +137,89 @@ public class Main {
 //        }
 //        System.out.println(System.currentTimeMillis() - ms + "ms");
 
-        PointArray S = new PointArray(2, 4);
+//        PointArray S = new PointArray(2, 4);
+//        try {
+//            S.set(0, 0, -0.7);
+//            S.set(0, 1, 0.71414);
+//
+//            S.set(1, 0, -0.25);
+//            S.set(1, 1, -0.9682);
+//
+//            S.set(2, 0, 0.3);
+//            S.set(2, 1, -0.953939);
+//
+//            S.set(3, 0, 0.87);
+//            S.set(3, 1, 0.49305);
+//        }catch(Exception e) {
+//            e.printStackTrace();
+//        }
+
+//        try{
+//            PointSet S = PointSetUtils.randomPointSet(15, 5, -100, 100);
+//            NeighborhoodFiltration nf = new NeighborhoodFiltration(WeightedGraph.vietoris(new Euclidean(S)), 6);
+////            for(int i = 0; i < nf.size(); i++) {
+////                System.out.println(i + " -> " + nf.get(i));
+////            }
+//            Persistence p = new Persistence(nf, 20);
+////            System.out.println(p);
+//            System.out.println(p.toBarcodePlot());
+//        }catch(Exception e) {
+//            e.printStackTrace();
+//        }
+
         try {
-            S.set(0, 0, 0);
-            S.set(0, 1, 0);
-
-            S.set(1, 0, 0.5);
-            S.set(1, 1, 1);
-
-            S.set(2, 0, 0.25);
-            S.set(2, 1, 1.75);
-
-            S.set(3, 0, 4);
-            S.set(3, 1, 2);
+            Filtration nf = new NeighborhoodFiltration(WeightedGraph.vietoris(PointSetUtils.getSphereData(2, 15, 0.1)), 5);
+            Persistence p = new Persistence(nf, 16);
+            System.out.println(p.toBarcodePlot());
         }catch(Exception e) {
             e.printStackTrace();
         }
 
-        try{
-//            PointSet S = PointSetUtils.randomPointSet(100, 5, -1_000, 1_000);
-            NeighborhoodFiltration nf = new NeighborhoodFiltration(WeightedGraph.vietoris(new Euclidean(S)), 2);
-            Persistence p = new Persistence(nf, 20);
-            System.out.println(p);
-        }catch(Exception e) {
-            e.printStackTrace();
-        }
-
-
+//        // A test with a increasing not-filled triangle.
+//        Simplex[] simplices = new Simplex[]{
+//                new Simplex(new int[]{}, 0),
+//                new Simplex(new int[]{0}, 0),
+//                new Simplex(new int[]{1}, 1),
+//                new Simplex(new int[]{0,1}, 2),
+//                new Simplex(new int[]{2}, 3),
+//                new Simplex(new int[]{1,2}, 4),
+//                new Simplex(new int[]{0,2}, 5),
+//        };
+//        Filtration f = new Filtration(){
+//            public int size() {
+//                return simplices.length;
+//            }
+//
+//            public Simplex get(int i) {
+//                return simplices[i];
+//            }
+//
+//            public int[] faces(int i) {
+//                switch(simplices[i].dim() + 1) {
+//                    case 0: return new int[]{};
+//                    case 1: return new int[]{0};
+//                    case 2:
+//                        int[] res = new int[2];
+//                        for(int k = 0; k < simplices.length; k++) {
+//                            if(simplices[k].dim() + 1 == 1) {
+//                                if(simplices[k].get(0) == simplices[i].get(0)) {
+//                                    res[0] = k;
+//                                }else if(simplices[k].get(0) == simplices[i].get(1)) {
+//                                    res[1] = k;
+//                                }
+//                            }
+//                        }
+//                        return res;
+//                }
+//                return new int[0];
+//            }
+//
+//            @Override
+//            public int dimension() {
+//                return 1;
+//            }
+//        };
+//        Persistence p = new Persistence(f, 10);
+//        System.out.println(p.toBarcodePlot());
     }
 }

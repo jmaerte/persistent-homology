@@ -1,4 +1,4 @@
-package com.jmaerte.util;
+package com.jmaerte.util.vector;
 
 public class Vector2D<V,E> {
 
