@@ -5,6 +5,9 @@ import com.jmaerte.lin_alg.SBVector;
 import com.jmaerte.util.vector.Vector4D;
 import com.jmaerte.util.calc.Util;
 import com.jmaerte.util.vector.Vector5D;
+import com.jmaerte.util.vector.Vector6D;
+
+import java.util.ArrayList;
 
 /**
  * Created by Julian on 27/02/2018.
@@ -48,7 +51,7 @@ public class Persistence {
     private void generate() {
         int i = 0;
         while(f.hasNext()) {
-            System.out.println(i + "/" + f.size());
+            System.out.print(i + "/" + f.size() + "\r");
             SBVector v = f.next();
             int p = v.occupation();
 
@@ -96,7 +99,7 @@ public class Persistence {
 
     private void evaluate() {
         int k = 0;
-        for(int i = 0; i < occupation_zeroes && k != occupation_low; i++) {
+        for(int i = 0; i < occupation_zeroes; i++) {
             k = Util.binarySearch(zeroes[i], low, k, occupation_low);
             if(k < occupation_low && low[k] == zeroes[i]) {
                 continue;
@@ -143,34 +146,52 @@ public class Persistence {
     }
 
     public String toBarcodePlot() {
-        Vector5D<String, String, Integer, int[], Integer> value = this.getIntervalArrays();
-        int overhead = value.getThird();
+        // Color strings: note that they must be escaped by \" since we also want the rgb-function to be a possible input.
+        String segmentColor = "\"black\"";
+        String birthColor = "\"chartreuse4\"";
+        String deathColor = "\"sienna4\"";
+
+        Vector5D<String, String, int[], int[], Integer> value = this.getIntervalArrays();
+        int[] nonTrivial = value.getThird();
         int[] groupSize = value.getFourth();
         int length = value.getFifth();
         String grouping = "c(";
-        String groupLabels = "c(";
-        for(int p = 0; p < f.dimension() + 2 - overhead; p++) {
-            grouping += groupSize[p] + "" + (p + 1 != f.dimension() + 2 - overhead ? ", " : "");
-            groupLabels += "expression('H'[" + p + "])" + (p + 1 != f.dimension() + 2 - overhead ? ", " : "");
+        String groupLabelPos = "c(";
+        String groupLabel = "c(";
+        for(int p = 0; p < nonTrivial.length; p++) {
+            grouping += (groupSize[p] + 0.5) + "" + (p + 1 != nonTrivial.length ? ", " : "");
+            if(p == 0) {
+                groupLabelPos += (groupSize[1]/2 + 0.5);
+            }else {
+                groupLabelPos += ", " + (0.5 + (double)(groupSize[p - 1] + groupSize[p])/2);
+            }
+            groupLabel += "expression('H'[" + (nonTrivial[p] - 1) + "])" + (p + 1 != nonTrivial.length ? ", " : "");
         }
         grouping += ")";
-        groupLabels += ")";
+        groupLabelPos += ")";
+        groupLabel += ")";
         String data = "data.frame(x=1:" + length + ", value1=value1, value2=value2)";
         return "library(tidyverse)\n\n" +
                 "value1 <- " + value.getFirst() + "\n" +
                 "value2 <- " + value.getSecond() + "\n" +
+                "grouping <- " + grouping + "\n" +
+                "groupLabel <- " + groupLabel + "\n" +
+                "groupLabelPos <- " + groupLabelPos + "\n" +
                 "data <- " + data + "\n" +
+                "vlines <- data.frame(x=grouping)\n" +
                 "fin <- which(is.finite(data$value2))\n" +
                 "inf <- which(is.infinite(data$value2))\n" +
                 "plot <- ggplot(data) +\n" +
-                "  geom_segment(data=data[fin,], aes(x=x, xend=x, y=value1, yend=value2), color=\"black\", size=1) +\n" +
-                "  geom_point(aes(x=x, y=value1), color=rgb(0.2,0.7,0.1,0.5), size=3 ) +\n" +
-                "  geom_point(data=data[fin,], aes(x=x, y=value2), color=rgb(0.7,0.2,0.1,0.5), size=3 ) +\n" +
+                "  geom_segment(data=data[fin,], aes(x=x, xend=x, y=value1, yend=value2), color=" + segmentColor + ", size=1) +\n" +
+                "  geom_point(aes(x=x, y=value1), colour=" + birthColor + ", size=3, alpha = 0.5) +\n" +
+                "  geom_point(data=data[fin,], aes(x=x, y=value2), colour=" + deathColor + ", size=3, alpha = 0.5) +\n" +
                 "  coord_flip() +\n" +
                 "  theme_light() +\n" +
                 "  theme(\n" +
                 "    legend.position = \"none\",\n" +
                 "    panel.border = element_blank(),\n" +
+                "    panel.grid.major.y = element_blank(),\n" +
+                "    panel.grid.minor.y = element_blank(),\n" +
                 "  ) +\n" +
                 "  xlab(\"Simplices\") +\n" +
                 "  ylab(epsilon ~ \"- Persistence\")\n" +
@@ -187,14 +208,18 @@ public class Persistence {
                 "                              color=\"black\",\n" +
                 "                              arrow = arrow(type=\"closed\", angle=30, length = unit(0.2,\"cm\")),\n" +
                 "                              size = 1) +\n" +
-                "    geom_point(data=data[inf,], aes(x=x, y=value1), color=rgb(0.2,0.7,0.1,0.5), size=3 )\n" +
+                "    geom_point(data=data[inf,], aes(x=x, y=value1), colour=" + birthColor + ", size=3, alpha=0.5)\n" +
                 "}\n" +
-                "plot <- plot + scale_y_continuous(limits = c(x_min, x_max), expand=c(0,0))\n" +
+                "plot <- plot + scale_y_continuous(limits = c(x_min, x_max), expand=c(0,0)) +\n" +
+                "               scale_x_continuous(breaks=groupLabelPos, label=groupLabel)\n" +
+                "plot <- plot + geom_vline(data=vlines, aes(xintercept=as.numeric(x))) +\n" +
+                "               geom_vline(aes(xintercept=0.5)) +\n" +
+                "               geom_segment(aes(x=0.5, xend=" + (length + 0.5) + ", y=x_min, yend=x_min))\n" +
                 "print(plot)";
     }
 
     public String toDiagramPlot() {
-        Vector5D<String, String, Integer, int[], Integer> value = this.getIntervalArrays();
+        Vector5D<String, String, int[], int[], Integer> value = this.getIntervalArrays();
 
 
         return "";
@@ -206,42 +231,46 @@ public class Persistence {
      * the length l of the arrays.
      * @return (a,b,o,g,l)
      */
-    private Vector5D<String,String, Integer, int[], Integer> getIntervalArrays() {
+    private Vector5D<String,String, int[], int[], Integer> getIntervalArrays() {
         String value1 = "c(";
         String value2 = "c(";
         int length = 0;
-        int overhead = 0;
-        int[] groupSize = new int[f.dimension() + 2 - overhead];
-        for(int i = f.dimension() + 1; i >= 0; i--) {
-            if(diagram[i].occ == 0) overhead++;
-            else break;
-        }
-        for(int p = 0; p < f.dimension() + 2 - overhead; p++) {
+        ArrayList<Integer> groupSize = new ArrayList<>();
+        ArrayList<Integer> nonTrivial = new ArrayList<>();
+        for(int p = 0; p < f.dimension() + 2; p++) {
             if(diagram[p].occ == 0) continue;
+            nonTrivial.add(p);
+            groupSize.add(groupSize.size() == 0 ? 0 : groupSize.get(groupSize.size() - 1));
             for(int i = 0; i < diagram[p].occ; i++) {
+                if(nonTrivial.size() > 1 || i != 0) {
+                    value1 += ", ";
+                    value2 += ", ";
+                }
                 Diagram.Node n = diagram[p].nodes[i];
                 for(int j = 0; j < n.occ; j++) {
                     for(int k = 0; k < n.multiplicity[j]; k++) {
-                        value1 += n.a + (j + 1 != n.occ || k + 1 != n.multiplicity[j] ? ", " : "");
-                        value2 += n.b[j] + (j + 1 != n.occ || k + 1 != n.multiplicity[j] ? ", " : "");
+                        value1 += n.a + (j + 1 == n.occ && k + 1 == n.multiplicity[j] && n.infMultiplicity == 0 ? "" : ", ");
+                        value2 += n.b[j] + (j + 1 == n.occ && k + 1 == n.multiplicity[j] && n.infMultiplicity == 0 ? "" : ", ");
                         length++;
-                        groupSize[p]++;
+                        groupSize.set(groupSize.size() - 1, groupSize.get(groupSize.size() - 1) + 1);
                     }
                 }
                 if(n.infMultiplicity != 0) {
-                    value1 += (n.occ != 0 ? ", " : "") + n.a;
-                    value2 += (n.occ != 0 ? ", " : "") + "Inf";
+                    value1 += n.a;
+                    value2 += "Inf";
                     length++;
-                    groupSize[p]++;
-                }
-                if(p + 1 != f.dimension() + 2 - overhead || i + 1 != diagram[p].occ) {
-                    value1 += ", ";
-                    value2 += ", ";
+                    groupSize.set(groupSize.size() - 1, groupSize.get(groupSize.size() - 1) + 1);
                 }
             }
         }
         value1 += ")";
         value2 += ")";
-        return new Vector5D<>(value1, value2, overhead, groupSize, length);
+        int[] nT = new int[nonTrivial.size()];
+        int[] gS = new int[nT.length];
+        for(int i = 0; i < nT.length; i++) {
+            nT[i] = nonTrivial.get(i);
+            gS[i] = groupSize.get(i);
+        }
+        return new Vector5D<>(value1, value2, nT, gS, length);
     }
 }

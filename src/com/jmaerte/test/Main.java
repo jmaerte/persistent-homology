@@ -167,23 +167,26 @@ public class Main {
 //            e.printStackTrace();
 //        }
 
-        try {
-            Filtration nf = new NeighborhoodFiltration(WeightedGraph.vietoris(PointSetUtils.getSphereData(2, 15, 0.1)), 5);
-            Persistence p = new Persistence(nf, 16);
-            System.out.println(p.toBarcodePlot());
-        }catch(Exception e) {
-            e.printStackTrace();
-        }
+        Euclidean S = PointSetUtils.getSphereData(2, 15, 0, 1);
+        System.out.println(S);
+        Filtration nf = new NeighborhoodFiltration(WeightedGraph.vietoris(S), 14);
+        Persistence p = new Persistence(nf, 16);
+        System.out.println(p.toBarcodePlot());
 
 //        // A test with a increasing not-filled triangle.
 //        Simplex[] simplices = new Simplex[]{
-//                new Simplex(new int[]{}, 0),
-//                new Simplex(new int[]{0}, 0),
+//                new Simplex(new int[]{}, 1),
+//                new Simplex(new int[]{0}, 1),
 //                new Simplex(new int[]{1}, 1),
-//                new Simplex(new int[]{0,1}, 2),
-//                new Simplex(new int[]{2}, 3),
-//                new Simplex(new int[]{1,2}, 4),
-//                new Simplex(new int[]{0,2}, 5),
+//                new Simplex(new int[]{2}, 1),
+//                new Simplex(new int[]{0,1}, 1),
+//                new Simplex(new int[]{1,2}, 2),
+//                new Simplex(new int[]{3}, 2),
+//                new Simplex(new int[]{0,3}, 3),
+//                new Simplex(new int[]{4}, 3),
+//                new Simplex(new int[]{3,4}, 4),
+//                new Simplex(new int[]{2,4}, 4),
+//                new Simplex(new int[]{0,4}, 5),
 //        };
 //        Filtration f = new Filtration(){
 //            public int size() {
@@ -220,6 +223,7 @@ public class Main {
 //            }
 //        };
 //        Persistence p = new Persistence(f, 10);
+//        System.out.println(p);
 //        System.out.println(p.toBarcodePlot());
     }
 }

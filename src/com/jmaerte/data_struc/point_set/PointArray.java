@@ -10,22 +10,31 @@ public class PointArray implements PointSet {
     private static DecimalFormat df2 = new DecimalFormat("0.##");
 
     private final int d, n;
-    private final double[] values;
+    private final double[][] values;
 
     public PointArray(int d, int n) {
         this.d = d;
         this.n = n;
-        this.values = new double[n * d];
+        this.values = new double[n][d];
     }
 
-    public double get(int i, int j) throws Exception {
-        if(i < 0 || i >= n || j < 0 || j >= d) throw new Exception("Dimension mismatch or cardinality out of bounds.");
-        return values[i * d + j];
+    public double get(int i, int j) {
+        assert i >= 0 && i < n && j >= 0 && j < d;
+        return values[i][j];
     }
 
-    public void set(int i, int j, double val) throws Exception {
-        if(i < 0 || i >= n || j < 0 || j >= d) throw new Exception("Dimension mismatch or cardinality out of bounds.");
-        values[i * d + j] = val;
+    /**Note that this is mutable. Therefore you should not manipulate the result of this method call.
+     *
+     * @param i index of the vector to get
+     * @return vector to get
+     */
+    public double[] get(int i) {
+        return values[i];
+    }
+
+    public void set(int i, int j, double val) {
+        assert i >= 0 && i < n & j >= 0 && j < d;
+        values[i][j] = val;
     }
 
     public int dimension() {
@@ -40,7 +49,7 @@ public class PointArray implements PointSet {
         String s = "";
         for(int j = 0; j < d; j++) {
             for(int i = 0; i < n; i++) {
-                s += df2.format(values[i * d + j]) + "\t";
+                s += df2.format(values[i][j]) + "\t";
             }
             s+= "\n";
         }

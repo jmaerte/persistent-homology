@@ -22,7 +22,14 @@ public interface PointSet {
      * @param j: Component index.
      * @return in case the <i>i</i>th vector is (x_k)_{0 <=k < {@code dimension()}} returns x_j.
      */
-    double get(int i, int j) throws Exception;
+    double get(int i, int j);
+
+    /**Providing access to vector-valued data.
+     *
+     * @param i index of the vector to get
+     * @return the vector as double[]
+     */
+    double[] get(int i);
 
     /**Providing an overview on the cardinality of the point point_set.
      *

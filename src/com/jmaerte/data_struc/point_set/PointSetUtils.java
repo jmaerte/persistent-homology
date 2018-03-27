@@ -10,7 +10,7 @@ public class PointSetUtils {
      * @param arr 2d array to read from.
      * @return the point set such that arr[i] is the array corresponding to the i-th vector of the {@link PointSet}.
      */
-    public static PointSet from2D_Array(double[][] arr) throws Exception {
+    public static PointSet from2D_Array(double[][] arr) {
         if(arr.length == 0) return null;
         PointArray ps = new PointArray(arr[0].length, arr.length);
         for(int i = 0; i < arr.length; i++) {
@@ -29,7 +29,7 @@ public class PointSetUtils {
      * @return
      * @throws Exception inherited from {@link com.jmaerte.data_struc.point_set.PointArray#set(int, int, double)}.
      */
-    public static PointSet fromArray(double[] arr, int n) throws Exception {
+    public static PointSet fromArray(double[] arr, int n) {
         if(arr.length == 0 || arr.length % n != 0) return null;
         PointArray ps = new PointArray(arr.length / n, n);
         for(int i = 0; i < arr.length; i++) {
@@ -53,20 +53,23 @@ public class PointSetUtils {
      *
      * @return
      */
-    public static Euclidean getSphereData(int d, int n, double eps) throws Exception {
+    public static Euclidean getSphereData(int d, int n, double eps, double radius) {
         PointArray res = new PointArray(d, n);
         for(int i = 0; i < n; i++) {
-            double sum = 0;
+            double[] point = new double[d];
+            double sqSum = 0;
             double[] noise = new double[d];
-            double curr = 0;
             for(int p = 0; p < d; p++) {
-                noise[p] = ThreadLocalRandom.current().nextDouble(-eps, eps);
-                curr = (p + 1 != d) ? ThreadLocalRandom.current().nextDouble(sum - 1, 1 - sum) : Math.sqrt(1-sum);
-                sum += curr * curr;
-                res.set(i, p, curr * curr + noise[p]);
+                noise[p] = eps != 0 ? ThreadLocalRandom.current().nextDouble(-eps, eps) : 0;
+                point[p] = ThreadLocalRandom.current().nextDouble(-radius, radius);
+                sqSum += point[p] * point[p];
+            }
+            double sum = Math.sqrt(sqSum);
+            for(int p = 0; p < d; p++) {
+                res.set(i, p, radius / sum * point[p] + noise[p]);
             }
         }
-        return new Euclidean(res);
+        return new Euclidean(res, ScalarProduct.getStandard(d));
     }
 
 }
