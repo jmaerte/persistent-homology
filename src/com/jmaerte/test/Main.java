@@ -6,6 +6,7 @@ import com.jmaerte.data_struc.complex.Simplex;
 import com.jmaerte.data_struc.graph.WeightedGraph;
 import com.jmaerte.data_struc.point_set.*;
 import com.jmaerte.persistence.Persistence;
+import com.jmaerte.util.vector.Vector2D;
 
 import java.util.Arrays;
 
@@ -167,11 +168,14 @@ public class Main {
 //            e.printStackTrace();
 //        }
 
-        Euclidean S = PointSetUtils.getSphereData(2, 15, 0, 1);
-        System.out.println(S);
-        Filtration nf = new NeighborhoodFiltration(WeightedGraph.vietoris(S), 14);
-        Persistence p = new Persistence(nf, 16);
-        System.out.println(p.toBarcodePlot());
+        Vector2D<Double, Double> v = NeighborhoodFiltration.testIntersection(100, 2, 20);
+        System.out.println(v.getFirst());
+        System.out.println(v.getSecond());
+
+//        Euclidean S = PointSetUtils.getSphereData(2, 20, 0, 1);
+//        Filtration nf = new NeighborhoodFiltration(WeightedGraph.vietoris(S), 19, NeighborhoodFiltration.LOGINTERSECTION);
+//        Persistence p = new Persistence(nf, 16);
+//        System.out.println(p.toBarcodePlot());
 
 //        // A test with a increasing not-filled triangle.
 //        Simplex[] simplices = new Simplex[]{

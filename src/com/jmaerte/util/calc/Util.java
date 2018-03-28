@@ -50,7 +50,18 @@ public class Util {
         return binarySearch(j, arr, 0, arr.length);
     }
 
-    public static int[] intersection(int[] a, int[] b) {
+    public static int[] logIntersection(int[] a, int[] b) {
+        if(a.length > b.length) return logIntersection(b, a);
+        return Arrays.stream(a)
+                .distinct()
+                .filter(x -> {
+                    int k = binarySearch(x, b, 0, b.length);
+                    return k < b.length && b[k] == x;
+                })
+                .toArray();
+    }
+
+    public static int[] linIntersection(int[] a, int[] b) {
         return Arrays.stream(a)
                 .distinct()
                 .filter(x -> Arrays.stream(b).anyMatch(y -> y == x))

@@ -1,11 +1,16 @@
 package com.jmaerte.data_struc.complex;
 
 import com.jmaerte.data_struc.graph.WeightedGraph;
+import com.jmaerte.data_struc.point_set.Euclidean;
+import com.jmaerte.data_struc.point_set.PointSetUtils;
 import com.jmaerte.util.calc.Util;
+import com.jmaerte.util.vector.Vector2D;
 
 import java.util.*;
 
 public class NeighborhoodFiltration extends Filtration {
+
+    public static final String LOGINTERSECTION = "LOG", LININTERSECTION = "LIN";
 
     private ArrayList<Simplex> simplices;//Simplices in ascending order(dimension -> elements)
     private Integer[] sigma; // permutation such that simplices o sigma = compatible ordering
@@ -15,6 +20,7 @@ public class NeighborhoodFiltration extends Filtration {
     private WeightedGraph graph;
     private int k;
     private int dim;
+    private String inter;
 
     /**Initializes a Neighbourhood-filtration analogous to the one described in
      * in section 1.3
@@ -24,7 +30,8 @@ public class NeighborhoodFiltration extends Filtration {
      *              therefore this information suffices
      * @param k the maximal simplex-dimension to compute.
      */
-    public NeighborhoodFiltration(WeightedGraph graph, int k) {
+    public NeighborhoodFiltration(WeightedGraph graph, int k, String inter) {
+        this.inter = inter;
         simplices = new ArrayList<>();
         this.graph = graph;
         this.k = k;
@@ -95,7 +102,7 @@ public class NeighborhoodFiltration extends Filtration {
             Simplex sigma = new Simplex(s, weight);
 
             // Intersect neighborhoods and go into the next generation step.
-            generate(sigma, Util.intersection(neighbors, getLowerNeighbourhood(neighbors[i])));
+            generate(sigma, this.intersection(neighbors, getLowerNeighbourhood(neighbors[i])));
         }
     }
 
@@ -186,5 +193,38 @@ public class NeighborhoodFiltration extends Filtration {
         }
     }
 
+    private int[] intersection(int[] a, int[] b) {
+        switch(inter) {
+            case "LOG":
+                return Util.logIntersection(a, b);
+            case "LIN":
+                return Util.linIntersection(a, b);
+            default: return Util.logIntersection(a, b);
+        }
+    }
 
+    /**Returns a vector2D with first = logintersection time, second = linintersection time.
+     *
+     * @param runs
+     * @param d
+     * @param n
+     * @return
+     */
+    public static Vector2D<Double, Double> testIntersection(int runs, int d, int n) {
+        double a = 0;
+        double b = 0;
+        long ms = 0;
+        for(int i = 0; i < runs; i++) {
+            Euclidean S = PointSetUtils.getSphereData(d, n, 0, 1);
+            ms = System.currentTimeMillis();
+            new NeighborhoodFiltration(WeightedGraph.vietoris(S), n - 1, NeighborhoodFiltration.LOGINTERSECTION);
+            a += System.currentTimeMillis() - ms;
+            ms = System.currentTimeMillis();
+            new NeighborhoodFiltration(WeightedGraph.vietoris(S), n - 1, NeighborhoodFiltration.LININTERSECTION);
+            b += System.currentTimeMillis() - ms;
+        }
+        a /= runs;
+        b /= runs;
+        return new Vector2D<>(a, b);
+    }
 }
