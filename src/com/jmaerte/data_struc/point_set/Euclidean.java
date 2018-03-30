@@ -1,6 +1,6 @@
 package com.jmaerte.data_struc.point_set;
 
-public class Euclidean implements VertexFactory, PointSet {
+public class Euclidean implements PointSet {
 
     private int currID;
     private PointSet set;

@@ -11,10 +11,12 @@ public class PointArray implements PointSet {
 
     private final int d, n;
     private final double[][] values;
+    private Metric<double[]> m;
 
-    public PointArray(int d, int n) {
+    public PointArray(int d, int n, Metric<double[]> m) {
         this.d = d;
         this.n = n;
+        this.m = m;
         this.values = new double[n][d];
     }
 
@@ -56,4 +58,11 @@ public class PointArray implements PointSet {
         return s;
     }
 
+    public double d(Integer i, Integer j) {
+        return m.d(get(i), get(j));
+    }
+
+    public double d(double[] x, double[] y) {
+        return m.d(x, y);
+    }
 }

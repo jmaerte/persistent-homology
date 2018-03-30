@@ -2,6 +2,8 @@ package com.jmaerte.data_struc.miniball;
 
 import com.jmaerte.data_struc.point_set.Euclidean;
 import com.jmaerte.data_struc.point_set.PointSet;
+import com.jmaerte.util.calc.Util;
+import com.jmaerte.util.vector.Vector2D;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -77,6 +79,52 @@ public class Miniball {
 
     public double squaredRadius() {
         return sqRadius;
+    }
+
+    public static Ball welzl(Euclidean S) {
+        int[] I = new int[S.size()];
+        int[] B = new int[S.size()];
+        for(int i = 0; i < S.size(); i++) {
+            I[i] = i;
+            B[i] = i;
+        }
+        return welzl(S, I, S.size(), B, null);
+    }
+
+    /**Uses welzl algorithm for computing the smallest enclosing ball.
+     * Calling welzl(S, [0,1,...,n], []) will return SED(S)
+     * @param S The overall pointset.
+     * @param I interior points (maybe on the boundary - not defining)
+     * @param i the occupation of I
+     * @param B boundary points (defining the ball)
+     * @return The smallest enclosing disk of S.
+     */
+    public static Ball welzl(Euclidean S, int[] I, int i, int[] B, AffineHull hull) {
+        Ball D;
+        if(i == 0 || hull.size() == S.dimension() + 1) {
+            D = hull.ball();
+        }else {
+            int p = ThreadLocalRandom.current().nextInt(0, i);
+            int temp = I[p];
+            if(p != i) {
+                System.arraycopy(I, p + 1, I, p, i - p);
+            }
+            I[i - 1] = temp;
+            D = welzl(S, I, --i, B, hull);
+            if(!D.contains(temp)) {
+                Vector2D<double[], Double> changes = null;
+                if(hull != null) {
+                    changes = hull.add(temp);
+                }else {
+                    hull = new AffineHull(S, p);
+                }
+                D = welzl(S, I, i, B, hull);
+                if(hull.size() > 1) {
+                    hull.pop(changes);
+                }
+            }
+        }
+        return D;
     }
 
     public static double miniball(Euclidean S, int iterations) {

@@ -7,7 +7,7 @@ package com.jmaerte.data_struc.point_set;
  * will be necessary in further progress.
  *
  */
-public interface PointSet {
+public interface PointSet extends VertexFactory, Metric<double[]> {
 
     /**Get the euclidean dimension of the points.
      *

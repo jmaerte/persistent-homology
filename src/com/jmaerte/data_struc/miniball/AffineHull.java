@@ -5,6 +5,7 @@ import static com.jmaerte.util.log.Logger.*;
 import com.jmaerte.data_struc.point_set.Euclidean;
 import com.jmaerte.data_struc.point_set.PointSet;
 import com.jmaerte.util.calc.Util;
+import com.jmaerte.util.vector.Vector2D;
 
 import java.text.DecimalFormat;
 
@@ -30,15 +31,14 @@ public class AffineHull {
     private int size;
 
     private int[] A;
+    private double[][] Qinv;
+    private double[][] T;
+    private double[] Tq;
 
-    private double[][] T;// T[i] = t_i - t_0
-    private double[][] Q;// Q_ij = Q[j][i]. It is upper triangular save-able, since it is symmetric.
-    private double[] Tq;// Tq[i] = q(T[i], T[i])
+    private double[] y;
+    private double[][] lambda;
 
-    private double[] c; // coordinates of the center of the unique Ball B with center c in Aff(A) and A \subset \partial(B)
-                        // Such that C = \sum lambda[i] * T[i], where lambda = 1/2 * (Q * Tq)
-    private double[] c_coef;
-    private double sqRadius;
+    private Ball SED;
 
     public AffineHull(Euclidean S, int initIndex) {
         this.S = S;
@@ -51,21 +51,12 @@ public class AffineHull {
 
         // init tools
         this.T = new double[dim][dim];
-        this.Q = new double[dim][dim];
+        this.Qinv = new double[dim][dim];
         this.Tq = new double[dim];
+        this.y = new double[dim + 1];
 
         // init result fields
-        this.c = new double[dim];
-        this.c_coef = new double[dim + 1];
-        try {
-            for(int i = 0; i < dim; i++) {
-                c[i] = S.get(initIndex, i);
-            }
-        }catch(Exception e) {
-            e.printStackTrace();
-        }
-        c_coef[0] = 1;
-        sqRadius = 0;
+        SED = new Ball(S, S.get(initIndex), 0);
     }
 
     /**Note: This is not the dimension of the affine hull.
@@ -96,16 +87,20 @@ public class AffineHull {
      * @param index index of vector to be added in S.
      * @throws Exception it is either an Exception inherited by {@link com.jmaerte.data_struc.point_set.PointSet#get(int, int)} or a PrecisionReachedException when the value y gets too small(i.e. the vector is too close to the affine hull).
      */
-    public void add(int index) throws Exception {
+    public Vector2D<double[], Double> add(int index) {
+        double y;
+        double[] mu;
         int m = size - 1;
         for(int i = 0; i < dim; i++) {
             T[m][i] = S.get(index, i) - S.get(A[0], i);
         }
         if(m == 0) {
             Tq[0] = q(T[0], T[0]);
-            Q[0][0] = 1/Tq[0];
+            Qinv[0][0] = 1/Tq[0];
+            y = Tq[0];
+            mu = new double[]{-1};
         }else {
-            double[] mu = new double[m + 1];
+            mu = new double[m + 1];
             double[] v = new double[m];
             for(int i = 0; i < m; i++) {
                 v[i] = q(T[i], T[m]);
@@ -114,70 +109,79 @@ public class AffineHull {
             // calculate mu
             for(int j = 0; j < m; j++) {
                 for(int i = 0; i < m; i++) {
-                    mu[i] += v[j] * Q[j][i];
+                    mu[i] += v[j] * Qinv[j][i];
                 }
             }
 
-            // calculate z
-            double y = 0;
+            // calculate y
+            y = 0;
             for(int i = 0; i < m; i++) {
                 y += mu[i] * v[i];
             }
             Tq[m] = q(T[m], T[m]);
             y = Tq[m] - y;
 
+            this.y[m] = y;
+            for(int i = 0; i < dim; i++) {
+                lambda[m][i] = mu[i];
+            }
             // Recursively add to Q
             for(int j = 0; j < m + 1; j++) {
                 for(int i = 0; i < m + 1; i++) {
-                    Q[j][i] += mu[i] * mu[j] / y;
+                    Qinv[j][i] += mu[i] * mu[j] / y;
                 }
             }
         }
         A[size] = index;
         calculateBall();
         size++;
-        log("Successfully added vector " + index + ", squared radius: " + sqRadius);
-        String s = "";
-        for(int i = 0; i < size; i++) {
-            s  += c_coef[i] + "\t";
-        }
-        log("Coefficients: " + s);
+        log("Successfully added vector " + index + ", radius: " + SED.radius());
+        return new Vector2D<>(mu, y);
     }
 
     /**An intern function that updates the center and squared radius fields after a vector being added or removed.
      *
      * @throws Exception inherited by {@link com.jmaerte.data_struc.point_set.PointSet#get(int, int)}(Shouldn't appear anyway)
      */
-    private void calculateBall() throws Exception {
+    private void calculateBall() {
         double[] lambda = new double[dim];
         for(int i = 0; i < size; i++) {
             for(int j = 0; j < size; j++) {
-                lambda[i] += Q[j][i] * Tq[j];
+                lambda[i] += Qinv[j][i] * Tq[j];
             }
             lambda[i] *= 0.5;
         }
-        c = new double[dim];
-        double lambda_0 = 1;
+        double[] c = new double[dim];
         for(int i = 0; i < size; i++) {
             for(int j = 0; j < dim; j++) {
                 c[j] += lambda[i] * T[i][j];
             }
-            c_coef[i + 1] = lambda[i];
-            lambda_0 -= lambda[i];
         }
-        c_coef[0] = lambda_0;
-        sqRadius = q(c, c);
+        double radius = Math.sqrt(q(c, c));
         for(int i = 0; i < dim; i++) {
             c[i] += S.get(A[0], i);
         }
+        SED = new Ball(S, c, radius);
     }
 
-    public void pop(int index) {
-
+    public void pop(Vector2D<double[], Double> changes) {
+        double[] mu = changes.getFirst();
+        double y = changes.getSecond();
+        for(int j = 0; j < size; j++) {
+            for(int i = 0; i < size; i++) {
+                Qinv[j][i] -= mu[i] * mu[j] / y;
+            }
+        }
+        size--;
+        calculateBall();
     }
 
     private double q(double[] x, double[] y) {
         return S.q(x, y);
+    }
+
+    public Ball ball() {
+        return SED;
     }
 
     public String toString() {
@@ -195,24 +199,12 @@ public class AffineHull {
         s += "\n\nQ^(-1):\n";
         for(int i = 0; i < size - 1; i++) {
             for(int j = 0; j < size - 1; j++) {
-                s += Q[j][i] + "\t";
+                s += Qinv[j][i] + "\t";
             }
             s += "\n";
         }
-        s += "\n\nCenter: ";
-        for(int i = 0; i < dim; i++) {
-            s += c[i] + "\t";
-        }
-        s += "\nSquared Radius: " + sqRadius;
+        s += SED.toString();
         return s;
-    }
-
-    public double radius() {
-        return Math.sqrt(sqRadius);
-    }
-
-    public double[] center() {
-        return c;
     }
 
     public boolean isSupport(int i) {
