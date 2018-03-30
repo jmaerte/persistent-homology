@@ -173,12 +173,13 @@ public class Main {
 //        System.out.println(v.getFirst());
 //        System.out.println(v.getSecond());
 
-        Euclidean S = PointSetUtils.getSphereData(5, 200, 0, 1);
+        Euclidean S = PointSetUtils.getSphereData(2, 1000, 0, 1);
+        System.out.println(S);
 //        Filtration nf = new NeighborhoodFiltration(WeightedGraph.vietoris(S), 19, NeighborhoodFiltration.LOGINTERSECTION);
 //        Persistence p = new Persistence(nf, 16);
 //        System.out.println(p.toBarcodePlot());
         long ms = System.currentTimeMillis();
-        System.out.println(Miniball.miniball(S, 500) + " in " + (System.currentTimeMillis() - ms) + "ms");
+        System.out.println(Miniball.miniball(S, 1000) + " in " + (System.currentTimeMillis() - ms) + "ms");
 
 //        // A test with a increasing not-filled triangle.
 //        Simplex[] simplices = new Simplex[]{

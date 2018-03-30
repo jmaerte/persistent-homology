@@ -4,6 +4,7 @@ import com.jmaerte.data_struc.point_set.Euclidean;
 import com.jmaerte.data_struc.point_set.PointSet;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Stack;
 import java.util.concurrent.ThreadLocalRandom;
 
@@ -99,13 +100,14 @@ public class Miniball {
             dist = -1;
             q = -1;
             for(int j = 0; j < S.size(); j++) {
-                double curr = S.d(j, p);
+                double curr = S.d(S.get(j), c);
                 if(curr > dist) {
                     q = j;
                     dist = curr;
                 }
             }
             shift(c, S.get(q), d);
+            System.out.println(Arrays.toString(c));
             d *= factor;
         }
         return dist;
@@ -116,7 +118,7 @@ public class Miniball {
      */
     private static void shift(double[] c, double[] v, double scalar) {
         for(int i = 0; i < c.length; i++) {
-            c[i] = scalar * (v[i] - c[i]);
+            c[i] += scalar * (v[i] - c[i]);
         }
     }
 }
