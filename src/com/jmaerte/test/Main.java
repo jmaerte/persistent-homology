@@ -4,6 +4,7 @@ import com.jmaerte.data_struc.complex.Filtration;
 import com.jmaerte.data_struc.complex.NeighborhoodFiltration;
 import com.jmaerte.data_struc.complex.Simplex;
 import com.jmaerte.data_struc.graph.WeightedGraph;
+import com.jmaerte.data_struc.miniball.Miniball;
 import com.jmaerte.data_struc.point_set.*;
 import com.jmaerte.persistence.Persistence;
 import com.jmaerte.util.vector.Vector2D;
@@ -168,14 +169,16 @@ public class Main {
 //            e.printStackTrace();
 //        }
 
-        Vector2D<Double, Double> v = NeighborhoodFiltration.testIntersection(100, 2, 20);
-        System.out.println(v.getFirst());
-        System.out.println(v.getSecond());
+//        Vector2D<Double, Double> v = NeighborhoodFiltration.testIntersection(100, 2, 20);
+//        System.out.println(v.getFirst());
+//        System.out.println(v.getSecond());
 
-//        Euclidean S = PointSetUtils.getSphereData(2, 20, 0, 1);
+        Euclidean S = PointSetUtils.getSphereData(5, 200, 0, 1);
 //        Filtration nf = new NeighborhoodFiltration(WeightedGraph.vietoris(S), 19, NeighborhoodFiltration.LOGINTERSECTION);
 //        Persistence p = new Persistence(nf, 16);
 //        System.out.println(p.toBarcodePlot());
+        long ms = System.currentTimeMillis();
+        System.out.println(Miniball.miniball(S, 500) + " in " + (System.currentTimeMillis() - ms) + "ms");
 
 //        // A test with a increasing not-filled triangle.
 //        Simplex[] simplices = new Simplex[]{

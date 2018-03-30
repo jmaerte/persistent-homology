@@ -41,7 +41,7 @@ public class PointArray implements PointSet {
         return d;
     }
 
-    public int card() {
+    public int size() {
         return n;
     }
 

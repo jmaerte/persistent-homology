@@ -35,5 +35,5 @@ public interface PointSet {
      *
      * @return card(S)
      */
-    int card();
+    int size();
 }

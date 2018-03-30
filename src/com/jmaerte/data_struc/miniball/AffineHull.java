@@ -2,7 +2,9 @@ package com.jmaerte.data_struc.miniball;
 
 import static com.jmaerte.util.log.Logger.*;
 
+import com.jmaerte.data_struc.point_set.Euclidean;
 import com.jmaerte.data_struc.point_set.PointSet;
+import com.jmaerte.util.calc.Util;
 
 import java.text.DecimalFormat;
 
@@ -22,7 +24,7 @@ public class AffineHull {
 
     private static DecimalFormat df2 = new DecimalFormat("0.##");
 
-    private final PointSet S;
+    private final Euclidean S;
 
     private int dim;
     private int size;
@@ -38,7 +40,7 @@ public class AffineHull {
     private double[] c_coef;
     private double sqRadius;
 
-    public AffineHull(PointSet S, int initIndex) {
+    public AffineHull(Euclidean S, int initIndex) {
         this.S = S;
 
         // init affine hull
@@ -175,11 +177,7 @@ public class AffineHull {
     }
 
     private double q(double[] x, double[] y) {
-        double scalar = 0;
-        for(int i = 0; i < dim; i++) {
-            scalar += x[i] * y[i];
-        }
-        return scalar;
+        return S.q(x, y);
     }
 
     public String toString() {
@@ -207,5 +205,18 @@ public class AffineHull {
         }
         s += "\nSquared Radius: " + sqRadius;
         return s;
+    }
+
+    public double radius() {
+        return Math.sqrt(sqRadius);
+    }
+
+    public double[] center() {
+        return c;
+    }
+
+    public boolean isSupport(int i) {
+        int k = Util.binarySearch(i, A, 0, size);
+        return k < size && A[k] == i;
     }
 }

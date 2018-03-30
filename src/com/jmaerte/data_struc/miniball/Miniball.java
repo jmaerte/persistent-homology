@@ -1,9 +1,11 @@
 package com.jmaerte.data_struc.miniball;
 
+import com.jmaerte.data_struc.point_set.Euclidean;
 import com.jmaerte.data_struc.point_set.PointSet;
 
 import java.util.ArrayList;
 import java.util.Stack;
+import java.util.concurrent.ThreadLocalRandom;
 
 /**An abstraction of a smallest enclosing circle.
  * This instance provides a calculation of the smallest enclosing ball of a subset of an arbitrarily large {@link PointSet} {@code S}.
@@ -12,7 +14,7 @@ import java.util.Stack;
 public class Miniball {
 
     // input fields
-    private PointSet S;
+    private Euclidean S;
     private int[] M;
 
     // tool fields
@@ -24,7 +26,7 @@ public class Miniball {
     private double sqRadius = 0;
     private double[] center;
 
-    public Miniball(PointSet S, int[] M) {
+    public Miniball(Euclidean S, int[] M) {
         this.S = S;
         this.M = M;
         this.dim = S.dimension();
@@ -74,5 +76,47 @@ public class Miniball {
 
     public double squaredRadius() {
         return sqRadius;
+    }
+
+    public static double miniball(Euclidean S, int iterations) {
+        int p = ThreadLocalRandom.current().nextInt(0, S.size());
+        double factor = 1 - 1/(double)iterations;
+        double d = 1/2d;
+        double dist = -1;
+        int q = -1;
+        for(int i = 0; i < S.size(); i++) {
+            double curr = S.d(i, p);
+            if(curr > dist) {
+                q = i;
+                dist = curr;
+            }
+        }
+        double[] c = new double[S.dimension()];
+        System.arraycopy(S.get(p), 0, c, 0, S.dimension());
+        shift(c, S.get(q), d);
+        d *= factor;
+        for(int i = 0; i < iterations; i++) {
+            dist = -1;
+            q = -1;
+            for(int j = 0; j < S.size(); j++) {
+                double curr = S.d(j, p);
+                if(curr > dist) {
+                    q = j;
+                    dist = curr;
+                }
+            }
+            shift(c, S.get(q), d);
+            d *= factor;
+        }
+        return dist;
+    }
+
+    /**Calculates c <- c + scalar*(v-c)
+     *
+     */
+    private static void shift(double[] c, double[] v, double scalar) {
+        for(int i = 0; i < c.length; i++) {
+            c[i] = scalar * (v[i] - c[i]);
+        }
     }
 }
