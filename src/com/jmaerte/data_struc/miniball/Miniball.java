@@ -88,7 +88,7 @@ public class Miniball {
             I[i] = i;
             B[i] = i;
         }
-        return welzl(S, I, S.size(), B, null);
+        return welzl(S, I, S.size(), null);
     }
 
     /**Uses welzl algorithm for computing the smallest enclosing ball.
@@ -96,21 +96,19 @@ public class Miniball {
      * @param S The overall pointset.
      * @param I interior points (maybe on the boundary - not defining)
      * @param i the occupation of I
-     * @param B boundary points (defining the ball)
+     * @param hull the boundary points(defining the ball)
      * @return The smallest enclosing disk of S.
      */
-    public static Ball welzl(Euclidean S, int[] I, int i, int[] B, AffineHull hull) {
+    public static Ball welzl(Euclidean S, int[] I, int i, AffineHull hull) {
         Ball D;
-        if(i == 0 || hull.size() == S.dimension() + 1) {
-            D = hull.ball();
+        if(i == 0 || (hull != null && hull.size() == S.dimension() + 1)) {
+            D = hull == null ? Ball.empty() : hull.ball();
         }else {
             int p = ThreadLocalRandom.current().nextInt(0, i);
             int temp = I[p];
-            if(p != i) {
-                System.arraycopy(I, p + 1, I, p, i - p);
-            }
+            System.arraycopy(I, p + 1, I, p, i - p - 1);
             I[i - 1] = temp;
-            D = welzl(S, I, --i, B, hull);
+            D = welzl(S, I, --i, hull);
             if(!D.contains(temp)) {
                 Vector2D<double[], Double> changes = null;
                 if(hull != null) {
@@ -118,7 +116,7 @@ public class Miniball {
                 }else {
                     hull = new AffineHull(S, p);
                 }
-                D = welzl(S, I, i, B, hull);
+                D = welzl(S, I, i, hull);
                 if(hull.size() > 1) {
                     hull.pop(changes);
                 }

@@ -2,6 +2,8 @@ package com.jmaerte.data_struc.miniball;
 
 import com.jmaerte.data_struc.point_set.PointSet;
 
+import java.util.Arrays;
+
 public class Ball {
     private double[] center;
     private double radius;
@@ -13,11 +15,21 @@ public class Ball {
         this.radius = radius;
     }
 
+    private Ball() {}
+
     public boolean contains(int i) {
-        return S.d(S.get(i), center) <= radius;
+        return S != null && S.d(S.get(i), center) <= radius;
     }
 
     public double radius() {
         return radius;
+    }
+
+    public static Ball empty() {
+        return new Ball();
+    }
+
+    public String toString() {
+        return "[" + Arrays.toString(center) + ", " + radius + "]";
     }
 }

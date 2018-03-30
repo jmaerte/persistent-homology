@@ -2,6 +2,7 @@ package com.jmaerte.data_struc.complex;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Comparator;
 
 public class Simplex {
 
@@ -105,4 +106,14 @@ public class Simplex {
 //        assert i < faces.length;
 //        return faces[i];
 //    }
+}
+class SimplexComparator implements Comparator<Simplex> {
+
+    public int compare(Simplex s, Simplex t) {
+        if(s.dim() != t.dim()) return s.dim() - t.dim();
+        for(int i = 0; i <= s.dim(); i++) {
+            if(s.vertices[i] != t.vertices[i]) return s.vertices[i] - t.vertices[i];
+        }
+        return 0;
+    }
 }

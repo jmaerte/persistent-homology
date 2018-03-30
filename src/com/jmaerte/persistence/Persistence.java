@@ -7,7 +7,10 @@ import com.jmaerte.util.calc.Util;
 import com.jmaerte.util.vector.Vector5D;
 import com.jmaerte.util.vector.Vector6D;
 
+import java.text.DecimalFormat;
+import java.text.DecimalFormatSymbols;
 import java.util.ArrayList;
+import java.util.Locale;
 
 /**
  * Created by Julian on 27/02/2018.
@@ -15,6 +18,7 @@ import java.util.ArrayList;
 public class Persistence {
 
     private static final int factor = 10;
+    private static final DecimalFormat df = new DecimalFormat("#.########", new DecimalFormatSymbols(Locale.US));
 
     private Filtration f;
     private SBVector[] matrix;
@@ -249,14 +253,14 @@ public class Persistence {
                 Diagram.Node n = diagram[p].nodes[i];
                 for(int j = 0; j < n.occ; j++) {
                     for(int k = 0; k < n.multiplicity[j]; k++) {
-                        value1 += n.a + (j + 1 == n.occ && k + 1 == n.multiplicity[j] && n.infMultiplicity == 0 ? "" : ", ");
-                        value2 += n.b[j] + (j + 1 == n.occ && k + 1 == n.multiplicity[j] && n.infMultiplicity == 0 ? "" : ", ");
+                        value1 += df.format(n.a) + (j + 1 == n.occ && k + 1 == n.multiplicity[j] && n.infMultiplicity == 0 ? "" : ", ");
+                        value2 += df.format(n.b[j]) + (j + 1 == n.occ && k + 1 == n.multiplicity[j] && n.infMultiplicity == 0 ? "" : ", ");
                         length++;
                         groupSize.set(groupSize.size() - 1, groupSize.get(groupSize.size() - 1) + 1);
                     }
                 }
                 if(n.infMultiplicity != 0) {
-                    value1 += n.a;
+                    value1 += df.format(n.a);
                     value2 += "Inf";
                     length++;
                     groupSize.set(groupSize.size() - 1, groupSize.get(groupSize.size() - 1) + 1);

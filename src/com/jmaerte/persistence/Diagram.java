@@ -9,6 +9,7 @@ public class Diagram {
     protected Node[] nodes;
     protected int occ;
     private final String INFINITY;
+    private final double eps = 1e-8;
 
     protected Diagram(double max) {
         this(""+max);
@@ -29,7 +30,8 @@ public class Diagram {
      * @param b death time
      */
     public void put(double a, double b) {
-        if(a == b) return;
+        if(Math.abs(a - b) < eps) return;
+        //if(a == b) return;
         int k = binarySearch(a);
         if(k < occ && nodes[k].a == a) {
             nodes[k].add(b);

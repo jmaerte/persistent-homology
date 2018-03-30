@@ -10,9 +10,9 @@ public class PointSetUtils {
      * @param arr 2d array to read from.
      * @return the point set such that arr[i] is the array corresponding to the i-th vector of the {@link PointSet}.
      */
-    public static PointSet from2D_Array(double[][] arr) {
+    public static PointSet from2D_Array(double[][] arr, Metric<double[]> m) {
         if(arr.length == 0) return null;
-        PointArray ps = new PointArray(arr[0].length, arr.length);
+        PointArray ps = new PointArray(arr[0].length, arr.length, m);
         for(int i = 0; i < arr.length; i++) {
             for(int j = 0; j < arr[i].length; i++) {
                 ps.set(i, j, arr[i][j]);
@@ -29,17 +29,17 @@ public class PointSetUtils {
      * @return
      * @throws Exception inherited from {@link com.jmaerte.data_struc.point_set.PointArray#set(int, int, double)}.
      */
-    public static PointSet fromArray(double[] arr, int n) {
+    public static PointSet fromArray(double[] arr, int n, Metric<double[]> m) {
         if(arr.length == 0 || arr.length % n != 0) return null;
-        PointArray ps = new PointArray(arr.length / n, n);
+        PointArray ps = new PointArray(arr.length / n, n, m);
         for(int i = 0; i < arr.length; i++) {
             ps.set(i % n, i /n, arr[i]);
         }
         return ps;
     }
 
-    public static PointSet randomPointSet(int n, int d, double min, double max) throws Exception {
-        PointArray pa = new PointArray(d, n);
+    public static PointSet randomPointSet(int n, int d, double min, double max, Metric<double[]> m) throws Exception {
+        PointArray pa = new PointArray(d, n, m);
         Random r = new Random();
         for(int i = 0; i < n; i++) {
             for(int j = 0; j < d; j++) {
@@ -53,8 +53,8 @@ public class PointSetUtils {
      *
      * @return
      */
-    public static Euclidean getSphereData(int d, int n, double eps, double radius) {
-        PointArray res = new PointArray(d, n);
+    public static Euclidean getSphereData(int d, int n, double eps, double radius, Metric<double[]> m) {
+        PointArray res = new PointArray(d, n, m);
         for(int i = 0; i < n; i++) {
             double[] point = new double[d];
             double sqSum = 0;

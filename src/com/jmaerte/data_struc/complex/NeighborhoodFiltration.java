@@ -2,6 +2,7 @@ package com.jmaerte.data_struc.complex;
 
 import com.jmaerte.data_struc.graph.WeightedGraph;
 import com.jmaerte.data_struc.point_set.Euclidean;
+import com.jmaerte.data_struc.point_set.Metric;
 import com.jmaerte.data_struc.point_set.PointSetUtils;
 import com.jmaerte.util.calc.Util;
 import com.jmaerte.util.vector.Vector2D;
@@ -174,17 +175,6 @@ public class NeighborhoodFiltration extends Filtration {
         }
     }
 
-    public class SimplexComparator implements Comparator<Simplex> {
-
-        public int compare(Simplex s, Simplex t) {
-            if(s.dim() != t.dim()) return s.dim() - t.dim();
-            for(int i = 0; i <= s.dim(); i++) {
-                if(s.vertices[i] != t.vertices[i]) return s.vertices[i] - t.vertices[i];
-            }
-            return 0;
-        }
-    }
-
     public class WeightComparator implements Comparator<Integer> {
 
         public int compare(Integer i, Integer j) {
@@ -215,7 +205,7 @@ public class NeighborhoodFiltration extends Filtration {
         double b = 0;
         long ms = 0;
         for(int i = 0; i < runs; i++) {
-            Euclidean S = PointSetUtils.getSphereData(d, n, 0, 1);
+            Euclidean S = PointSetUtils.getSphereData(d, n, 0, 1, Metric.EUCLIDEAN);
             ms = System.currentTimeMillis();
             new NeighborhoodFiltration(WeightedGraph.vietoris(S), n - 1, NeighborhoodFiltration.LOGINTERSECTION);
             a += System.currentTimeMillis() - ms;

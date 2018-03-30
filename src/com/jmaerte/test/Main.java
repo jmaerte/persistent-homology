@@ -1,5 +1,6 @@
 package com.jmaerte.test;
 
+import com.jmaerte.data_struc.complex.CechFiltration;
 import com.jmaerte.data_struc.complex.Filtration;
 import com.jmaerte.data_struc.complex.NeighborhoodFiltration;
 import com.jmaerte.data_struc.complex.Simplex;
@@ -173,12 +174,18 @@ public class Main {
 //        System.out.println(v.getFirst());
 //        System.out.println(v.getSecond());
 
-        Euclidean S = PointSetUtils.getSphereData(2, 1000, 0, 1);
-//        Filtration nf = new NeighborhoodFiltration(WeightedGraph.vietoris(S), 19, NeighborhoodFiltration.LOGINTERSECTION);
-//        Persistence p = new Persistence(nf, 16);
-//        System.out.println(p.toBarcodePlot());
-        long ms = System.currentTimeMillis();
-        System.out.println(Miniball.miniball(S, 1000) + " in " + (System.currentTimeMillis() - ms) + "ms");
+//        Euclidean S = PointSetUtils.getSphereData(2, 1000, 0, 1, Metric.EUCLIDEAN);
+////        Filtration nf = new NeighborhoodFiltration(WeightedGraph.vietoris(S), 19, NeighborhoodFiltration.LOGINTERSECTION);
+////        Persistence p = new Persistence(nf, 16);
+////        System.out.println(p.toBarcodePlot());
+//        long ms = System.currentTimeMillis();
+//        System.out.println(Miniball.welzl(S) + " in " + (System.currentTimeMillis() - ms) + "ms");
+
+
+        Euclidean S = PointSetUtils.getSphereData(2, 10, 0, 1, Metric.EUCLIDEAN);
+        CechFiltration cf = new CechFiltration(S, 9);
+        Persistence p = new Persistence(cf, 16);
+        System.out.println(p.toBarcodePlot());
 
 //        // A test with a increasing not-filled triangle.
 //        Simplex[] simplices = new Simplex[]{

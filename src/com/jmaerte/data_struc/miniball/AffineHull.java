@@ -35,9 +35,6 @@ public class AffineHull {
     private double[][] T;
     private double[] Tq;
 
-    private double[] y;
-    private double[][] lambda;
-
     private Ball SED;
 
     public AffineHull(Euclidean S, int initIndex) {
@@ -53,7 +50,6 @@ public class AffineHull {
         this.T = new double[dim][dim];
         this.Qinv = new double[dim][dim];
         this.Tq = new double[dim];
-        this.y = new double[dim + 1];
 
         // init result fields
         SED = new Ball(S, S.get(initIndex), 0);
@@ -121,10 +117,6 @@ public class AffineHull {
             Tq[m] = q(T[m], T[m]);
             y = Tq[m] - y;
 
-            this.y[m] = y;
-            for(int i = 0; i < dim; i++) {
-                lambda[m][i] = mu[i];
-            }
             // Recursively add to Q
             for(int j = 0; j < m + 1; j++) {
                 for(int i = 0; i < m + 1; i++) {
@@ -167,13 +159,14 @@ public class AffineHull {
     public void pop(Vector2D<double[], Double> changes) {
         double[] mu = changes.getFirst();
         double y = changes.getSecond();
-        for(int j = 0; j < size; j++) {
-            for(int i = 0; i < size; i++) {
+        for(int j = 0; j < size - 1; j++) {
+            for(int i = 0; i < size - 1; i++) {
                 Qinv[j][i] -= mu[i] * mu[j] / y;
             }
         }
         size--;
         calculateBall();
+        log("Successfully popped vector " + A[size] + ", radius: " + ball().radius());
     }
 
     private double q(double[] x, double[] y) {
