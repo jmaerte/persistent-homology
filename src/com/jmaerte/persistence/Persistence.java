@@ -67,6 +67,8 @@ public class Persistence {
             int k = Util.binarySearch(v.getEntry(v.occupation() - 1), low, 0, occupation_low);
             while(k < occupation_low && !v.isZero() && low[k] == v.getEntry(v.occupation() - 1)) {
                 try {
+                    System.out.println(v.occupation() + " " + matrix[k].occupation());
+                    if(v.occupation() < matrix[k].occupation()) System.out.println("is less! would swap");
                     v.add(matrix[k]);
                 }catch(Exception e) {
                     e.printStackTrace();

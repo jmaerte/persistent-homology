@@ -45,7 +45,7 @@ public class CechFiltration extends Filtration {
             tau[sigma[i]] = i;
         }
 
-        System.out.println(simplices);
+//        System.out.println(simplices);
     }
 
     public class WeightComparator implements Comparator<Integer> {

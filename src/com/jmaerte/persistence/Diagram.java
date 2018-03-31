@@ -9,19 +9,20 @@ public class Diagram {
     protected Node[] nodes;
     protected int occ;
     private final String INFINITY;
-    private final double eps = 1e-8;
-
-    protected Diagram(double max) {
-        this(""+max);
-    }
+    private final double clear;
 
     protected Diagram() {
-        this("inf");
+        this("inf", 1e-8);
     }
 
-    private Diagram(String inf) {
+    protected Diagram(double clear) {
+        this("inf", clear);
+    }
+
+    private Diagram(String inf, double clear) {
         this.INFINITY = inf;
         nodes = new Node[2];
+        this.clear = clear;
     }
 
     /**Adds the tuple (a,b) to the diagram.
@@ -30,8 +31,8 @@ public class Diagram {
      * @param b death time
      */
     public void put(double a, double b) {
-        if(Math.abs(a - b) < eps) return;
-        //if(a == b) return;
+        if(b - a <= clear) return;
+//        if(a == b) return;
         int k = binarySearch(a);
         if(k < occ && nodes[k].a == a) {
             nodes[k].add(b);
