@@ -182,10 +182,11 @@ public class Main {
 //        System.out.println(Miniball.welzl(S) + " in " + (System.currentTimeMillis() - ms) + "ms");
 
 
-        Euclidean S = PointSetUtils.getSphereData(2, 20, 1, 4, Metric.EUCLIDEAN);
-        CechFiltration cf = new CechFiltration(S, 19);
+        Euclidean S = PointSetUtils.getSphereData(2, 100, 0.5, 4, Metric.EUCLIDEAN);
+        System.out.println(S.toPlot());
+        CechFiltration cf = new CechFiltration(S, 3);
         Persistence p = new Persistence(cf, 16);
-        System.out.println(p.toBarcodePlot());
+        System.out.println(p.toBarcodePlot(2));
 
 //        // A test with a increasing not-filled triangle.
 //        Simplex[] simplices = new Simplex[]{

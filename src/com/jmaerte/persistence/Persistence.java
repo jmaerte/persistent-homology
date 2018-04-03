@@ -2,6 +2,7 @@ package com.jmaerte.persistence;
 
 import com.jmaerte.data_struc.complex.Filtration;
 import com.jmaerte.lin_alg.SBVector;
+import com.jmaerte.util.vector.Vector3D;
 import com.jmaerte.util.vector.Vector4D;
 import com.jmaerte.util.calc.Util;
 import com.jmaerte.util.vector.Vector5D;
@@ -67,13 +68,16 @@ public class Persistence {
             int k = Util.binarySearch(v.getEntry(v.occupation() - 1), low, 0, occupation_low);
             while(k < occupation_low && !v.isZero() && low[k] == v.getEntry(v.occupation() - 1)) {
                 try {
-                    System.out.println(v.occupation() + " " + matrix[k].occupation());
-                    if(v.occupation() < matrix[k].occupation()) System.out.println("is less! would swap");
+                    if(v.occupation() < matrix[k].occupation()) {
+                        SBVector temp = matrix[k];
+                        matrix[k] = v;
+                        v = temp;
+                    }
                     v.add(matrix[k]);
                 }catch(Exception e) {
                     e.printStackTrace();
                 }
-                if(!v.isZero()) k = Util.binarySearch(v.getEntry(v.occupation() - 1), low, 0, occupation_low);
+                if(!v.isZero()) k = Util.binarySearch(v.getEntry(v.occupation() - 1), low, 0, k);
             }
             if(!v.isZero()) {
                 if(occupation_low == matrix.length) mkPlace(true);
@@ -151,13 +155,13 @@ public class Persistence {
         return s + "]";
     }
 
-    public String toBarcodePlot() {
+    public String toBarcodePlot(int n) {
         // Color strings: note that they must be escaped by \" since we also want the rgb-function to be a possible input.
         String segmentColor = "\"black\"";
         String birthColor = "\"chartreuse4\"";
         String deathColor = "\"sienna4\"";
 
-        Vector5D<String, String, int[], int[], Integer> value = this.getIntervalArrays();
+        Vector5D<String, String, int[], int[], Integer> value = this.getIntervalArrays(n);
         int[] nonTrivial = value.getThird();
         int[] groupSize = value.getFourth();
         int length = value.getFifth();
@@ -167,7 +171,7 @@ public class Persistence {
         for(int p = 0; p < nonTrivial.length; p++) {
             grouping += (groupSize[p] + 0.5) + "" + (p + 1 != nonTrivial.length ? ", " : "");
             if(p == 0) {
-                groupLabelPos += (groupSize[1]/2 + 0.5);
+                groupLabelPos += (groupSize[0]/2 + 0.5);
             }else {
                 groupLabelPos += ", " + (0.5 + (double)(groupSize[p - 1] + groupSize[p])/2);
             }
@@ -224,10 +228,7 @@ public class Persistence {
                 "print(plot)";
     }
 
-    public String toDiagramPlot() {
-        Vector5D<String, String, int[], int[], Integer> value = this.getIntervalArrays();
-
-
+    public String toDiagramPlot(int n) {
         return "";
     }
 
@@ -237,13 +238,13 @@ public class Persistence {
      * the length l of the arrays.
      * @return (a,b,o,g,l)
      */
-    private Vector5D<String,String, int[], int[], Integer> getIntervalArrays() {
+    private Vector5D<String, String, int[], int[], Integer> getIntervalArrays(int m) {
         String value1 = "c(";
         String value2 = "c(";
         int length = 0;
         ArrayList<Integer> groupSize = new ArrayList<>();
         ArrayList<Integer> nonTrivial = new ArrayList<>();
-        for(int p = 0; p < f.dimension() + 2; p++) {
+        for(int p = 0; p < m + 1; p++) {
             if(diagram[p].occ == 0) continue;
             nonTrivial.add(p);
             groupSize.add(groupSize.size() == 0 ? 0 : groupSize.get(groupSize.size() - 1));

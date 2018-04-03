@@ -7,7 +7,8 @@ import java.text.DecimalFormat;
  */
 public class PointArray implements PointSet {
 
-    private static DecimalFormat df2 = new DecimalFormat("0.##");
+    private static DecimalFormat df2 = new DecimalFormat("#.##");
+    private static DecimalFormat df4 = new DecimalFormat("#.####");
 
     private final int d, n;
     private final double[][] values;
@@ -64,5 +65,38 @@ public class PointArray implements PointSet {
 
     public double d(double[] x, double[] y) {
         return m.d(x, y);
+    }
+
+    public String toPlot() {
+        if(d > 2) return "";
+        String x = "c(";
+        String y = "c(";
+        for(int i = 0; i < n; i++) {
+            if(i != 0) {
+                x += ", ";
+                y += ", ";
+            }
+            x += df4.format(get(i, 0));
+            y += df4.format(get(i, 1));
+        }
+        x += ")";
+        y += ")";
+        return  "library(tidyverse)\n\n" +
+                "x <- " + x + "\n" +
+                "y <- " + y + "\n" +
+                "data <- data.frame(x = x, y = y)\n" +
+                "plot <- ggplot(data) + geom_point(aes(x=x, y=y), colour=\"black\", size=1) + \n" +
+                "theme_light() +\n" +
+                "theme(\n" +
+                "    legend.position = \"none\",\n" +
+                "    panel.border = element_blank(),\n" +
+                "    panel.grid.major.y = element_blank(),\n" +
+                "    panel.grid.minor.y = element_blank(),\n" +
+                "    panel.grid.major.x = element_blank(),\n" +
+                "    panel.grid.minor.x = element_blank(),\n" +
+                ") +\n" +
+                "geom_vline(aes(xintercept=0)) +\n" +
+                "geom_hline(aes(yintercept=0))\n\n" +
+                "print(plot)";
     }
 }

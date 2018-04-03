@@ -44,4 +44,8 @@ public class Euclidean implements PointSet {
     public double[] get(int i) {
         return set.get(i);
     }
+
+    public String toPlot() {
+        return set.toPlot();
+    }
 }

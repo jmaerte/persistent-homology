@@ -36,4 +36,10 @@ public interface PointSet extends VertexFactory, Metric<double[]> {
      * @return card(S)
      */
     int size();
+
+    /**Gives a plot code for R
+     *
+     * @return plot code
+     */
+    String toPlot();
 }

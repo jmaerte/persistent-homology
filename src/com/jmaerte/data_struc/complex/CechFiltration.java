@@ -67,10 +67,10 @@ public class CechFiltration extends Filtration {
             System.arraycopy(s.vertices, 0, sigma, 1, s.vertices.length);
             sigma[0] = j;
             if(b.contains(j)) {
-                System.out.println("Is inside");
+//                System.out.println("Is inside");
                 generate(new Simplex(sigma, b.radius()), j, b);
             }else {
-                System.out.println(Arrays.toString(S.get(j)) + " is not inside " + b);
+//                System.out.println(Arrays.toString(S.get(j)) + " is not inside " + b);
                 int[] I = new int[s.vertices.length];
                 System.arraycopy(s.vertices, 0, I, 0, s.vertices.length);
                 Ball mb = Miniball.welzl(S, I, I.length, new AffineHull(S, j));

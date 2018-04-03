@@ -127,7 +127,7 @@ public class AffineHull {
         A[size] = index;
         calculateBall();
         size++;
-        log("Successfully added vector " + index + ", radius: " + SED.radius());
+//        log("Successfully added vector " + index + ", radius: " + SED.radius());
         return new Vector2D<>(mu, y);
     }
 
@@ -166,7 +166,7 @@ public class AffineHull {
         }
         size--;
         calculateBall();
-        log("Successfully popped vector " + A[size] + ", radius: " + ball().radius());
+//        log("Successfully popped vector " + A[size] + ", radius: " + ball().radius());
     }
 
     private double q(double[] x, double[] y) {
