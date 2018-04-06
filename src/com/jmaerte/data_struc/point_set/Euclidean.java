@@ -1,5 +1,14 @@
 package com.jmaerte.data_struc.point_set;
 
+import com.jmaerte.util.log.Logger;
+
+import java.io.BufferedWriter;
+import java.io.File;
+import java.io.FileWriter;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+
 public class Euclidean implements PointSet {
 
     private int currID;
@@ -47,5 +56,26 @@ public class Euclidean implements PointSet {
 
     public String toPlot() {
         return set.toPlot();
+    }
+
+    public void toFile() {
+        DateFormat dateFormat = new SimpleDateFormat("yyyy.MM.dd - HH mm ss");
+        File file = new File("output/" + dateFormat.format(Logger.date) + "/");
+        file.mkdirs();
+        File ps = new File("output/" + dateFormat.format(Logger.date) + "/pointset.txt");
+        try {
+            ps.createNewFile();
+            BufferedWriter bw = new BufferedWriter(new FileWriter(ps));
+            for(int i = 0; i < size(); i++) {
+                for(int j = 0; j < dimension(); j++) {
+                    bw.write((j != 0 ? " ": "") + get(i, j));
+                }
+                bw.newLine();
+            }
+            bw.flush();
+            bw.close();
+        }catch(Exception e) {
+            e.printStackTrace();
+        }
     }
 }

@@ -72,4 +72,24 @@ public class PointSetUtils {
         return new Euclidean(res, ScalarProduct.getStandard(d));
     }
 
+    /**Returns a point set in a rose structure with some artificial noise.
+     *
+     * @param n amount of points
+     * @param k number of petals. even k produces 2k petals, odd k produces k petals.
+     * @param eps noise factor. every generated point on the rose set gets noised into a eps x eps square around the point(see supremal-metric)
+     * @param radius the radius of the petals(the norm of the extremal point from origin)
+     * @return the described rose set.
+     */
+    public static Euclidean getRoseData(int n, int k, double eps, double radius) {
+        PointArray res = new PointArray(2, n, Metric.EUCLIDEAN);
+        double theta;
+        for(int i = 0; i < n; i++) {
+            theta = ThreadLocalRandom.current().nextDouble(0, 2 * Math.PI);
+            double factor = radius * Math.cos(k * theta);
+            res.set(i, 0, factor * Math.cos(theta) + (eps > 0 ? ThreadLocalRandom.current().nextDouble(0, eps) : 0));
+            res.set(i, 1, factor * Math.sin(theta) + (eps > 0 ? ThreadLocalRandom.current().nextDouble(0, eps) : 0));
+        }
+        return new Euclidean(res, ScalarProduct.getStandard(2));
+    }
+
 }

@@ -1,7 +1,10 @@
 package com.jmaerte.util.log;
 
+import java.util.Date;
+
 public class Logger {
 
+    public static final Date date = new Date();
     public static final boolean log = true;
 
     /**Reports warnings in following syntax:
