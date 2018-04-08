@@ -10,6 +10,8 @@ import java.util.Iterator;
  */
 public abstract class Filtration implements Iterator<SBVector> {
 
+    private Tree simplices;
+
     private int i = 0;
 
     @Override

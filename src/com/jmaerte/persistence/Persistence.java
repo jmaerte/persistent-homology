@@ -155,13 +155,13 @@ public class Persistence {
         return s + "]";
     }
 
-    public String toBarcodePlot(int n) {
+    public String toBarcodePlot(int m, int n) {
         // Color strings: note that they must be escaped by \" since we also want the rgb-function to be a possible input.
         String segmentColor = "\"black\"";
         String birthColor = "\"chartreuse4\"";
         String deathColor = "\"sienna4\"";
 
-        Vector5D<String, String, int[], int[], Integer> value = this.getIntervalArrays(n);
+        Vector5D<String, String, int[], int[], Integer> value = this.getIntervalArrays(m, n);
         int[] nonTrivial = value.getThird();
         int[] groupSize = value.getFourth();
         int length = value.getFifth();
@@ -238,13 +238,13 @@ public class Persistence {
      * the length l of the arrays.
      * @return (a,b,o,g,l)
      */
-    private Vector5D<String, String, int[], int[], Integer> getIntervalArrays(int m) {
+    private Vector5D<String, String, int[], int[], Integer> getIntervalArrays(int b, int m) {
         String value1 = "c(";
         String value2 = "c(";
         int length = 0;
         ArrayList<Integer> groupSize = new ArrayList<>();
         ArrayList<Integer> nonTrivial = new ArrayList<>();
-        for(int p = 0; p < m + 1; p++) {
+        for(int p = b + 1; p < m + 1; p++) {
             if(diagram[p].occ == 0) continue;
             nonTrivial.add(p);
             groupSize.add(groupSize.size() == 0 ? 0 : groupSize.get(groupSize.size() - 1));

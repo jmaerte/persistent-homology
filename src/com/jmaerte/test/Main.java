@@ -1,13 +1,11 @@
 package com.jmaerte.test;
 
-import com.jmaerte.data_struc.complex.CechFiltration;
-import com.jmaerte.data_struc.complex.Filtration;
-import com.jmaerte.data_struc.complex.NeighborhoodFiltration;
-import com.jmaerte.data_struc.complex.Simplex;
+import com.jmaerte.data_struc.complex.*;
 import com.jmaerte.data_struc.graph.WeightedGraph;
 import com.jmaerte.data_struc.miniball.Miniball;
 import com.jmaerte.data_struc.point_set.*;
 import com.jmaerte.persistence.Persistence;
+import com.jmaerte.util.calc.Function;
 import com.jmaerte.util.vector.Vector2D;
 
 import java.util.Arrays;
@@ -182,17 +180,35 @@ public class Main {
 //        System.out.println(Miniball.welzl(S) + " in " + (System.currentTimeMillis() - ms) + "ms");
 
 
-//        Euclidean S = PointSetUtils.getSphereData(2, 100, 0.5, 4, Metric.EUCLIDEAN);
-//        System.out.println(S.toPlot());
-//        CechFiltration cf = new CechFiltration(S, 3);
-//        Persistence p = new Persistence(cf, 16);
-//        System.out.println(p.toBarcodePlot(2));
-
-        Euclidean S = PointSetUtils.getRoseData(100, 3, 0.5, 4);
-        S.toFile();
+        Euclidean S = PointSetUtils.getSphereData(2, 100, 0.5, 4, Metric.EUCLIDEAN);
+        System.out.println(S.toPlot());
         CechFiltration cf = new CechFiltration(S, 3);
         Persistence p = new Persistence(cf, 16);
-        System.out.println(p.toBarcodePlot(2));
+        System.out.println(p.toBarcodePlot(1,2));
+
+//        Euclidean S = PointSetUtils.getRoseData(100, 3, 0.5, 4);
+//        S.toFile();
+//        Filtration nf = new NeighborhoodFiltration(WeightedGraph.vietoris(S), 3, NeighborhoodFiltration.LOGINTERSECTION);
+//        CechFiltration cf = new CechFiltration(S, 3);
+//        Persistence p2 = new Persistence(cf, 16);
+//        Persistence p = new Persistence(nf, 16);
+//        System.out.println(p2.toBarcodePlot(1, 2));
+//        System.out.println(p.toBarcodePlot(1, 2));
+
+//        Euclidean S = PointSetUtils.getRoseData(100, 3, 0.5, 4);
+//        WeightedGraph g = WeightedGraph.vietoris(S);
+//        Filtratio f = new Filtratio(1000, 3, new Function<Vector2D<Simplex, Integer>, Double>() {
+//            public Double eval(Vector2D<Simplex, Integer> v) {
+//                double w = -1;
+//                for(int i = 0; i < v.getFirst().getVertices().length; i++) {
+//                    double d = S.d(v.getSecond(), v.getFirst().getVertices()[i]);
+//                    if(d > w) {
+//                        w = d;
+//                    }
+//                }
+//                return w;
+//            }
+//        });
 
 //        // A test with a increasing not-filled triangle.
 //        Simplex[] simplices = new Simplex[]{

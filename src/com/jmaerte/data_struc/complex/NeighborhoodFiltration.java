@@ -39,7 +39,9 @@ public class NeighborhoodFiltration extends Filtration {
         simplices.add(new Simplex(new int[]{}, 0));
         dim = -1;
         for(int i = 0; i < graph.size(); i++) {
-            generate(new Simplex(new int[]{i}, 0), getLowerNeighbourhood(i));
+            System.out.println(i);
+            if(graph.isComplete()) generate(new Simplex(new int[]{i}, 0));
+            else generate(new Simplex(new int[]{i}, 0), getLowerNeighbourhood(i));
         }
         Collections.sort(simplices, new SimplexComparator());
         sigma = new Integer[simplices.size()];
@@ -75,6 +77,32 @@ public class NeighborhoodFiltration extends Filtration {
             else return mid;
         }
         return min;
+    }
+
+    private void generate(Simplex simplex) {
+        simplices.add(simplex);
+        if(simplex.dim() > dim) dim = simplex.dim();
+        if(simplex.dim() + 1 > k) return;
+        for(int i = 0; i < simplex.vertices[0]; i++) {
+            int[] s = new int[simplex.vertices.length + 1];
+            System.arraycopy(simplex.vertices, 0, s, 1, simplex.vertices.length);
+
+            s[0] = i;
+
+            // calculate weight as the maximum of the weight of simplex itself and all edges between the vertices of simplex and the new one.
+            double weight = 0;
+            for(int j = 0; j < simplex.vertices.length; j++) {
+                double curr = graph.getWeight(simplex.vertices[j], i);
+                if(curr > weight) {
+                    weight = curr;
+                }
+            }
+            if(weight < simplex.getWeight()) weight = simplex.getWeight();
+            Simplex sigma = new Simplex(s, weight);
+
+            // Intersect neighborhoods and go into the next generation step.
+            generate(sigma);
+        }
     }
 
     public void generate(Simplex simplex, int[] neighbors) {

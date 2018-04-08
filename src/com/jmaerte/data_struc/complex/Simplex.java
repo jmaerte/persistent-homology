@@ -30,6 +30,10 @@ public class Simplex {
         return weight;
     }
 
+    public int[] getVertices() {
+        return vertices;
+    }
+
 //    private final VertexFactory factory;
 //
 //    // stores codimension 1 faces of this instance.

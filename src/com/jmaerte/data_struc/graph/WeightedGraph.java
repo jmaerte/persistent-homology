@@ -11,6 +11,7 @@ public class WeightedGraph {
 
     private Node[] nodes;
     private int fill;
+    private boolean complete;
 
     /**Creates a complete weighted Graph (G,w) where G=([0...n-1], E), E = {{x,y} | x,y in [0...n-1]}
      * and w({x,y}) = lambda(new Vector2D(x,y))
@@ -19,6 +20,7 @@ public class WeightedGraph {
      * @param lambda a symmetric function in arguments (x,y) in [0...n-1]^2
      */
     public WeightedGraph(int n, Function<Vector2D<Integer, Integer>, Double> lambda) {
+        complete = true;
         nodes = new Node[n];
         for(int i = 0; i < n; i++) {
             nodes[i] = new Node(i, n);
@@ -54,6 +56,10 @@ public class WeightedGraph {
         assert fill < nodes.length;
         nodes[fill] = new Node(fill, nodes.length);
         fill++;
+    }
+
+    public boolean isComplete() {
+        return complete;
     }
 
     /**The user has to guarantee that the edge is really existent.
