@@ -39,7 +39,7 @@ public class NeighborhoodFiltration extends Filtration {
         simplices.add(new Simplex(new int[]{}, 0));
         dim = -1;
         for(int i = 0; i < graph.size(); i++) {
-            System.out.println(i);
+//            System.out.println(i);
             if(graph.isComplete()) generate(new Simplex(new int[]{i}, 0));
             else generate(new Simplex(new int[]{i}, 0), getLowerNeighbourhood(i));
         }

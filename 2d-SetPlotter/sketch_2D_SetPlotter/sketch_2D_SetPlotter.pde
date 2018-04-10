@@ -3,7 +3,7 @@ float[] y;
 double scale = 100;
 
 void setup() {
-  String[] lines = loadStrings("C:/Users/Ina/IdeaProjects/persistent_homology/output/2018.04.06 - 14 12 41/pointset.txt");
+  String[] lines = loadStrings("C:/Users/Julian/IdeaProjects/persistent_homology/output/2018.04.08 - 12 57 35/pointset.txt");
   x = new float[lines.length];
   y = new float[lines.length];
   for(int i = 0; i < lines.length; i++) {

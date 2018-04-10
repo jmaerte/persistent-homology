@@ -193,8 +193,8 @@ public class Persistence {
                 "inf <- which(is.infinite(data$value2))\n" +
                 "plot <- ggplot(data) +\n" +
                 "  geom_segment(data=data[fin,], aes(x=x, xend=x, y=value1, yend=value2), color=" + segmentColor + ", size=1) +\n" +
-                "  geom_point(aes(x=x, y=value1), colour=" + birthColor + ", size=3, alpha = 0.5) +\n" +
-                "  geom_point(data=data[fin,], aes(x=x, y=value2), colour=" + deathColor + ", size=3, alpha = 0.5) +\n" +
+//                "  geom_point(aes(x=x, y=value1), colour=" + birthColor + ", size=3, alpha = 0.5) +\n" +
+//                "  geom_point(data=data[fin,], aes(x=x, y=value2), colour=" + deathColor + ", size=3, alpha = 0.5) +\n" +
                 "  coord_flip() +\n" +
                 "  theme_light() +\n" +
                 "  theme(\n" +
@@ -217,8 +217,8 @@ public class Persistence {
                 "                              linetype=\"solid\",\n" +
                 "                              color=\"black\",\n" +
                 "                              arrow = arrow(type=\"closed\", angle=30, length = unit(0.2,\"cm\")),\n" +
-                "                              size = 1) +\n" +
-                "    geom_point(data=data[inf,], aes(x=x, y=value1), colour=" + birthColor + ", size=3, alpha=0.5)\n" +
+                "                              size = 1)\n" +
+//                "    geom_point(data=data[inf,], aes(x=x, y=value1), colour=" + birthColor + ", size=3, alpha=0.5)\n" +
                 "}\n" +
                 "plot <- plot + scale_y_continuous(limits = c(x_min, x_max), expand=c(0,0)) +\n" +
                 "               scale_x_continuous(breaks=groupLabelPos, label=groupLabel)\n" +
@@ -228,8 +228,52 @@ public class Persistence {
                 "print(plot)";
     }
 
-    public String toDiagramPlot(int n) {
-        return "";
+    public String toDiagramPlot(int p) {
+        String[] fields = getDiagramFrame(p);
+        return "library(tidyverse)\n" +
+                "\n" +
+                "value1 <- " + fields[0] + "\n" +
+                "value2 <- " + fields[1] + "\n" +
+                "mult <- " + fields[2] + "\n" +
+                "data <- data.frame(value1 = value1, value2 = value2, mult = mult)\n" +
+                "\n" +
+                "plot <- ggplot(data = data, aes(x = value1, y = value2, color = mult)) + \n" +
+                "        geom_point() +\n" +
+                "        scale_colour_gradient() +\n" +
+                "        theme_light() +\n" +
+                "        theme(\n" +
+                "          legend.position = \"none\",\n" +
+                "          panel.border = element_blank(),\n" +
+                "        ) +\n" +
+                "        xlab(\"death\") +\n" +
+                "        ylab(\"birth\")\n" +
+                "\n" +
+                "plot <- plot + stat_function(fun=function(x)x, colour=\"black\")\n" +
+                "print(plot)";
+    }
+
+    private String[] getDiagramFrame(int p) {
+        p = p + 1;
+        String value1 = "c(";
+        String value2 = "c(";
+        String mult = "c(";
+        for(int i = 0; i < diagram[p].occ; i++){
+            Diagram.Node n = diagram[p].nodes[i];
+            for(int j = 0; j < n.occ; j++) {
+                if(i != 0 || j != 0) {
+                    value1 += ", ";
+                    value2 += ", ";
+                    mult += ", ";
+                }
+                value1 += n.a;
+                value2 += n.b[j];
+                mult += n.multiplicity[j];
+            }
+        }
+        value1 += ")";
+        value2 += ")";
+        mult += ")";
+        return new String[]{value1, value2, mult};
     }
 
     /**Calculates R-Script arrays a, b that contain the interval information. (a[i], b[i]) is in the diagram.

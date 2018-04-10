@@ -180,20 +180,29 @@ public class Main {
 //        System.out.println(Miniball.welzl(S) + " in " + (System.currentTimeMillis() - ms) + "ms");
 
 
-        Euclidean S = PointSetUtils.getSphereData(2, 100, 0.5, 4, Metric.EUCLIDEAN);
+//        Euclidean S = PointSetUtils.getSphereData(2, 100, 0.5, 4, Metric.EUCLIDEAN);
+//        S.toFile();
+//        System.out.println(S.toPlot());
+//        CechFiltration cf = new CechFiltration(S, 3);
+//        NeighborhoodFiltration vf = new NeighborhoodFiltration(WeightedGraph.vietoris(S), 3, NeighborhoodFiltration.LOGINTERSECTION);
+//        Persistence p = new Persistence(cf, 16);
+//        Persistence pv = new Persistence(vf, 16);
+//        System.out.println(p.toBarcodePlot(1,2));
+//        System.out.println(p.toDiagramPlot(1));
+//        System.out.println(pv.toBarcodePlot(1, 2));
+//        System.out.println(pv.toDiagramPlot(1));
+
+        Euclidean S = PointSetUtils.getRoseData(115, 2, 0.2, 4);
+        S.toFile();
         System.out.println(S.toPlot());
         CechFiltration cf = new CechFiltration(S, 3);
+        NeighborhoodFiltration vf = new NeighborhoodFiltration(WeightedGraph.vietoris(S), 3, NeighborhoodFiltration.LOGINTERSECTION);
         Persistence p = new Persistence(cf, 16);
+        Persistence pv = new Persistence(vf, 16);
         System.out.println(p.toBarcodePlot(1,2));
-
-//        Euclidean S = PointSetUtils.getRoseData(100, 3, 0.5, 4);
-//        S.toFile();
-//        Filtration nf = new NeighborhoodFiltration(WeightedGraph.vietoris(S), 3, NeighborhoodFiltration.LOGINTERSECTION);
-//        CechFiltration cf = new CechFiltration(S, 3);
-//        Persistence p2 = new Persistence(cf, 16);
-//        Persistence p = new Persistence(nf, 16);
-//        System.out.println(p2.toBarcodePlot(1, 2));
-//        System.out.println(p.toBarcodePlot(1, 2));
+        System.out.println(p.toDiagramPlot(1));
+        System.out.println(pv.toBarcodePlot(1, 2));
+        System.out.println(pv.toDiagramPlot(1));
 
 //        Euclidean S = PointSetUtils.getRoseData(100, 3, 0.5, 4);
 //        WeightedGraph g = WeightedGraph.vietoris(S);
