@@ -192,17 +192,18 @@ public class Main {
 //        System.out.println(pv.toBarcodePlot(1, 2));
 //        System.out.println(pv.toDiagramPlot(1));
 
-        Euclidean S = PointSetUtils.getRoseData(115, 2, 0.2, 4);
+//        Euclidean S = PointSetUtils.getRoseData(115, 2, 0.2, 4);
+        Euclidean S = PointSetUtils.getFromMapping(100, 3, new double[]{2 * Math.PI, 2 * Math.PI}, PointSetUtils.torusChart(2, 4));
         S.toFile();
         System.out.println(S.toPlot());
-        CechFiltration cf = new CechFiltration(S, 3);
-        NeighborhoodFiltration vf = new NeighborhoodFiltration(WeightedGraph.vietoris(S), 3, NeighborhoodFiltration.LOGINTERSECTION);
+        CechFiltration cf = new CechFiltration(S, 5);
+//        NeighborhoodFiltration vf = new NeighborhoodFiltration(WeightedGraph.vietoris(S), 3, NeighborhoodFiltration.LOGINTERSECTION);
         Persistence p = new Persistence(cf, 16);
-        Persistence pv = new Persistence(vf, 16);
-        System.out.println(p.toBarcodePlot(1,2));
+//        Persistence pv = new Persistence(vf, 16);
+        System.out.println(p.toBarcodePlot(1,5));
         System.out.println(p.toDiagramPlot(1));
-        System.out.println(pv.toBarcodePlot(1, 2));
-        System.out.println(pv.toDiagramPlot(1));
+//        System.out.println(pv.toBarcodePlot(1, 2));
+//        System.out.println(pv.toDiagramPlot(1));
 
 //        Euclidean S = PointSetUtils.getRoseData(100, 3, 0.5, 4);
 //        WeightedGraph g = WeightedGraph.vietoris(S);
