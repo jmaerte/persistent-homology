@@ -57,11 +57,7 @@ public class Persistence {
         int i = 0;
         BinaryVector temp;
         long ns = 0;
-        long switches = 0;
-        long curr;
-        long currSwitches;
         for(BinaryVector v : f) {
-            curr = System.nanoTime();
             int p = v.simplexDim + 1;
 
             if(v.isZero()) {
@@ -101,11 +97,9 @@ public class Persistence {
                 addZero(v.filterInd, p);
             }
             i++;
-            if(i % 10 == 0) Logger.updateProgress(i);
-            ns += (System.nanoTime() - curr);
+            if(i % 1000 == 0) Logger.updateProgress(i);
         }
         System.out.println("Calculation time " + ns + "ns");
-        System.out.println("Switch time " + switches + "ns");
         for(int k = 0; k < occupation_low; k++) {
             lowCount[f.get(low[k]).depth()]++;
             diagram[f.get(low[k]).depth()].put(f.get(low[k]).val(), matrix[k].filterVal);

@@ -178,31 +178,35 @@ public class Filtration implements Iterable<BinaryVector> {
     @Override
     public Iterator<BinaryVector> iterator() {
         return new Iterator<>() {
-
+            long ns = 0;
+            long curr = 0;
             int i = 0;
 
             @Override
             public boolean hasNext() {
+                if(i == ordering.size()) System.out.println("Iterator time: " + ns + "ns");
                 return i < ordering.size();
             }
 
             @Override
             public BinaryVector next() {
                 if(!hasNext()) throw new NoSuchElementException();
-
+                curr = System.nanoTime();
                 Tree t = ordering.get(i);
+                int depth = t.depth;
                 int[] path = new int[t.depth];
-                int i = 0;
-                while(t.parent != null) {
-                    path[t.depth - i] = t.node;
-                    i++;
+                int j = 1;
+//                System.out.println(t.node + " " + t.depth);
+                while(t.node != -1) {
+//                    System.out.println(Arrays.toString(path));
+                    path[depth - j++] = t.node;
                     t = t.parent;
                 }
-                this.i++;
-                return binaryVector(path, ordering.get(i).depth, ordering.get(i).filteredVal, ordering.get(i).filteredInd);
+                return binaryVector(path, depth, ordering.get(i).filteredVal, ordering.get(i).filteredInd);
             }
 
             private BinaryVector binaryVector(int[] path, int depth, double filteredVal, int filteredInd) {
+                i++;
                 Tree curr;
                 int[] entries = new int[depth];
                 for(int i = 0; i < depth; i++) {
@@ -220,6 +224,7 @@ public class Filtration implements Iterable<BinaryVector> {
                     entries[i] = curr.filteredInd;
                 }
                 Arrays.sort(entries);
+                ns += System.nanoTime() - this.curr;
                 return new BinaryVector(size, entries, entries.length, depth - 1, filteredVal, filteredInd);
             }
         };

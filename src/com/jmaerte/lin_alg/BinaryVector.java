@@ -8,7 +8,6 @@ package com.jmaerte.lin_alg;
 public class BinaryVector {
 
     public static long timeAdding = 0;
-    public static int added = 0;
 
     public int simplexDim;
     public double filterVal;
@@ -92,8 +91,6 @@ public class BinaryVector {
 
     public void add(BinaryVector v) throws Exception {
         if(dimension != v.dimension) throw new Exception("Dimensions are incompatible: " + dimension + " - " + v.dimension);
-        added++;
-        long ns = System.nanoTime();
 
         int[] newEntries = new int[Math.min(occupation + v.occupation, dimension)];
         int newOccupation = 0;
@@ -113,7 +110,6 @@ public class BinaryVector {
         }
         entries = newEntries;
         occupation = newOccupation;
-        timeAdding += System.nanoTime() - ns;
     }
 
     public String toString() {
