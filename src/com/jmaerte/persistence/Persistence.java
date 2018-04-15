@@ -1,16 +1,15 @@
 package com.jmaerte.persistence;
 
 import com.jmaerte.data_struc.complex.Filtration;
-import com.jmaerte.lin_alg.SBVector;
-import com.jmaerte.util.vector.Vector3D;
-import com.jmaerte.util.vector.Vector4D;
+import com.jmaerte.lin_alg.BinaryVector;
 import com.jmaerte.util.calc.Util;
+import com.jmaerte.util.log.Logger;
 import com.jmaerte.util.vector.Vector5D;
-import com.jmaerte.util.vector.Vector6D;
 
 import java.text.DecimalFormat;
 import java.text.DecimalFormatSymbols;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Locale;
 
 /**
@@ -22,7 +21,7 @@ public class Persistence {
     private static final DecimalFormat df = new DecimalFormat("#.########", new DecimalFormatSymbols(Locale.US));
 
     private Filtration f;
-    private SBVector[] matrix;
+    private BinaryVector[] matrix;
     private int[] low;
     private int[] zeroes;
     private int occupation_low;
@@ -33,7 +32,7 @@ public class Persistence {
 
     public Persistence(Filtration f, int initCap) {
         this.f = f;
-        this.matrix = new SBVector[initCap];
+        this.matrix = new BinaryVector[initCap];
         this.low = new int[initCap];
         this.zeroes = new int[initCap];
 
@@ -44,7 +43,7 @@ public class Persistence {
             diagram[i] = new Diagram();
         }
         generate();
-        System.out.format("%13s | %15s", "Dimension i", "Rank of H_i(K)");
+        System.out.format("%13s | %15s", "Dimension i", "i-th Betti number");
         System.out.println("\n--------------|------------------");
         for(int i = 0; i < lowCount.length; i++) {
             System.out.format("%13d | %15d", i-1, zeroCount[i] - lowCount[i]);
@@ -54,26 +53,36 @@ public class Persistence {
     }
 
     private void generate() {
+        Logger.progress(f.size(), "Termination algorithm");
         int i = 0;
-        while(f.hasNext()) {
-            System.out.print(i + "/" + f.size() + "\r");
-            SBVector v = f.next();
-            int p = v.occupation();
+        BinaryVector temp;
+        long ns = 0;
+        long switches = 0;
+        long curr;
+        long currSwitches;
+        for(BinaryVector v : f) {
+            curr = System.nanoTime();
+            int p = v.simplexDim + 1;
 
             if(v.isZero()) {
-                addZero(i++, p);
+                addZero(v.filterInd, p);
+                i++;
                 continue;
             }
 
             int k = Util.binarySearch(v.getEntry(v.occupation() - 1), low, 0, occupation_low);
             while(k < occupation_low && !v.isZero() && low[k] == v.getEntry(v.occupation() - 1)) {
                 try {
-                    if(v.occupation() < matrix[k].occupation()) {
-                        SBVector temp = matrix[k];
-                        matrix[k] = v;
-                        v = temp;
-                    }
+//                    currSwitches = System.nanoTime();
+//                    if(matrix[k].filterInd > v.filterInd) {
+//                        temp = matrix[k];
+//                        matrix[k] = v;
+//                        v = temp;
+//                        p = v.simplexDim + 1;
+//                    }
+//                    switches += System.nanoTime() - currSwitches;
                     v.add(matrix[k]);
+//                    System.out.println("Added " + matrix[k].filterInd + " to " + v.filterInd);
                 }catch(Exception e) {
                     e.printStackTrace();
                 }
@@ -85,26 +94,25 @@ public class Persistence {
                     System.arraycopy(matrix, k, matrix, k + 1, occupation_low - k);
                     System.arraycopy(low, k, low, k + 1, occupation_low - k);
                 }
-//                for(int i = 0; i < occupation; i++) {
-//                    int m = matrix[i].index(v.getEntry(v.occupation() - 1));
-//                    if(m < matrix[i].occupation() && matrix[i].getEntry(m) == v.getEntry(v.occupation() - 1)) {
-//                        try {
-//                            matrix[i].add(v);
-//                        }catch(Exception e) {
-//                            e.printStackTrace();
-//                        }
-//                    }
-//                }
                 matrix[k] = v;
                 low[k] = v.getEntry( v.occupation() - 1);
                 occupation_low++;
-                lowCount[f.get(low[k]).dim() + 1]++;
-                diagram[f.get(low[k]).dim() + 1].put(f.get(low[k]).getWeight(), f.get(i).getWeight());
             }else {
-                addZero(i, p);
+                addZero(v.filterInd, p);
             }
             i++;
+            if(i % 10 == 0) Logger.updateProgress(i);
+            ns += (System.nanoTime() - curr);
         }
+        System.out.println("Calculation time " + ns + "ns");
+        System.out.println("Switch time " + switches + "ns");
+        for(int k = 0; k < occupation_low; k++) {
+            lowCount[f.get(low[k]).depth()]++;
+            diagram[f.get(low[k]).depth()].put(f.get(low[k]).val(), matrix[k].filterVal);
+        }
+//        System.out.println(Arrays.toString(low));
+//        System.out.println(Arrays.toString(zeroes));
+        Logger.close();
     }
 
     private void evaluate() {
@@ -115,7 +123,7 @@ public class Persistence {
                 continue;
             }
             // add (a_i, inf) to diagram[p]
-            diagram[f.get(zeroes[i]).dim() + 1].put(f.get(zeroes[i]).getWeight());
+            diagram[f.get(zeroes[i]).depth()].put(f.get(zeroes[i]).val());
         }
     }
 
@@ -133,7 +141,7 @@ public class Persistence {
 
     private void mkPlace(boolean low) {
         if(low) {
-            SBVector[] vectors = new SBVector[factor * matrix.length];
+            BinaryVector[] vectors = new BinaryVector[factor * matrix.length];
             int[] lows = new int[factor * this.low.length];
             System.arraycopy(matrix, 0, vectors, 0, occupation_low);
             System.arraycopy(this.low, 0, lows, 0, occupation_low);

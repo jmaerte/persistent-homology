@@ -1,21 +1,18 @@
 package com.jmaerte.test;
 
-import com.jmaerte.data_struc.complex.*;
-import com.jmaerte.data_struc.graph.WeightedGraph;
-import com.jmaerte.data_struc.miniball.Miniball;
-import com.jmaerte.data_struc.point_set.*;
+import com.jmaerte.data_struc.complex.Filtration;
+import com.jmaerte.data_struc.point_set.Euclidean;
+import com.jmaerte.data_struc.point_set.Metric;
+import com.jmaerte.data_struc.point_set.PointSetUtils;
+import com.jmaerte.lin_alg.BinaryVector;
 import com.jmaerte.persistence.Persistence;
-import com.jmaerte.util.calc.Function;
-import com.jmaerte.util.vector.Vector2D;
-
-import java.util.Arrays;
 
 public class Main {
 
     public static void main(String[] args) {
-//        SBVector v = new SBVector(3, new int[]{1,2}, 2);
-//        SBVector w = new SBVector(3, new int[]{0,2}, 2);
-//        SBVector u = new SBVector(3, new int[]{0,1}, 2);
+//        BinaryVector v = new BinaryVector(3, new int[]{1,2}, 2);
+//        BinaryVector w = new BinaryVector(3, new int[]{0,2}, 2);
+//        BinaryVector u = new BinaryVector(3, new int[]{0,1}, 2);
 //        GaussianSBMatrix m = new GaussianSBMatrix(3, 3);
 //        m.add(v);
 //        System.out.println(m);
@@ -43,8 +40,8 @@ public class Main {
 //        long ms = System.currentTimeMillis();
 //        GaussianSBMatrix matrix = new GaussianSBMatrix(n, m);
 //        for(int i = 0; i < n; i++) {
-//            System.out.print("Pushed " + i + "/" + n + " - RunTime: " + (System.currentTimeMillis() - ms) + "ms, Time adding: " + SBVector.timeAdding/1_000_000 + "\r");
-//            matrix.push(new SBVector(m, entries[i], occs[i]));
+//            System.out.print("Pushed " + i + "/" + n + " - RunTime: " + (System.currentTimeMillis() - ms) + "ms, Time adding: " + BinaryVector.timeAdding/1_000_000 + "\r");
+//            matrix.push(new BinaryVector(m, entries[i], occs[i]));
 //        }
 //        try{
 //            matrix.smith();
@@ -179,7 +176,6 @@ public class Main {
 //        long ms = System.currentTimeMillis();
 //        System.out.println(Miniball.welzl(S) + " in " + (System.currentTimeMillis() - ms) + "ms");
 
-
 //        Euclidean S = PointSetUtils.getSphereData(2, 100, 0.5, 4, Metric.EUCLIDEAN);
 //        S.toFile();
 //        System.out.println(S.toPlot());
@@ -193,21 +189,42 @@ public class Main {
 //        System.out.println(pv.toDiagramPlot(1));
 
 //        Euclidean S = PointSetUtils.getRoseData(115, 2, 0.2, 4);
-        Euclidean S = PointSetUtils.getFromMapping(100, 3, new double[]{2 * Math.PI, 2 * Math.PI}, PointSetUtils.torusChart(2, 4));
-        S.toFile();
-        System.out.println(S.toPlot());
-        CechFiltration cf = new CechFiltration(S, 5);
+//        S.toFile();
+//        System.out.println(S.toPlot());
+//        CechFiltration cf = new CechFiltration(S, 3);
 //        NeighborhoodFiltration vf = new NeighborhoodFiltration(WeightedGraph.vietoris(S), 3, NeighborhoodFiltration.LOGINTERSECTION);
-        Persistence p = new Persistence(cf, 16);
+//        Persistence p = new Persistence(cf, 16);
 //        Persistence pv = new Persistence(vf, 16);
-        System.out.println(p.toBarcodePlot(1,5));
-        System.out.println(p.toDiagramPlot(1));
+//        System.out.println(p.toBarcodePlot(1,2));
+//        System.out.println(p.toDiagramPlot(1));
 //        System.out.println(pv.toBarcodePlot(1, 2));
 //        System.out.println(pv.toDiagramPlot(1));
 
+//        Euclidean S = PointSetUtils.getRoseData(130, 3, 0.1, 4);
+//        System.out.println(S.toPlot());
+//        NeighborhoodFiltration nf = new NeighborhoodFiltration(WeightedGraph.witness(S, 20), 6, NeighborhoodFiltration.LOGINTERSECTION);
+////            for(int i = 0; i < nf.size(); i++) {
+////                System.out.println(i + " -> " + nf.get(i));
+////            }
+//            Persistence p = new Persistence(nf, 20);
+////            System.out.println(p);
+//            System.out.println(p.toBarcodePlot(1, 2));
+
+//        Euclidean S = PointSetUtils.getSphereData(2, 10, 0.5, 4, Metric.EUCLIDEAN);
+
+        Euclidean S = PointSetUtils.getSphereData(2, 50, 0, 4, Metric.EUCLIDEAN);
+        System.out.println(S.toPlot());
+
+        Filtration f = new Filtration(50, 3, v -> S.d(v.getFirst(), v.getSecond()));
+//        Filtration f = Filtration.example();
+        Persistence p = new Persistence(f, 16);
+        System.out.println(p.toBarcodePlot(1,2));
+        System.out.println(BinaryVector.added);
+
+
 //        Euclidean S = PointSetUtils.getRoseData(100, 3, 0.5, 4);
 //        WeightedGraph g = WeightedGraph.vietoris(S);
-//        Filtratio f = new Filtratio(1000, 3, new Function<Vector2D<Simplex, Integer>, Double>() {
+//        Filtration f = new Filtration(1000, 3, new Function<Vector2D<Simplex, Integer>, Double>() {
 //            public Double eval(Vector2D<Simplex, Integer> v) {
 //                double w = -1;
 //                for(int i = 0; i < v.getFirst().getVertices().length; i++) {

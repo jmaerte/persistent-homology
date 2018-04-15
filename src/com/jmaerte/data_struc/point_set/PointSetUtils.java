@@ -29,7 +29,7 @@ public class PointSetUtils {
      *            (meaning that in modulo n notation the columns are the vectors)
      * @param n the amount of vectors to parse.
      * @return
-     * @throws Exception inherited from {@link com.jmaerte.data_struc.point_set.PointArray#set(int, int, double)}.
+     * @throws Exception inherited from {@link PointArray#set(int, int, double)}.
      */
     public static PointSet fromArray(double[] arr, int n, Metric<double[]> m) {
         if(arr.length == 0 || arr.length % n != 0) return null;

@@ -1,6 +1,7 @@
 package com.jmaerte.data_struc.point_set;
 
 import java.text.DecimalFormat;
+import java.text.DecimalFormatSymbols;
 
 /**An implementation of the PointSet, that stores the Points of the Set as a double[].
  * An instance of this realizes a {@link PointSet} with cardinality <i>n</i> in euclidean <i>R^d</i>.
@@ -76,8 +77,8 @@ public class PointArray implements PointSet {
                 x += ", ";
                 y += ", ";
             }
-            x += df4.format(get(i, 0));
-            y += df4.format(get(i, 1));
+            x += df4.format(get(i, 0)).replace(',', '.');
+            y += df4.format(get(i, 1)).replace(',', '.');
         }
         x += ")";
         y += ")";

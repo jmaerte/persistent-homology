@@ -81,7 +81,7 @@ public class AffineHull {
      * For the full construction see chapter <b>Smallest enclosing ball</b>.
      *
      * @param index index of vector to be added in S.
-     * @throws Exception it is either an Exception inherited by {@link com.jmaerte.data_struc.point_set.PointSet#get(int, int)} or a PrecisionReachedException when the value y gets too small(i.e. the vector is too close to the affine hull).
+     * @throws Exception it is either an Exception inherited by {@link PointSet#get(int, int)} or a PrecisionReachedException when the value y gets too small(i.e. the vector is too close to the affine hull).
      */
     public Vector2D<double[], Double> add(int index) {
         double y;
@@ -133,7 +133,7 @@ public class AffineHull {
 
     /**An intern function that updates the center and squared radius fields after a vector being added or removed.
      *
-     * @throws Exception inherited by {@link com.jmaerte.data_struc.point_set.PointSet#get(int, int)}(Shouldn't appear anyway)
+     * @throws Exception inherited by {@link PointSet#get(int, int)}(Shouldn't appear anyway)
      */
     private void calculateBall() {
         double[] lambda = new double[dim];
