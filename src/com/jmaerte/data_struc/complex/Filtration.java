@@ -7,6 +7,7 @@ import com.jmaerte.util.calc.Function;
 import com.jmaerte.util.log.Logger;
 import com.jmaerte.util.vector.Vector2D;
 import com.jmaerte.util.vector.Vector3D;
+import com.jmaerte.util.vector.Vector4D;
 
 import java.util.*;
 
@@ -32,6 +33,12 @@ public class Filtration implements Iterable<BinaryVector> {
         fill(k, valuation);
     }
 
+    public Filtration(int n) {
+        this.dim = -1;
+        this.n = n;
+        this.simplices = new Tree(-1, null, 0, 0);
+    }
+
     public void insert(WeightedGraph g) {
         for(int i = 0; i < n; i++) {
             simplices.subTrees.put(i, new Tree(i, simplices, 0, 1));
@@ -53,28 +60,33 @@ public class Filtration implements Iterable<BinaryVector> {
      * @param k dimension of the target filtration
      * @param valuation the recursion formula on the simplices. The call valuation.eval(sigma, i, j) means that sigma is of dimension i - 1 and we add j.
      */
-    public void generate(int k, Function<Vector3D<int[], Integer, Integer>, Double> valuation) {
+    public <T> void generate(int k, Function<Vector4D<int[], T, Integer, Integer>, Vector2D<T, Double>> valuation) {
         HashMap<Double, LinkedList<Tree>> table = new HashMap<>();
         int[] sigma = new int[k + 1];
+        Logger.progress(n, "Building Function-Filtration");
         for(int i = 0; i < n; i++) {
             sigma[0] = i;
-            simplices.subTrees.put(i, new Tree(i, simplices, valuation.eval(new Vector3D<>(sigma, 0, i)), 1));
+            Vector2D<T, Double> v = valuation.eval(new Vector4D<>(sigma, null, 0, i));
+            simplices.subTrees.put(i, new Tree(i, simplices, v.getSecond(), 1));
             table.computeIfAbsent(simplices.subTrees.get(i).filteredVal, m -> new LinkedList<>());
             table.get(simplices.subTrees.get(i).filteredVal).addLast(simplices.subTrees.get(i));
-            generate(k, simplices.subTrees.get(i), sigma, valuation, table);
+            generate(k, simplices.subTrees.get(i), sigma, v.getFirst(), valuation, table);
+            Logger.updateProgress(i);
         }
+        Logger.close();
+        pack(table);
     }
 
-    private void generate(int k, Tree simplex, int[] sigma, Function<Vector3D<int[], Integer, Integer>, Double> valuation, HashMap<Double, LinkedList<Tree>> table) {
+    private <T> void generate(int k, Tree simplex, int[] sigma, T object, Function<Vector4D<int[], T, Integer, Integer>, Vector2D<T, Double>> valuation, HashMap<Double, LinkedList<Tree>> table) {
         if(simplex.depth > k) return;
         if(simplex.depth -1 > this.dim) this.dim = simplex.depth - 1;
         for(int j = simplex.node + 1; j < n; j++) {
             sigma[simplex.depth] = j;
-            double val = valuation.eval(new Vector3D<>(sigma, simplex.depth, j));
-            simplex.subTrees.put(j, new Tree(j, simplex, val, simplex.depth + 1));
-            table.computeIfAbsent(val, m -> new LinkedList<>());
-            table.get(val).addLast(simplex.subTrees.get(j));
-            generate(k, simplex.subTrees.get(j), sigma, valuation, table);
+            Vector2D<T, Double> v = valuation.eval(new Vector4D<>(sigma, object, simplex.depth, j));
+            simplex.subTrees.put(j, new Tree(j, simplex, v.getSecond(), simplex.depth + 1));
+            table.computeIfAbsent(v.getSecond(), m -> new LinkedList<>());
+            table.get(v.getSecond()).addLast(simplex.subTrees.get(j));
+            generate(k, simplex.subTrees.get(j), sigma, v.getFirst(), valuation, table);
         }
     }
 
@@ -102,7 +114,6 @@ public class Filtration implements Iterable<BinaryVector> {
         table.get(0d).add(simplices);
         Logger.progress(n, "Building Neighborhood-Filtration");
         for(int i = 0; i < n; i++) {
-            Logger.log(i + "\r");
             sigma[0] = i;
             table.get(0d).addLast(simplices.subTrees.get(i));
             for(int j = i + 1; j < n; j++) {

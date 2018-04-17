@@ -6,6 +6,7 @@ import com.jmaerte.data_struc.point_set.Metric;
 import com.jmaerte.data_struc.point_set.PointSetUtils;
 import com.jmaerte.lin_alg.BinaryVector;
 import com.jmaerte.persistence.Persistence;
+import com.jmaerte.util.calc.Util;
 
 public class Main {
 
@@ -212,15 +213,19 @@ public class Main {
 
 //        Euclidean S = PointSetUtils.getSphereData(2, 10, 0.5, 4, Metric.EUCLIDEAN);
 
-        Euclidean S = PointSetUtils.getSphereData(2, 100, 0.5, 4, Metric.EUCLIDEAN);
+        Euclidean S = PointSetUtils.getSphereData(2, 120, 0.5, 4, Metric.EUCLIDEAN);
         System.out.println(S.toPlot());
 
-        Filtration f = new Filtration(100, 3, v -> S.d(v.getFirst(), v.getSecond()));
-//        Filtration f = Filtration.example();
-        Persistence p = new Persistence(f, 16);
-        System.out.println(p.toBarcodePlot(0, 2));
-        System.out.println(p.toBarcodePlot(1,2));
+//        Filtration f = new Filtration(100, 3, v -> S.d(v.getFirst(), v.getSecond()));
+////        Filtration f = Filtration.example();
+//        Persistence p = new Persistence(f, 16);
+//        System.out.println(p.toBarcodePlot(0, 2));
+//        System.out.println(p.toBarcodePlot(1,2));
 
+        Filtration c = new Filtration(120);
+        c.generate(3, Util.getCechFunction(S));
+        Persistence p = new Persistence(c, 16);
+        System.out.println(p.toBarcodePlot(1, 2));
 
 //        Euclidean S = PointSetUtils.getRoseData(100, 3, 0.5, 4);
 //        WeightedGraph g = WeightedGraph.vietoris(S);

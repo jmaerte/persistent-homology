@@ -33,4 +33,8 @@ public class Ball {
     public String toString() {
         return "[" + Arrays.toString(center) + ", " + radius + "]";
     }
+
+    public Euclidean getEuclidean() {
+        return S;
+    }
 }
