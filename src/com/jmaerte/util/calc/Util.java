@@ -4,6 +4,8 @@ import com.jmaerte.data_struc.miniball.AffineHull;
 import com.jmaerte.data_struc.miniball.Ball;
 import com.jmaerte.data_struc.miniball.Miniball;
 import com.jmaerte.data_struc.point_set.Euclidean;
+import com.jmaerte.data_struc.point_set.Landmarks;
+import com.jmaerte.data_struc.point_set.PointSet;
 import com.jmaerte.util.vector.Vector2D;
 import com.jmaerte.util.vector.Vector4D;
 
@@ -97,4 +99,11 @@ public class Util {
         };
     }
 
+    public static Function<Vector2D<Integer, Integer>, Double> vietoris(PointSet S) {
+        return v -> S.d(v.getFirst(), v.getSecond());
+    }
+
+    public static Function<Vector2D<Integer, Integer>, Double> witness(Landmarks L) {
+        return v -> L.getValuation(v.getFirst(), v.getSecond());
+    }
 }

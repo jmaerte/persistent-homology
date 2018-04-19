@@ -9,17 +9,18 @@ import java.text.DecimalFormatSymbols;
 public class PointArray implements PointSet {
 
     private static DecimalFormat df2 = new DecimalFormat("#.##");
-    private static DecimalFormat df4 = new DecimalFormat("#.####");
 
     private final int d, n;
     private final double[][] values;
     private Metric<double[]> m;
+    private String name;
 
-    public PointArray(int d, int n, Metric<double[]> m) {
+    public PointArray(int d, int n, Metric<double[]> m, String name) {
         this.d = d;
         this.n = n;
         this.m = m;
         this.values = new double[n][d];
+        this.name = name;
     }
 
     public double get(int i, int j) {
@@ -60,44 +61,15 @@ public class PointArray implements PointSet {
         return s;
     }
 
+    public String name() {
+        return name;
+    }
+
     public double d(Integer i, Integer j) {
         return m.d(get(i), get(j));
     }
 
     public double d(double[] x, double[] y) {
         return m.d(x, y);
-    }
-
-    public String toPlot() {
-        if(d > 2) return "";
-        String x = "c(";
-        String y = "c(";
-        for(int i = 0; i < n; i++) {
-            if(i != 0) {
-                x += ", ";
-                y += ", ";
-            }
-            x += df4.format(get(i, 0)).replace(',', '.');
-            y += df4.format(get(i, 1)).replace(',', '.');
-        }
-        x += ")";
-        y += ")";
-        return  "library(tidyverse)\n\n" +
-                "x <- " + x + "\n" +
-                "y <- " + y + "\n" +
-                "data <- data.frame(x = x, y = y)\n" +
-                "plot <- ggplot(data) + geom_point(aes(x=x, y=y), colour=\"black\", size=1) + \n" +
-                "theme_light() +\n" +
-                "theme(\n" +
-                "    legend.position = \"none\",\n" +
-                "    panel.border = element_blank(),\n" +
-                "    panel.grid.major.y = element_blank(),\n" +
-                "    panel.grid.minor.y = element_blank(),\n" +
-                "    panel.grid.major.x = element_blank(),\n" +
-                "    panel.grid.minor.x = element_blank(),\n" +
-                ") +\n" +
-                "geom_vline(aes(xintercept=0)) +\n" +
-                "geom_hline(aes(yintercept=0))\n\n" +
-                "print(plot)";
     }
 }
