@@ -65,6 +65,8 @@ public class Filtration implements Iterable<BinaryVector> {
      */
     public <T> void generate(int k, Function<Vector4D<int[], T, Integer, Integer>, Vector2D<T, Double>> valuation) {
         HashMap<Double, LinkedList<Tree>> table = new HashMap<>();
+        table.put(0d, new LinkedList<>());
+        table.get(0d).add(simplices);
         int[] sigma = new int[k + 1];
         Logger.progress(n, "Building Function-Filtration");
         for(int i = 0; i < n; i++) {

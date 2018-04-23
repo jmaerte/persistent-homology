@@ -16,7 +16,7 @@ public abstract class ScalarProduct {
         return Math.sqrt(scalar(x,x));
     }
 
-    static ScalarProduct getStandard(int dim) {
+    public static ScalarProduct getStandard(int dim) {
         return new ScalarProduct() {
             @Override
             public double scalar(double[] a, double[] b) {

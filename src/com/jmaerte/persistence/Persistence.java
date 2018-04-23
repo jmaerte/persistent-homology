@@ -58,6 +58,7 @@ public class Persistence {
         BinaryVector temp;
         long ns = 0;
         for(BinaryVector v : f) {
+            System.out.println(v);
             int p = v.simplexDim + 1;
 
             if(v.isZero()) {

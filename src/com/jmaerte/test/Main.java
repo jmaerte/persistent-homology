@@ -187,7 +187,9 @@ public class Main {
 //        System.out.println(pv.toBarcodePlot(1, 2));
 //        System.out.println(pv.toDiagramPlot(1));
 
-        PointSet S = PointSetUtils.getRoseData(10000, 3, 0.2, 4, "Rose");
+//        PointSet S = PointSetUtils.getRoseData(10000, 3, 0.2, 4, "Rose");
+        PointSet centers = PointSetUtils.randomPointSet(3, 10, -100,100, Metric.EUCLIDEAN, "Centers");
+        PointSet S = PointSetUtils.getClusteredData(centers, 1000, new double[]{1d, 1d, 1d}, "Cluster");
 //        S.toFile();
 //        System.out.println(S.toPlot());
 //        CechFiltration cf = new CechFiltration(S, 3);
@@ -212,13 +214,18 @@ public class Main {
 //        Euclidean S = PointSetUtils.getSphereData(2, 10, 0.5, 4, Metric.EUCLIDEAN);
 
 //        Euclidean S = PointSetUtils.getSphereData(2, 1000, 0.5, 4, Metric.EUCLIDEAN);
+        System.out.println(centers);
         System.out.println(S);
 
-        Landmarks L = new Landmarks(S, 100, Landmarks.Choice.MINMAX);
+        Landmarks L = new Landmarks(S, 3, Landmarks.Choice.MINMAX);
         System.out.println(L.toPlot());
-        Filtration f = Filtration.witness_lazy(L, 3);
+        Filtration f = Filtration.witness_lazy(L, 2);
+        Filtration cf = Filtration.cech(new Euclidean(L, ScalarProduct.getStandard(10), "Euklid"), 2);
         Persistence p = new Persistence(f, 16);
-        System.out.println(p.toBarcodePlot(1,2));
+        Persistence pc = new Persistence(cf, 16);
+        System.out.println(p.toBarcodePlot(0, 2));
+        System.out.println(pc.toBarcodePlot(0, 2));
+
 
 //        Filtration f = new Filtration(100, 3, v -> S.d(v.getFirst(), v.getSecond()));
 ////        Filtration f = Filtration.example();

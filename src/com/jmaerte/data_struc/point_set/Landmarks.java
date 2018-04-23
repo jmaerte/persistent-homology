@@ -9,7 +9,7 @@ import java.util.concurrent.ThreadLocalRandom;
  * equipped with an matrix D of Size l.length x (s.size() - l.length) where D[i,j] = d(l[i], S.get(j)).
  *
  */
-public class Landmarks {
+public class Landmarks implements PointSet {
 
     private PointSet S;
     private double[][] D;
@@ -124,5 +124,29 @@ public class Landmarks {
 
     public String toString() {
         return Arrays.toString(landmarks);
+    }
+
+    public int dimension() {
+        return S.dimension();
+    }
+
+    public double get(int i, int j) {
+        return S.get(landmarks[i], j);
+    }
+
+    public double[] get(int i) {
+        return S.get(landmarks[i]);
+    }
+
+    public String name() {
+        return "Landmarks of " + S.name();
+    }
+
+    public double d(Integer i, Integer j) {
+        return S.d(landmarks[i], landmarks[j]);
+    }
+
+    public double d(double[] x, double[] y) {
+        return S.d(x,y);
     }
 }

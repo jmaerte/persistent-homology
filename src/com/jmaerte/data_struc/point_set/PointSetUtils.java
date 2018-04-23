@@ -103,6 +103,33 @@ public class PointSetUtils {
         return new Euclidean(res, ScalarProduct.getStandard(2), name);
     }
 
+    public static PointSet getClusteredData(PointSet S, int k, double[] radius, String name) {
+        int n = S.size();
+        PointArray res = new PointArray(S.dimension(), k * n, Metric.EUCLIDEAN, name);
+        for(int i = 0; i < n; i++) {
+            createCluster(res, S.get(i), k, S.dimension(), radius[i], i * k);
+        }
+        return res;
+    }
+
+    /**Creates a cluster around a given center c with radius r.
+     * Remark: This clusters are cuboids.(topological: (-r,r)^d)
+     *
+     * @param res The PointArray to fill in
+     * @param center the center point in ambient space
+     * @param k the magnitude of the cluster.
+     * @param d dimension of the points
+     * @param r radius of the cluster
+     * @param i location in res.
+     */
+    private static void createCluster(PointArray res, double[] center, int k, int d, double r, int i) {
+        for(int l = 0; l < k; l++) {
+            for(int j = 0; j < d; j++) {
+                res.set(i + l, j, center[j] + ThreadLocalRandom.current().nextDouble(-r, r));
+            }
+        }
+    }
+
     /**Creates points on a sub-manifold from a chart of an atlas.
      * The chart is given by a function which maps points from the cuboid [0,boundary[0])x...x[0,boundary[n])
      * onto the sub-manifold. Examples for such charts are up to a less-dimensional sub-manifold bijective maps of the torus or the sphere.
