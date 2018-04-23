@@ -1,9 +1,12 @@
 package com.jmaerte.data_struc.complex;
 
 import com.jmaerte.data_struc.graph.WeightedGraph;
+import com.jmaerte.data_struc.point_set.Euclidean;
+import com.jmaerte.data_struc.point_set.Landmarks;
 import com.jmaerte.data_struc.point_set.PointSet;
 import com.jmaerte.lin_alg.BinaryVector;
 import com.jmaerte.util.calc.Function;
+import com.jmaerte.util.calc.Util;
 import com.jmaerte.util.log.Logger;
 import com.jmaerte.util.vector.Vector2D;
 import com.jmaerte.util.vector.Vector3D;
@@ -188,7 +191,7 @@ public class Filtration implements Iterable<BinaryVector> {
 
     @Override
     public Iterator<BinaryVector> iterator() {
-        return new Iterator<>() {
+        return new Iterator<BinaryVector>() {
             long ns = 0;
             long curr = 0;
             int i = 0;
@@ -267,7 +270,7 @@ public class Filtration implements Iterable<BinaryVector> {
 //                    if(next.subTrees.get(i) != null) {
 //                        next = next.subTrees.get(i);
 //                        this.path[next.depth - 1] = i;
-//                        ns += (System.nanoTime() - curr);
+//                        ns += (System.nanoTime() - curr);Integer
 //                        return v;
 //                    }
 //                }
@@ -281,7 +284,7 @@ public class Filtration implements Iterable<BinaryVector> {
 //                    next = next.parent;
 //                    for(int i = path[next.depth] + 1; i < n; i++) {
 //                        if(next.subTrees.get(i) != null) {
-//                            this.path[next.depth] = i;
+//                            this.path[next.depth] = i;Integer
 //                            next = next.subTrees.get(i);
 //                            ns += (System.nanoTime() - curr);
 //                            return v;
@@ -317,8 +320,39 @@ public class Filtration implements Iterable<BinaryVector> {
         return new Filtration(S.size(), k, v -> S.d(v.getFirst(), v.getSecond()));
     }
 
-    public static Filtration cech(PointSet S, int k) {
-        return null;
+    /**Generates the k-skeleton of the cech filtration.
+     * This is a geometric approximation of a point sample S in euclidean space.
+     * The Cech complex for parameter epsilon is defined to be the nerve of the collection of all
+     * balls of radius epsilon with base points S.
+     * Therefore using the nerve theorem we know that the cech-complex for a good value of epsilon(good meaning that the collection of balls
+     * is an open cover of the space the points got sampled from) has the same homotopy type as the metric space we sampled from.
+     * Since simplicial homology is a homology theory in the sense of Eilenberg-Steenrod we get that the homology of this spaces
+     * got to be the same(remark: only for this value of epsilon).
+     * Now it is up to us to estimate this value of epsilon. This is done by looking at strong characteristics of the samples we investigate.
+     * E.g. a whole in the middle of a point set sampled from a thickened circle.
+     *
+     * @param S The Sample point set
+     * @param k dimension of the resulting filtration.
+     * @return The filtration described above.
+     */
+    public static Filtration cech(Euclidean S, int k) {
+        Filtration f = new Filtration(S.size());
+        f.generate(k, Util.getCechFunction(S));
+        return f;
+    }
+
+    /**Generates the k-skeleton of the lazy-witness filtration.(Lazy in the sense that this filtration behaves to the witness filtration
+     * as the vietoris does to the cech filtration)
+     * This is a more topological kind of approximation than the vietoris or cech filtrations(which actually are geometric)
+     * Because given a set of well-distributed points in a metric space we can approximate this metric space by using a
+     * much larger set of data-points to determine the weight of the edges.
+     *
+     * @param L The landmark points that are used as the vertices of our filtration.
+     * @param k dimension to calculate to.
+     * @return W(L)_k
+     */
+    public static Filtration witness_lazy(Landmarks L, int k) {
+        return new Filtration(L.size(), k, Util.witness(L));
     }
 
     public static Filtration example() {

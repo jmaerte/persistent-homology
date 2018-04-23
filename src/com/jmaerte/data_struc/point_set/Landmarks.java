@@ -29,42 +29,41 @@ public class Landmarks {
         double[][] D = new double[n][N];
         if(c == Choice.MINMAX) {
             int next = ThreadLocalRandom.current().nextInt(0, S.size());
+            System.out.println(next);
             double[][] curr = new double[n][S.size()];
             double[] min = new double[S.size()];
+            int[] order = new int[landmarks.length];
             for(int i = 0; i < n; i++) {
                 int p = Util.binarySearch(next, landmarks, 0, i);
                 if(i - p > 0) {
                     System.arraycopy(landmarks, p, landmarks, p + 1, i - p);
-                    System.arraycopy(curr, p, curr, p + 1, i - p);
+                    System.arraycopy(order, p, order, p + 1, i - p);
                 }
                 landmarks[p] = next;
+                order[p] = i;
 
-                if(i + 1 != n) {
-                    int l = 0;
-                    int maxIndex = -1;
-                    double max = -1;
-                    for(int k = 0; k < S.size(); k++) {
-                        if(l <= i && k == landmarks[l]) l++;
-                        else {
-                            curr[p][k] = S.d(landmarks[p], k);
-                            if(i == 0 || curr[p][k] < min[k]) min[k] = curr[p][k];
-                            if(min[k] > max) {
-                                max = min[k];
-                                maxIndex = k;
-                            }
+                int l = 0;
+                int maxIndex = -1;
+                double max = -1;
+                for(int k = 0; k < S.size(); k++) {
+                    if(l <= i && k == landmarks[l]) l++;
+                    else {
+                        curr[order[p]][k] = S.d(landmarks[p], k);
+                        if(i == 0 || curr[order[p]][k] < min[k]) min[k] = curr[order[p]][k];
+                        if(min[k] > max) {
+                            max = min[k];
+                            maxIndex = k;
                         }
                     }
-                    next = maxIndex;
                 }
+                next = maxIndex;
             }
             int l = 0;
             for(int j = 0; j < S.size(); j++) {
                 if(l < n && landmarks[l] == j) l++;
                 else {
-                    double m = 0;
                     for(int i = 0; i < n; i++) {
-                        if(i == 0 || curr[i][j] < m) m = curr[i][j];
-                        D[i][j-l] = curr[i][j];
+                        D[i][j-l] = curr[order[i]][j];
                     }
                 }
             }
@@ -98,14 +97,17 @@ public class Landmarks {
         double minmax = 0;
         for(int k = 0; k < N; k++) {
             double curr = Math.max(D[i][k], D[j][k]);
-            if(k == 0) minmax = curr;
-            else if(curr < minmax) minmax = curr;
+            if(k == 0 || curr < minmax) minmax = curr;
         }
         return minmax;
     }
 
     public static enum Choice {
         MINMAX, RANDOM;
+    }
+
+    public int size() {
+        return n;
     }
 
     public String toPlot() {
@@ -118,5 +120,9 @@ public class Landmarks {
                 "landmarks <- " + landmarks + "\n" +
                 "plot <- plot + geom_point(data = subset(data, id %in% landmarks), aes(x = x0, y = x1), colour=\"firebrick1\", size=1.5, shape=2, fill = 1)\n" +
                 "print(plot)";
+    }
+
+    public String toString() {
+        return Arrays.toString(landmarks);
     }
 }
