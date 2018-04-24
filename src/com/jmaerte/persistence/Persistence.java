@@ -18,6 +18,7 @@ import java.util.Locale;
 public class Persistence {
 
     private static final int factor = 10;
+    private static final int initCap = 16;
     private static final DecimalFormat df = new DecimalFormat("#.########", new DecimalFormatSymbols(Locale.US));
 
     private Filtration f;
@@ -30,7 +31,7 @@ public class Persistence {
     private int[] zeroCount;
     private Diagram[] diagram;
 
-    public Persistence(Filtration f, int initCap) {
+    public Persistence(Filtration f, boolean reduced) {
         this.f = f;
         this.matrix = new BinaryVector[initCap];
         this.low = new int[initCap];
@@ -42,7 +43,7 @@ public class Persistence {
         for(int i = 0; i < diagram.length; i++) {
             diagram[i] = new Diagram();
         }
-        generate();
+        generate(reduced);
         System.out.format("%13s | %15s", "Dimension i", "i-th Betti number");
         System.out.println("\n--------------|------------------");
         for(int i = 0; i < lowCount.length; i++) {
@@ -52,12 +53,28 @@ public class Persistence {
         evaluate();
     }
 
-    private void generate() {
+    /**
+     *
+     * @param reduced ordinary or reduced homology?
+     */
+    private void generate(boolean reduced) {
         Logger.progress(f.size(), "Termination algorithm");
         int i = 0;
-        BinaryVector temp;
+        BinaryVector missingVertex = null;
         long ns = 0;
         for(BinaryVector v : f) {
+            if(!reduced && v.simplexDim >= 0) {
+                if(missingVertex == null && v.simplexDim == 0) {
+                    missingVertex = v;
+                    System.out.println(missingVertex.filterInd);
+                }else if(v.simplexDim > 0) {
+                    int k = v.index(missingVertex.filterInd);
+                    if(k < v.occupation() && v.getEntry(k) == missingVertex.filterInd) {
+                        diagram[1].put(missingVertex.filterVal, v.filterVal);
+                        reduced = true;
+                    }
+                }
+            }
             System.out.println(v);
             int p = v.simplexDim + 1;
 
@@ -102,6 +119,7 @@ public class Persistence {
         }
         System.out.println("Calculation time " + ns + "ns");
         for(int k = 0; k < occupation_low; k++) {
+            System.out.println(low[k] + " " + f.get(low[k]).depth());
             lowCount[f.get(low[k]).depth()]++;
             diagram[f.get(low[k]).depth()].put(f.get(low[k]).val(), matrix[k].filterVal);
         }
@@ -174,9 +192,9 @@ public class Persistence {
         for(int p = 0; p < nonTrivial.length; p++) {
             grouping += (groupSize[p] + 0.5) + "" + (p + 1 != nonTrivial.length ? ", " : "");
             if(p == 0) {
-                groupLabelPos += (groupSize[0]/2 + 0.5);
+                groupLabelPos += (groupSize[0]/2d + 0.5);
             }else {
-                groupLabelPos += ", " + (0.5 + (double)(groupSize[p - 1] + groupSize[p])/2);
+                groupLabelPos += ", " + (0.5 + (double)(groupSize[p - 1] + groupSize[p])/2d);
             }
             groupLabel += "expression('H'[" + (nonTrivial[p] - 1) + "])" + (p + 1 != nonTrivial.length ? ", " : "");
         }

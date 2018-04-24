@@ -221,8 +221,8 @@ public class Main {
         System.out.println(L.toPlot());
         Filtration f = Filtration.witness_lazy(L, 2);
         Filtration cf = Filtration.cech(new Euclidean(L, ScalarProduct.getStandard(10), "Euklid"), 2);
-        Persistence p = new Persistence(f, 16);
-        Persistence pc = new Persistence(cf, 16);
+        Persistence p = new Persistence(f, false);
+        Persistence pc = new Persistence(cf, false);
         System.out.println(p.toBarcodePlot(0, 2));
         System.out.println(pc.toBarcodePlot(0, 2));
 

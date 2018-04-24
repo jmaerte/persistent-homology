@@ -31,6 +31,7 @@ public class Diagram {
      * @param b death time
      */
     public void put(double a, double b) {
+        System.out.println(a + " " + b);
         if(b - a <= clear) return;
 //        if(a == b) return;
         int k = binarySearch(a);
