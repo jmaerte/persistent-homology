@@ -16,6 +16,7 @@ import java.util.*;
 
 public class Filtration implements Iterable<BinaryVector> {
 
+    private static boolean reduced = false;
     private Tree simplices;
     private int dim;
     private int n;
@@ -179,6 +180,10 @@ public class Filtration implements Iterable<BinaryVector> {
 //        System.out.println(simplices);
     }
 
+    public static void reduced(boolean r) {
+        reduced = r;
+    }
+
     public Tree get(int i) {
         return ordering.get(i);
     }
@@ -196,7 +201,7 @@ public class Filtration implements Iterable<BinaryVector> {
         return new Iterator<BinaryVector>() {
             long ns = 0;
             long curr = 0;
-            int i = 0;
+            int i = (reduced ? 0 : 1);
 
             @Override
             public boolean hasNext() {
@@ -223,6 +228,9 @@ public class Filtration implements Iterable<BinaryVector> {
 
             private BinaryVector binaryVector(int[] path, int depth, double filteredVal, int filteredInd) {
                 i++;
+                if(!reduced && depth == 1) {
+                    return new BinaryVector(size, new int[]{}, 0, 0, filteredVal, filteredInd);
+                }
                 Tree curr;
                 int[] entries = new int[depth];
                 for(int i = 0; i < depth; i++) {

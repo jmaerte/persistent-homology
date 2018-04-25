@@ -46,7 +46,7 @@ public class Persistence {
         generate(reduced);
         System.out.format("%13s | %15s", "Dimension i", "i-th Betti number");
         System.out.println("\n--------------|------------------");
-        for(int i = 0; i < lowCount.length; i++) {
+        for(int i = 1; i < lowCount.length; i++) {
             System.out.format("%13d | %15d", i-1, zeroCount[i] - lowCount[i]);
             System.out.println();
         }
@@ -58,24 +58,14 @@ public class Persistence {
      * @param reduced ordinary or reduced homology?
      */
     private void generate(boolean reduced) {
+        Filtration.reduced(reduced);
+        Logger.log("Now calculating " + (reduced ? "reduced " : "ordinary ") + "homology.");
         Logger.progress(f.size(), "Termination algorithm");
         int i = 0;
         BinaryVector missingVertex = null;
         long ns = 0;
         for(BinaryVector v : f) {
-            if(!reduced && v.simplexDim >= 0) {
-                if(missingVertex == null && v.simplexDim == 0) {
-                    missingVertex = v;
-                    System.out.println(missingVertex.filterInd);
-                }else if(v.simplexDim > 0) {
-                    int k = v.index(missingVertex.filterInd);
-                    if(k < v.occupation() && v.getEntry(k) == missingVertex.filterInd) {
-                        diagram[1].put(missingVertex.filterVal, v.filterVal);
-                        reduced = true;
-                    }
-                }
-            }
-            System.out.println(v);
+//            System.out.println(v);
             int p = v.simplexDim + 1;
 
             if(v.isZero()) {
