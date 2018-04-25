@@ -1,61 +1,37 @@
 package com.jmaerte.data_struc.point_set;
 
-import com.jmaerte.util.log.Logger;
+import com.jmaerte.util.calc.Function;
+import java.util.ArrayList;
 
-import java.io.BufferedWriter;
-import java.io.File;
-import java.io.FileWriter;
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
+public class Euclidean implements Function<Euclidean, Double> {
 
-public class Euclidean implements PointSet {
+    public double[] vector;
+    public ScalarProduct q;
 
-    private int currID;
-    private PointSet set;
-    private ScalarProduct q;
-    private String name;
+    private Euclidean() {}
 
-    public Euclidean(PointSet set, ScalarProduct q, String name) {
-        assert set.dimension() == q.dimension();
-        this.set = set;
-        currID = set.size();
-        this.q = q;
-        this.name = name;
+    public static Euclidean fromArray(ArrayList<Double> a, ScalarProduct q) {
+        Euclidean e = new Euclidean();
+        e.vector = new double[a.size()];
+        for(int i = 0; i < e.vector.length; i++) {
+            e.vector[i] = a.get(i);
+        }
+        e.q = q;
+        return e;
     }
 
-    public double d(Integer i, Integer j) {
-        return d(set.get(i), set.get(j));
+    public static Euclidean fromArray(double[] a, ScalarProduct q) {
+        Euclidean e = new Euclidean();
+        e.vector = a;
+        e.q = q;
+        return e;
     }
 
-    public double d(double[] a, double[] b) {
-        return q.d(a, b);
+    public double get(int i) {
+        return vector[i];
     }
 
-    public double q(double[] a, double[] b) {
-        return q.scalar(a, b);
-    }
-
-    public int size() {
-        return currID;
-    }
-
-    public String toString() {
-        return set.toString();
-    }
-
-    public int dimension() {
-        return set.dimension();
-    }
-
-    public double get(int i, int j) {
-        return set.get(i, j);
-    }
-
-    public double[] get(int i) {
-        return set.get(i);
-    }
-
-    public String name() {
-        return name;
+    public Double eval(Euclidean e) {
+        return q.d(this.vector, e.vector);
     }
 }

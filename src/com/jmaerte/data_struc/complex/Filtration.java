@@ -345,7 +345,7 @@ public class Filtration implements Iterable<BinaryVector> {
      * @param k dimension of the resulting filtration.
      * @return The filtration described above.
      */
-    public static Filtration cech(Euclidean S, int k) {
+    public static Filtration cech(PointSet<Euclidean> S, int k) {
         Filtration f = new Filtration(S.size());
         f.generate(k, Util.getCechFunction(S));
         return f;

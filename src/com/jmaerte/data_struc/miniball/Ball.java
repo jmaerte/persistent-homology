@@ -6,20 +6,20 @@ import com.jmaerte.data_struc.point_set.PointSet;
 import java.util.Arrays;
 
 public class Ball {
-    private double[] center;
+    private Euclidean center;
     private double radius;
-    private Euclidean S;
+    private PointSet<Euclidean> S;
 
-    public Ball(Euclidean S, double[] center, double radius) {
+    public Ball(PointSet<Euclidean> S, Euclidean e, double radius) {
         this.S = S;
-        this.center = center;
+        this.center = e;
         this.radius = radius;
     }
 
     private Ball() {}
 
     public boolean contains(int i) {
-        return S != null && S.d(S.get(i), center) <= radius;
+        return S != null && S.get(i).eval(center) <= radius;
     }
 
     public double radius() {
@@ -31,10 +31,10 @@ public class Ball {
     }
 
     public String toString() {
-        return "[" + Arrays.toString(center) + ", " + radius + "]";
+        return "[" + center.toString() + ", " + radius + "]";
     }
 
-    public Euclidean getEuclidean() {
+    public PointSet<Euclidean> getEuclidean() {
         return S;
     }
 }

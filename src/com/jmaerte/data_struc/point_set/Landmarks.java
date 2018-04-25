@@ -1,5 +1,6 @@
 package com.jmaerte.data_struc.point_set;
 
+import com.jmaerte.util.calc.Function;
 import com.jmaerte.util.calc.Util;
 
 import java.util.Arrays;
@@ -9,27 +10,26 @@ import java.util.concurrent.ThreadLocalRandom;
  * equipped with an matrix D of Size l.length x (s.size() - l.length) where D[i,j] = d(l[i], S.get(j)).
  *
  */
-public class Landmarks implements PointSet {
+public class Landmarks<T extends Function<T, Double>> extends PointSet<T> {
 
-    private PointSet S;
+    private PointSet<T> S;
     private double[][] D;
     private int[] landmarks;
     private int n, N;
 
-    public Landmarks(PointSet S, int[] landmarks, double[][] D) {
+    public Landmarks(PointSet<T> S, int[] landmarks, double[][] D) {
         this.S = S;
         this.landmarks = landmarks;
         this.D = D;
     }
 
-    public Landmarks(PointSet S, int n, Choice c) {
+    public Landmarks(PointSet<T> S, int n, Choice c) {
         this.n = n;
         this.N = S.size() - n;
         int[] landmarks = new int[n];
         double[][] D = new double[n][N];
         if(c == Choice.MINMAX) {
             int next = ThreadLocalRandom.current().nextInt(0, S.size());
-            System.out.println(next);
             double[][] curr = new double[n][S.size()];
             double[] min = new double[S.size()];
             int[] order = new int[landmarks.length];
@@ -77,7 +77,6 @@ public class Landmarks implements PointSet {
                     landmarks[k] = j;
                 }
             }
-            System.out.println(Arrays.toString(landmarks));
             for(int i = 0; i < n; i++) {
                 int l = 0;
                 for(int j = 0; j < S.size(); j++) {
@@ -110,43 +109,31 @@ public class Landmarks implements PointSet {
         return n;
     }
 
-    public String toPlot() {
-        String p = PointSetUtils.toFilePlot(S);
-        String landmarks = "c(";
-        for(int i = 0; i < n; i++) {
-            landmarks += (this.landmarks[i] + 1) + (i + 1 == n ? ")" : ", ");
-        }
-        return p + "\n" +
-                "landmarks <- " + landmarks + "\n" +
-                "plot <- plot + geom_point(data = subset(data, id %in% landmarks), aes(x = x0, y = x1), colour=\"firebrick1\", size=1.5, shape=2, fill = 1)\n" +
-                "print(plot)";
-    }
+//    public String toPlot() {
+//        String p = PointSetUtils.toFilePlot(S);
+//        String landmarks = "c(";
+//        for(int i = 0; i < n; i++) {
+//            landmarks += (this.landmarks[i] + 1) + (i + 1 == n ? ")" : ", ");
+//        }
+//        return p + "\n" +
+//                "landmarks <- " + landmarks + "\n" +
+//                "plot <- plot + geom_point(data = subset(data, id %in% landmarks), aes(x = x0, y = x1), colour=\"firebrick1\", size=1.5, shape=2, fill = 1)\n" +
+//                "print(plot)";
+//    }
 
     public String toString() {
         return Arrays.toString(landmarks);
     }
 
-    public int dimension() {
-        return S.dimension();
-    }
-
-    public double get(int i, int j) {
-        return S.get(landmarks[i], j);
-    }
-
-    public double[] get(int i) {
+    public T get(int i) {
         return S.get(landmarks[i]);
-    }
-
-    public String name() {
-        return "Landmarks of " + S.name();
     }
 
     public double d(Integer i, Integer j) {
         return S.d(landmarks[i], landmarks[j]);
     }
 
-    public double d(double[] x, double[] y) {
-        return S.d(x,y);
+    public double d(T x, T y) {
+        return x.eval(y);
     }
 }

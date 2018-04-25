@@ -109,7 +109,6 @@ public class Persistence {
         }
         System.out.println("Calculation time " + ns + "ns");
         for(int k = 0; k < occupation_low; k++) {
-            System.out.println(low[k] + " " + f.get(low[k]).depth());
             lowCount[f.get(low[k]).depth()]++;
             diagram[f.get(low[k]).depth()].put(f.get(low[k]).val(), matrix[k].filterVal);
         }

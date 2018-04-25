@@ -77,7 +77,7 @@ public class Util {
                 .toArray();
     }
 
-    public static Function<Vector4D<int[], Ball, Integer, Integer>, Vector2D<Ball, Double>> getCechFunction(Euclidean S) {
+    public static Function<Vector4D<int[], Ball, Integer, Integer>, Vector2D<Ball, Double>> getCechFunction(PointSet<Euclidean> S) {
         return v -> {
             int[] sigma = v.getFirst();
             Ball seb = v.getSecond();

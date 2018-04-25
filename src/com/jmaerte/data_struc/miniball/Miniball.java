@@ -15,73 +15,7 @@ import java.util.concurrent.ThreadLocalRandom;
  *
  */
 public class Miniball {
-
-    // input fields
-    private Euclidean S;
-    private int[] M;
-
-    // tool fields
-    private AffineHull hull;
-    private int dim;
-    private int size;
-
-    // ball fields
-    private double sqRadius = 0;
-    private double[] center;
-
-    public Miniball(Euclidean S, int[] M) {
-        this.S = S;
-        this.M = M;
-        this.dim = S.dimension();
-        this.size = M.length;
-
-        this.center = new double[dim];
-
-        try{
-            initBall();
-            if(sqRadius != 0) calculate();
-        }catch(Exception e) {
-            e.printStackTrace();
-        }
-
-    }
-
-    /**initializes the ball as the minimal ball that has center p = S.get(M[0]) and radius
-     * max_{q \in M} ||S.get(q) - p||.
-     *
-     */
-    private void initBall() throws Exception {
-        for(int i = 0; i < dim; i++) {
-            center[i] = S.get(M[0], i);
-        }
-        int k = -1;
-        for(int i = 1; i < size; i++) {
-            double sum = 0;
-            for(int j = 0; j < dim; j++) {
-                double x = S.get(i, j) - center[j];
-                sum += x * x;
-            }
-            if(sum > sqRadius) {
-                k = i;
-                sqRadius = sum;
-            }
-        }
-        hull = new AffineHull(S, k);
-    }
-
-    /**This method shrinks the initial ball. At every time the ball given through sqRadius and center contains the whole set M.
-     * This happens through letting the center walk towards the center of the ball given in {@code hull].
-     *
-     */
-    private void calculate() {
-
-    }
-
-    public double squaredRadius() {
-        return sqRadius;
-    }
-
-    public static Ball welzl(Euclidean S) {
+    public static Ball welzl(PointSet<Euclidean> S) {
         int[] I = new int[S.size()];
         int[] B = new int[S.size()];
         for(int i = 0; i < S.size(); i++) {
@@ -99,9 +33,10 @@ public class Miniball {
      * @param hull the boundary points(defining the ball)
      * @return The smallest enclosing disk of S.
      */
-    public static Ball welzl(Euclidean S, int[] I, int i, AffineHull hull) {
+    public static Ball welzl(PointSet<Euclidean> S, int[] I, int i, AffineHull hull) {
+        int dim = S.get(0).vector.length;
         Ball D;
-        if(i == 0 || (hull != null && hull.size() == S.dimension() + 1)) {
+        if(i == 0 || (hull != null && hull.size() == dim + 1)) {
             D = hull == null ? Ball.empty() : hull.ball();
         }else {
             int p = ThreadLocalRandom.current().nextInt(0, i);
@@ -125,7 +60,7 @@ public class Miniball {
         return D;
     }
 
-    public static double miniball(Euclidean S, int iterations) {
+    public static double miniball(PointSet<Euclidean> S, int iterations) {
         int p = ThreadLocalRandom.current().nextInt(0, S.size());
         double factor = 1 - 1/(double)iterations;
         double d = 1/2d;
@@ -138,21 +73,21 @@ public class Miniball {
                 dist = curr;
             }
         }
-        double[] c = new double[S.dimension()];
-        System.arraycopy(S.get(p), 0, c, 0, S.dimension());
-        shift(c, S.get(q), d);
+        double[] c = new double[S.get(p).vector.length];
+        System.arraycopy(S.get(p).vector, 0, c, 0, c.length);
+        shift(c, S.get(q).vector, d);
         d *= factor;
         for(int i = 0; i < iterations; i++) {
             dist = -1;
             q = -1;
             for(int j = 0; j < S.size(); j++) {
-                double curr = S.d(S.get(j), c);
+                double curr = S.get(j).eval(Euclidean.fromArray(c, S.get(0).q));
                 if(curr > dist) {
                     q = j;
                     dist = curr;
                 }
             }
-            shift(c, S.get(q), d);
+            shift(c, S.get(q).vector, d);
             System.out.println(Arrays.toString(c));
             d *= factor;
         }

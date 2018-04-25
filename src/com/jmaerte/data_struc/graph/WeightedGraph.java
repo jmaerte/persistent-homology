@@ -1,6 +1,6 @@
 package com.jmaerte.data_struc.graph;
 
-import com.jmaerte.data_struc.point_set.VertexFactory;
+import com.jmaerte.data_struc.point_set.PointSet;
 import com.jmaerte.util.vector.Vector2D;
 import com.jmaerte.util.calc.Function;
 import com.jmaerte.util.calc.Util;
@@ -124,72 +124,5 @@ public class WeightedGraph {
             }
             return min;
         }
-    }
-
-    public static WeightedGraph vietoris(VertexFactory factory) {
-        return new WeightedGraph(factory.size(), new Function<Vector2D<Integer, Integer>, Double>() {
-            @Override
-            public Double eval(Vector2D<Integer, Integer> x) {
-                return factory.d(x.getFirst(), x.getSecond());
-            }
-        });
-    }
-
-    /**Generates the witness graph described in the bachelor thesis with minmax-process.
-     *
-     * @param factory point factory
-     * @return witness graph.
-     */
-    public static WeightedGraph witness(VertexFactory factory, int n) {
-        int[] L = new int[n];
-        L[0] = ThreadLocalRandom.current().nextInt(0, factory.size());
-
-        double[] min = new double[factory.size()];
-        for(int i = 0; i < factory.size(); i++) {
-            if(i != L[0]) min[i] = factory.d(i, L[0]);
-            else min[i] = -1;
-        }
-        for(int i = 1; i < n; i++) {
-            int index = -1;
-            double max = -1;
-            for(int j = 0; j < factory.size(); j++) {
-                if(max < min[j]) {
-                    index = j;
-                    max = min[j];
-                }
-            }
-            int k = Util.binarySearch(index, L, 0, i);
-            System.out.println(index);
-            if(k < i) {
-                System.arraycopy(L, k, L, k + 1, i - k);
-            }
-            L[k] = index;
-            for(int j = 0; j < factory.size(); j++) {
-                if(j != index) {
-                    double d = factory.d(index, j);
-                    if(min[j] > d) min[j] = d;
-                }else {
-                    min[j] = -1;
-                }
-            }
-        }
-        return witness(factory, L);
-    }
-
-    /**Generates the witness graph with given landmarks set.
-     *
-     * @param factory
-     * @param L sorted landmark set.
-     * @return
-     */
-    public static WeightedGraph witness(VertexFactory factory, int[] L) {
-        int[] D = new int[factory.size() - L.length];
-        for(int i = 0, k = 0; i < factory.size(); i++) {
-            if(L[k] == i) k++;
-            else D[i - k] = i;
-        }
-        double[][] dist = new double[L.length][factory.size() - L.length];
-
-        return null;
     }
 }

@@ -1,5 +1,9 @@
 package com.jmaerte.data_struc.point_set;
 
+import com.jmaerte.util.calc.Function;
+
+import java.util.ArrayList;
+
 /**
  * An instance that stores an <i>n</i> point subset of the <i>same</i> euclidean space(meaning that their dimension has
  * to be the same, what is no restriction for our purposes).
@@ -7,38 +11,29 @@ package com.jmaerte.data_struc.point_set;
  * will be necessary in further progress.
  *
  */
-public interface PointSet extends VertexFactory, Metric<double[]> {
+public class PointSet<T extends Function<T, Double>> implements Metric<Integer> {
 
-    /**Get the euclidean dimension of the points.
-     *
-     * @return Dimension of the PointSet
-     */
-    int dimension();
+    private ArrayList<T> list;
 
-    /**Providing access to the components of the vectors.
-     * The ordering is fixed.
-     *
-     * @param i: Index of the vector.
-     * @param j: Component index.
-     * @return in case the <i>i</i>th vector is (x_k)_{0 <=k < {@code dimension()}} returns x_j.
-     */
-    double get(int i, int j);
+    public PointSet() {
+        this(new ArrayList<>());
+    }
 
-    /**Providing access to vector-valued data.
-     *
-     * @param i index of the vector to get
-     * @return the vector as double[]
-     */
-    double[] get(int i);
+    public PointSet(ArrayList<T> list) {
+        this.list = list;
+    }
 
-    /**Providing an overview on the cardinality of the point point_set.
-     *
-     * @return card(S)
-     */
-    int size();
+    public T get(int i) {
+        return list.get(i);
+    }
 
-    /**
-     * Returns a name for the pointset.
-     */
-    String name();
+    public int size() {
+        return list.size();
+    }
+
+    public double d(Integer i, Integer j) {
+        return list.get(i).eval(list.get(j));
+    }
+
+
 }

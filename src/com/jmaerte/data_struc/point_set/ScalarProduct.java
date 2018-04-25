@@ -5,7 +5,7 @@ package com.jmaerte.data_struc.point_set;
  */
 public abstract class ScalarProduct {
 
-    abstract double scalar(double[] a, double[] b);
+    public abstract double scalar(double[] a, double[] b);
     abstract int dimension();
 
     public double d(double[] a, double[] b) {
