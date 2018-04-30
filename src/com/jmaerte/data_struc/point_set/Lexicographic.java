@@ -1,10 +1,12 @@
 package com.jmaerte.data_struc.point_set;
 
 import com.jmaerte.util.calc.Function;
+import com.jmaerte.util.input.Writable;
 
+import java.io.BufferedWriter;
 import java.util.ArrayList;
 
-public class Lexicographic implements Function<Lexicographic, Double> {
+public class Lexicographic implements Function<Lexicographic, Double> , Writable {
 
     private String s;
 
@@ -20,4 +22,7 @@ public class Lexicographic implements Function<Lexicographic, Double> {
         return Metric.Levehnshtein.d(this.s, l.s);
     }
 
+    public void write(BufferedWriter bw) throws Exception {
+        bw.write(s);
+    }
 }

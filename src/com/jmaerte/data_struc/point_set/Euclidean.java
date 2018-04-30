@@ -1,9 +1,12 @@
 package com.jmaerte.data_struc.point_set;
 
 import com.jmaerte.util.calc.Function;
+import com.jmaerte.util.input.Writable;
+
+import java.io.BufferedWriter;
 import java.util.ArrayList;
 
-public class Euclidean implements Function<Euclidean, Double> {
+public class Euclidean implements Function<Euclidean, Double>, Writable {
 
     public double[] vector;
     public ScalarProduct q;
@@ -29,6 +32,12 @@ public class Euclidean implements Function<Euclidean, Double> {
 
     public double get(int i) {
         return vector[i];
+    }
+
+    public void write(BufferedWriter bw) throws Exception {
+        for(int j = 0; j < vector.length; j++) {
+            bw.write((j != 0 ? "\t": "") + vector[j]);
+        }
     }
 
     public Double eval(Euclidean e) {

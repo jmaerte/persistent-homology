@@ -26,7 +26,7 @@ public class FileIO {
      * @param <K> T[]-like Object.
      * @return PointSet<K> consisting of the elements described in the file.
      */
-    public static <T, K extends Function<K, Double>> PointSet<K> fromCSV(String path, Function<String, T> cast, Function<ArrayList<T>, K> packing, char nextElement, char delimiter, char textQualifier) {
+    public static <T, K extends Writable & Function<K, Double>> PointSet<K> fromCSV(String path, Function<String, T> cast, Function<ArrayList<T>, K> packing, char nextElement, char delimiter, char textQualifier) {
         File f = new File(path);
         byte[] data = null;
         try {

@@ -43,15 +43,15 @@ public class Filtration implements Iterable<BinaryVector> {
         this.simplices = new Tree(-1, null, 0, 0);
     }
 
-    public void insert(WeightedGraph g) {
-        for(int i = 0; i < n; i++) {
-            simplices.subTrees.put(i, new Tree(i, simplices, 0, 1));
-            for(int j = i + 1; j < n; j++) {
-//                System.out.println(i + ", " + j + ": " + g.getWeight(i,j));
-                simplices.subTrees.get(i).subTrees.put(j, new Tree(j, simplices.subTrees.get(i), g.getWeight(i,j), 2));
-            }
-        }
-    }
+//    public void insert(WeightedGraph g) {
+//        for(int i = 0; i < n; i++) {
+//            simplices.subTrees.put(i, new Tree(i, simplices, 0, 1));
+//            for(int j = i + 1; j < n; j++) {
+////                System.out.println(i + ", " + j + ": " + g.getWeight(i,j));
+//                simplices.subTrees.get(i).subTrees.put(j, new Tree(j, simplices.subTrees.get(i), g.getWeight(i,j), 2));
+//            }
+//        }
+//    }
 
     public void insert(int[] path, double valuation) {
 
@@ -85,7 +85,7 @@ public class Filtration implements Iterable<BinaryVector> {
 
     private <T> void generate(int k, Tree simplex, int[] sigma, T object, Function<Vector4D<int[], T, Integer, Integer>, Vector2D<T, Double>> valuation, HashMap<Double, LinkedList<Tree>> table) {
         if(simplex.depth > k) return;
-        if(simplex.depth -1 > this.dim) this.dim = simplex.depth - 1;
+        if(simplex.depth - 1 > this.dim) this.dim = simplex.depth - 1;
         for(int j = simplex.node + 1; j < n; j++) {
             sigma[simplex.depth] = j;
             Vector2D<T, Double> v = valuation.eval(new Vector4D<>(sigma, object, simplex.depth, j));
@@ -103,7 +103,14 @@ public class Filtration implements Iterable<BinaryVector> {
      */
     public void fill(int k, Function<Vector2D<Integer, Integer>, Double> valuation) {
         // Generate 1-skeleton
-        insert(new WeightedGraph(n, valuation));
+        for(int i = 0; i < n; i++) {
+            simplices.subTrees.put(i, new Tree(i, simplices, 0, 1));
+            for(int j = i + 1; j < n; j++) {
+//                System.out.println(i + ", " + j + ": " + g.getWeight(i,j));
+                simplices.subTrees.get(i).subTrees.put(j, new Tree(j, simplices.subTrees.get(i), valuation.eval(new Vector2D<>(i, j)), 2));
+            }
+        }
+//        insert(new WeightedGraph(n, valuation));
 
         // expand to neighborhood complex
         fill(k);

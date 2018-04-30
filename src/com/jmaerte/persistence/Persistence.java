@@ -37,16 +37,16 @@ public class Persistence {
         this.low = new int[initCap];
         this.zeroes = new int[initCap];
 
-        this.lowCount = new int[f.dimension() + 2];
-        this.zeroCount = new int[f.dimension() + 2];
-        this.diagram = new Diagram[f.dimension() + 2];
+        this.lowCount = new int[f.dimension() + 3];
+        this.zeroCount = new int[f.dimension() + 3];
+        this.diagram = new Diagram[Math.max(3, f.dimension() + 2)];
         for(int i = 0; i < diagram.length; i++) {
             diagram[i] = new Diagram();
         }
         generate(reduced);
         System.out.format("%13s | %15s", "Dimension i", "i-th Betti number");
         System.out.println("\n--------------|------------------");
-        for(int i = 1; i < lowCount.length; i++) {
+        for(int i = 1; i < diagram.length; i++) {
             System.out.format("%13d | %15d", i-1, zeroCount[i] - lowCount[i]);
             System.out.println();
         }
@@ -170,7 +170,7 @@ public class Persistence {
         String segmentColor = "\"black\"";
         String birthColor = "\"chartreuse4\"";
         String deathColor = "\"sienna4\"";
-
+        double average = getAverage(m, n);
         Vector5D<String, String, int[], int[], Integer> value = this.getIntervalArrays(m, n);
         int[] nonTrivial = value.getThird();
         int[] groupSize = value.getFourth();
@@ -235,6 +235,7 @@ public class Persistence {
                 "plot <- plot + geom_vline(data=vlines, aes(xintercept=as.numeric(x))) +\n" +
                 "               geom_vline(aes(xintercept=0.5)) +\n" +
                 "               geom_segment(aes(x=0.5, xend=" + (length + 0.5) + ", y=x_min, yend=x_min))\n" +
+                "plot <- plot + geom_hline(aes(yintercept=" + average + "), colour=\"red\")\n" +
                 "print(plot)";
     }
 
@@ -333,5 +334,20 @@ public class Persistence {
             gS[i] = groupSize.get(i);
         }
         return new Vector5D<>(value1, value2, nT, gS, length);
+    }
+
+    private double getAverage(int n, int m) {
+        double av = 0d;
+        int amount = 0;
+        for(int i = n + 1; i < m + 1; i++) {
+            for(int j = 0; j < diagram[i].occ; j++) {
+                Diagram.Node node = diagram[i].nodes[j];
+                for(int k = 0; k < node.occ; k++) {
+                    av += node.multiplicity[k] * (node.b[k] - node.a);
+                    amount += node.multiplicity[k];
+                }
+            }
+        }
+        return av / amount;
     }
 }

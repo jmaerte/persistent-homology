@@ -2,6 +2,8 @@ package com.jmaerte.data_struc.point_set;
 
 import com.jmaerte.util.calc.Function;
 import com.jmaerte.util.calc.Util;
+import com.jmaerte.util.input.Writable;
+import com.jmaerte.util.log.Logger;
 
 import java.util.Arrays;
 import java.util.concurrent.ThreadLocalRandom;
@@ -10,11 +12,12 @@ import java.util.concurrent.ThreadLocalRandom;
  * equipped with an matrix D of Size l.length x (s.size() - l.length) where D[i,j] = d(l[i], S.get(j)).
  *
  */
-public class Landmarks<T extends Function<T, Double>> extends PointSet<T> {
+public class Landmarks<T extends Writable & Function<T, Double>> extends PointSet<T> {
 
     private PointSet<T> S;
     private double[][] D;
     private int[] landmarks;
+    private int[] order;
     private int n, N;
 
     public Landmarks(PointSet<T> S, int[] landmarks, double[][] D) {
@@ -27,12 +30,12 @@ public class Landmarks<T extends Function<T, Double>> extends PointSet<T> {
         this.n = n;
         this.N = S.size() - n;
         int[] landmarks = new int[n];
-        double[][] D = new double[n][N];
+        double[][] D = new double[n][S.size()];
         if(c == Choice.MINMAX) {
             int next = ThreadLocalRandom.current().nextInt(0, S.size());
-            double[][] curr = new double[n][S.size()];
             double[] min = new double[S.size()];
-            int[] order = new int[landmarks.length];
+            order = new int[landmarks.length];
+            Logger.progress(n, "Landmarks");
             for(int i = 0; i < n; i++) {
                 int p = Util.binarySearch(next, landmarks, 0, i);
                 if(i - p > 0) {
@@ -48,8 +51,8 @@ public class Landmarks<T extends Function<T, Double>> extends PointSet<T> {
                 for(int k = 0; k < S.size(); k++) {
                     if(l <= i && k == landmarks[l]) l++;
                     else {
-                        curr[order[p]][k] = S.d(landmarks[p], k);
-                        if(i == 0 || curr[order[p]][k] < min[k]) min[k] = curr[order[p]][k];
+                        D[order[p]][k] = S.d(landmarks[p], k);
+                        if(i == 0 || D[order[p]][k] < min[k]) min[k] = D[order[p]][k];
                         if(min[k] > max) {
                             max = min[k];
                             maxIndex = k;
@@ -57,16 +60,9 @@ public class Landmarks<T extends Function<T, Double>> extends PointSet<T> {
                     }
                 }
                 next = maxIndex;
+                Logger.updateProgress(i);
             }
-            int l = 0;
-            for(int j = 0; j < S.size(); j++) {
-                if(l < n && landmarks[l] == j) l++;
-                else {
-                    for(int i = 0; i < n; i++) {
-                        D[i][j-l] = curr[order[i]][j];
-                    }
-                }
-            }
+            Logger.close();
         }else {
             for(int i = 0; i < n; i++) {
                 int j = ThreadLocalRandom.current().nextInt(0, S.size());
@@ -93,10 +89,14 @@ public class Landmarks<T extends Function<T, Double>> extends PointSet<T> {
     }
 
     public double getValuation(int i, int j) {
+        int l = 0;
         double minmax = 0;
-        for(int k = 0; k < N; k++) {
-            double curr = Math.max(D[i][k], D[j][k]);
-            if(k == 0 || curr < minmax) minmax = curr;
+        for(int k = 0; k < S.size(); k++) {
+            if(l < n && landmarks[l] == k) l++;
+            else {
+                double curr = Math.max(D[order[i]][k], D[order[j]][k]);
+                if(k == 0 || curr < minmax) minmax = curr;
+            }
         }
         return minmax;
     }
@@ -108,18 +108,6 @@ public class Landmarks<T extends Function<T, Double>> extends PointSet<T> {
     public int size() {
         return n;
     }
-
-//    public String toPlot() {
-//        String p = PointSetUtils.toFilePlot(S);
-//        String landmarks = "c(";
-//        for(int i = 0; i < n; i++) {
-//            landmarks += (this.landmarks[i] + 1) + (i + 1 == n ? ")" : ", ");
-//        }
-//        return p + "\n" +
-//                "landmarks <- " + landmarks + "\n" +
-//                "plot <- plot + geom_point(data = subset(data, id %in% landmarks), aes(x = x0, y = x1), colour=\"firebrick1\", size=1.5, shape=2, fill = 1)\n" +
-//                "print(plot)";
-//    }
 
     public String toString() {
         return Arrays.toString(landmarks);
@@ -135,5 +123,13 @@ public class Landmarks<T extends Function<T, Double>> extends PointSet<T> {
 
     public double d(T x, T y) {
         return x.eval(y);
+    }
+
+    public PointSet<T> pointSet() {
+        return S;
+    }
+
+    public int[] landmarks() {
+        return landmarks;
     }
 }

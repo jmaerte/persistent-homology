@@ -1,6 +1,7 @@
 package com.jmaerte.data_struc.point_set;
 
 import com.jmaerte.util.calc.Function;
+import com.jmaerte.util.input.Writable;
 
 import java.util.ArrayList;
 
@@ -11,9 +12,12 @@ import java.util.ArrayList;
  * will be necessary in further progress.
  *
  */
-public class PointSet<T extends Function<T, Double>> implements Metric<Integer> {
+public class PointSet<T extends Writable & Function<T, Double>> implements Metric<Integer> {
+
+    private static int ID = 0;
 
     private ArrayList<T> list;
+    private int id;
 
     public PointSet() {
         this(new ArrayList<>());
@@ -21,6 +25,7 @@ public class PointSet<T extends Function<T, Double>> implements Metric<Integer> 
 
     public PointSet(ArrayList<T> list) {
         this.list = list;
+        id = ID++;
     }
 
     public T get(int i) {
@@ -35,5 +40,7 @@ public class PointSet<T extends Function<T, Double>> implements Metric<Integer> 
         return list.get(i).eval(list.get(j));
     }
 
-
+    public int id() {
+        return id;
+    }
 }

@@ -1,6 +1,7 @@
 package com.jmaerte.data_struc.graph;
 
 import com.jmaerte.data_struc.point_set.PointSet;
+import com.jmaerte.util.log.Logger;
 import com.jmaerte.util.vector.Vector2D;
 import com.jmaerte.util.calc.Function;
 import com.jmaerte.util.calc.Util;
@@ -26,12 +27,15 @@ public class WeightedGraph {
             nodes[i] = new Node(i, n);
         }
         fill = n;
+        Logger.progress(n, "Calculating graph");
         for(int i = 0; i < n; i++) {
             for(int j = 0; j < i; j++) {
                 double w = lambda.eval(new Vector2D<>(i, j));
                 addEdge(i, j, w);
             }
+            Logger.updateProgress(i);
         }
+        Logger.close();
     }
 
     public WeightedGraph(int n) {
@@ -82,6 +86,8 @@ public class WeightedGraph {
     }
 
     public class Node {
+        private static final int initial = 16;
+
         private int[] adjacency;
         private double[] weight;
         private int adjacent;
@@ -90,13 +96,16 @@ public class WeightedGraph {
 
         public Node(int label, int n) {
             this.label = label;
-            adjacency = new int[n];
-            weight = new double[n];
+            adjacency = new int[initial];
+            weight = new double[initial];
         }
 
         public void addAdjacent(int adj, double w) {
             int k = binarySearch(adj);
             if(k == adjacent || adjacency[k] != adj) {
+                if(adjacent >= adjacency.length) {
+                    mkPlace();
+                }
                 assert adjacent < adjacency.length;
                 if(k != adjacent) {
                     System.arraycopy(adjacency, k, adjacency, k+1, adjacent - k);
@@ -106,6 +115,15 @@ public class WeightedGraph {
                 adjacent++;
             }
             weight[k] = w;
+        }
+
+        private void mkPlace() {
+            int[] adj = new int[2 * this.adjacency.length];
+            double[] w = new double[2 * this.weight.length];
+            System.arraycopy(adjacency, 0, adj, 0, adjacent);
+            System.arraycopy(weight, 0, w, 0, adjacent);
+            this.adjacency = adj;
+            this.weight = w;
         }
 
         public int getAdjacent(int i) {
