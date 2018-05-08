@@ -9,15 +9,24 @@ public class Tree {
     protected double filteredVal;
     protected int filteredInd;
     protected int depth;
-    protected HashMap<Integer, Tree> subTrees;
+    private Tree[] subTrees;
     protected Tree parent;
 
-    public Tree(int node, Tree parent, double filteredVal, int depth) {
+    public Tree(int node, Tree parent, double filteredVal, int depth, int totalSize) {
         this.node = node;
         this.depth = depth;
         this.filteredVal = filteredVal;
         this.parent = parent;
-        this.subTrees = new HashMap<>();
+        this.subTrees = new Tree[totalSize - node - 1];
+    }
+
+    public Tree getChild(int i) {
+        assert i > node;
+        return subTrees[i-node-1];
+    }
+
+    public void setChild(int j, Tree t) {
+        subTrees[j-node-1] = t;
     }
 
     public int depth() {
@@ -31,8 +40,8 @@ public class Tree {
     public String toString() {
         String s = "";
         s += "node: " + node + ", val: " + filteredVal + ", ind: " + filteredInd + "->[";
-        for(Map.Entry<Integer, Tree> e : subTrees.entrySet()) {
-            s += e.getValue().toString() + "; ";
+        for(Tree e : subTrees) {
+            s += e.toString() + "; ";
         }
         s += "]";
         return s;

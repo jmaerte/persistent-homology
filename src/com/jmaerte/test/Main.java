@@ -221,14 +221,14 @@ public class Main {
 //        PointSet<Euclidean> S = FileIO.fromCSV("C:\\Users\\Ina\\Desktop\\Julian\\data.csv", Double::valueOf,
 //                v -> Euclidean.fromArray(v, ScalarProduct.getStandard(v.size())), '\n', ',', '"');
 //        PointSet<Euclidean> S = PointSetUtils.getRoseData(10000, 2, -5,5);
-        PointSet<Euclidean> base = PointSetUtils.randomPointSet(15, 2, -100, 100);
-        PointSet<Euclidean> S = PointSetUtils.getClusteredData(base, 100, new double[]{1, 1, 1, 1, 1, 1, 4, 5, 1, 2, 7, 10, 5, 3, 5});
+//        PointSet<Euclidean> base = PointSetUtils.randomPointSet(15, 2, -100, 100);
+        PointSet<Euclidean> S = PointSetUtils.getRoseData(1000, 3, 0.2, 4);
         for(int i = 0; i < 1; i++) {
-            Landmarks L = new Landmarks(S, 10 * (int)Math.log(S.size()), Landmarks.Choice.MINMAX);
+            Landmarks L = new Landmarks(S, 50, Landmarks.Choice.MINMAX);
             System.out.println(PointSetUtils.toPlot(L));
-            Filtration f = Filtration.vietoris(L, 1);
+            Filtration f = Filtration.vietoris(L, 8);
             Persistence p = new Persistence(f, false);
-            System.out.println(p.toBarcodePlot(0, 1));
+            System.out.println(p.toBarcodePlot(1, 2));
         }
 
 //        Landmarks L = new Landmarks(S, 3, Landmarks.Choice.MINMAX);

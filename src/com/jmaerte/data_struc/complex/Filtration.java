@@ -33,14 +33,14 @@ public class Filtration implements Iterable<BinaryVector> {
     public Filtration(int n, int k, Function<Vector2D<Integer, Integer>, Double> valuation) {
         this.dim = -1;
         this.n = n;
-        this.simplices = new Tree(-1, null, 0, 0);
+        this.simplices = new Tree(-1, null, 0, 0, n);
         fill(k, valuation);
     }
 
     public Filtration(int n) {
         this.dim = -1;
         this.n = n;
-        this.simplices = new Tree(-1, null, 0, 0);
+        this.simplices = new Tree(-1, null, 0, 0, n);
     }
 
 //    public void insert(WeightedGraph g) {
@@ -73,10 +73,10 @@ public class Filtration implements Iterable<BinaryVector> {
         for(int i = 0; i < n; i++) {
             sigma[0] = i;
             Vector2D<T, Double> v = valuation.eval(new Vector4D<>(sigma, null, 0, i));
-            simplices.subTrees.put(i, new Tree(i, simplices, v.getSecond(), 1));
-            table.computeIfAbsent(simplices.subTrees.get(i).filteredVal, m -> new LinkedList<>());
-            table.get(simplices.subTrees.get(i).filteredVal).addLast(simplices.subTrees.get(i));
-            generate(k, simplices.subTrees.get(i), sigma, v.getFirst(), valuation, table);
+            simplices.setChild(i, new Tree(i, simplices, v.getSecond(), 1, n));
+            table.computeIfAbsent(simplices.getChild(i).filteredVal, m -> new LinkedList<>());
+            table.get(simplices.getChild(i).filteredVal).addLast(simplices.getChild(i));
+            generate(k, simplices.getChild(i), sigma, v.getFirst(), valuation, table);
             Logger.updateProgress(i);
         }
         Logger.close();
@@ -89,10 +89,10 @@ public class Filtration implements Iterable<BinaryVector> {
         for(int j = simplex.node + 1; j < n; j++) {
             sigma[simplex.depth] = j;
             Vector2D<T, Double> v = valuation.eval(new Vector4D<>(sigma, object, simplex.depth, j));
-            simplex.subTrees.put(j, new Tree(j, simplex, v.getSecond(), simplex.depth + 1));
+            simplex.setChild(j, new Tree(j, simplex, v.getSecond(), simplex.depth + 1, n));
             table.computeIfAbsent(v.getSecond(), m -> new LinkedList<>());
-            table.get(v.getSecond()).addLast(simplex.subTrees.get(j));
-            generate(k, simplex.subTrees.get(j), sigma, v.getFirst(), valuation, table);
+            table.get(v.getSecond()).addLast(simplex.getChild(j));
+            generate(k, simplex.getChild(j), sigma, v.getFirst(), valuation, table);
         }
     }
 
@@ -104,10 +104,10 @@ public class Filtration implements Iterable<BinaryVector> {
     public void fill(int k, Function<Vector2D<Integer, Integer>, Double> valuation) {
         // Generate 1-skeleton
         for(int i = 0; i < n; i++) {
-            simplices.subTrees.put(i, new Tree(i, simplices, 0, 1));
+            simplices.setChild(i, new Tree(i, simplices, 0, 1, n));
             for(int j = i + 1; j < n; j++) {
 //                System.out.println(i + ", " + j + ": " + g.getWeight(i,j));
-                simplices.subTrees.get(i).subTrees.put(j, new Tree(j, simplices.subTrees.get(i), valuation.eval(new Vector2D<>(i, j)), 2));
+                simplices.getChild(i).setChild(j, new Tree(j, simplices.getChild(i), valuation.eval(new Vector2D<>(i, j)), 2, n));
             }
         }
 //        insert(new WeightedGraph(n, valuation));
@@ -128,12 +128,12 @@ public class Filtration implements Iterable<BinaryVector> {
         Logger.progress(n, "Building Neighborhood-Filtration");
         for(int i = 0; i < n; i++) {
             sigma[0] = i;
-            table.get(0d).addLast(simplices.subTrees.get(i));
+            table.get(0d).addLast(simplices.getChild(i));
             for(int j = i + 1; j < n; j++) {
                 sigma[1] = j;
-                Tree curr = simplices.subTrees.get(i).subTrees.get(j);
+                Tree curr = simplices.getChild(i).getChild(j);
                 table.computeIfAbsent(curr.filteredVal, m -> new LinkedList<>());
-                table.get(curr.filteredVal).add(simplices.subTrees.get(i).subTrees.get(j));
+                table.get(curr.filteredVal).add(simplices.getChild(i).getChild(j));
                 fill(k, curr, sigma, table);
             }
             Logger.updateProgress(i);
@@ -149,16 +149,16 @@ public class Filtration implements Iterable<BinaryVector> {
         for(int j = simplex.node + 1; j < n; j++) {
             sigma[simplex.depth] = j;
 //            System.out.println("\t" + Arrays.toString(sigma) + " " + (j-sigma[0]-1));
-            double val = simplices.subTrees.get(sigma[0]).subTrees.get(j).filteredVal;
+            double val = simplices.getChild(sigma[0]).getChild(j).filteredVal;
             for(int i = 1; i < simplex.depth; i++) {
-                double curr = simplices.subTrees.get(sigma[i]).subTrees.get(j).filteredVal;
+                double curr = simplices.getChild(sigma[i]).getChild(j).filteredVal;
                 if(curr > val) val = curr;
             }
             if(val < simplex.filteredVal) val = simplex.filteredVal;
-            simplex.subTrees.put(j, new Tree(j, simplex, val, simplex.depth + 1));
+            simplex.setChild(j, new Tree(j, simplex, val, simplex.depth + 1, n));
             table.computeIfAbsent(val, m -> new LinkedList<>());
-            table.get(val).addLast(simplex.subTrees.get(j));
-            fill(k, simplex.subTrees.get(j), sigma, table);
+            table.get(val).addLast(simplex.getChild(j));
+            fill(k, simplex.getChild(j), sigma, table);
         }
     }
 
@@ -244,7 +244,7 @@ public class Filtration implements Iterable<BinaryVector> {
                     curr = simplices;
                     for(int j = 0; j < depth; j++) {
                         if(i != j) {
-                            curr = curr.subTrees.get(path[j]);
+                            curr = curr.getChild(path[j]);
                         }
                     }
 //                    int k = Util.binarySearch(curr.filteredInd, entries, 0, i);
@@ -374,7 +374,7 @@ public class Filtration implements Iterable<BinaryVector> {
 
     public static Filtration example() {
         Filtration res = new Filtration(3, 2, v -> 0d);
-        res.simplices.subTrees.get(0).subTrees.get(1).subTrees.get(2).filteredVal = 5;
+        res.simplices.getChild(0).getChild(1).getChild(2).filteredVal = 5;
         return res;
     }
 }
