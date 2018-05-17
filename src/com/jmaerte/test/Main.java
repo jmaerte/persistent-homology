@@ -218,20 +218,23 @@ public class Main {
 //        System.out.println(centers);
 //        System.out.println(S);
 
-//        PointSet<Euclidean> S = FileIO.fromCSV("/home/julian/Desktop/data.csv", Double::valueOf,
-//                v -> Euclidean.fromArray(v, ScalarProduct.getStandard(v.size())), '\n', ',', '"');
+        PointSet<Euclidean> S = FileIO.fromCSV("/home/julian/Desktop/data.csv", Double::valueOf,
+                v -> Euclidean.fromArray(v, ScalarProduct.getStandard(v.size())), '\n', ',', '"');
 
 //        PointSet<Euclidean> S = PointSetUtils.getRoseData(10000, 2, -5,5);
-        PointSet<Euclidean> base = PointSetUtils.randomPointSet(2, 2, -100, 100);
-        PointSet<Euclidean> S = PointSetUtils.getClusteredData(base, new int[]{10000, 100}, new double[]{10d, 10d});
+//        PointSet<Euclidean> base = PointSetUtils.randomPointSet(2, 2, -100, 100);
+//        PointSet<Euclidean> S = PointSetUtils.getClusteredData(base, new int[]{100000, 100}, new double[]{10d, 10d});
 //        PointSet<Euclidean> S = PointSetUtils.getRoseData(1000, 3, 0.2, 4);
-        for(int i = 0; i < 1; i++) {
-            Landmarks L = new Landmarks(S, 2, Landmarks.Choice.MINMAX);
-            System.out.println(PointSetUtils.toPlot(L));
-            Filtration f = Filtration.vietoris(L, 2);
-            Persistence p = new Persistence(f, false);
-            System.out.println(p.toBarcodePlot(0, 2));
-        }
+        Landmarks L = new Landmarks(S, 100, Landmarks.Choice.RANDOM);
+//        Landmarks R = new Landmarks(S, 2, Landmarks.Choice.RANDOM);
+        System.out.println(PointSetUtils.toPlot(L, "firebrick1"));
+//        System.out.println(PointSetUtils.toPlot(R, "blue"));
+        Filtration f = Filtration.vietoris(L, 2);
+//        Filtration fr = Filtration.vietoris(R, 2);
+        Persistence p = new Persistence(f, false);
+//        Persistence pr = new Persistence(fr, false);
+        System.out.println(p.toBarcodePlot(0, 2));
+//        System.out.println(pr.toBarcodePlot(0, 2));
 
 //        Landmarks L = new Landmarks(S, 3, Landmarks.Choice.MINMAX);
 ////        System.out.println(L.toPlot());

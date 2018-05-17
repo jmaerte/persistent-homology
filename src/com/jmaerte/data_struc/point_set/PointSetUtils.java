@@ -149,7 +149,7 @@ public class PointSetUtils {
      * @param chart the mapping to use on the generated points
      * @return
      */
-    public static PointSet<Euclidean> getFromMapping(int n, int d, double[] boundary, Function<double[], double[]> chart, String name) {
+    public static PointSet<Euclidean> getFromMapping(int n, int d, double[] boundary, Function<double[], double[]> chart) {
         ArrayList<Euclidean> arr = new ArrayList<>();
         for(int i = 0; i < n; i++) {
             double[] point = new double[boundary.length];
@@ -248,7 +248,7 @@ public class PointSetUtils {
                 "print(plot)";
     }
 
-    public static String toPlot(Landmarks<Euclidean> L) {
+    public static String toPlot(Landmarks<Euclidean> L, String color) {
         String p = PointSetUtils.toFilePlot(L.pointSet());
         String landmarks = "c(";
         for(int i = 0; i < L.size(); i++) {
@@ -256,7 +256,7 @@ public class PointSetUtils {
         }
         return p + "\n" +
                 "landmarks <- " + landmarks + "\n" +
-                "plot <- plot + geom_point(data = subset(data, V1 %in% landmarks), aes(x = V2, y = V3), colour=\"firebrick1\", size=1.5, shape=2, fill = 1)\n" +
+                "plot <- plot + geom_point(data = subset(data, V1 %in% landmarks), aes(x = V2, y = V3), colour=\"" + color + "\", size=1.5, shape=2, fill = 1)\n" +
                 "print(plot)";
     }
 }
