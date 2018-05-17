@@ -111,11 +111,11 @@ public class PointSetUtils {
         return new PointSet<>(arr);
     }
 
-    public static PointSet getClusteredData(PointSet<Euclidean> S, int k, double[] radius) {
+    public static PointSet getClusteredData(PointSet<Euclidean> S, int[] k, double[] radius) {
         int n = S.size();
         ArrayList<Euclidean> arr = new ArrayList<>();
         for(int i = 0; i < n; i++) {
-            createCluster(arr, S.get(i).vector, k, radius[i]);
+            createCluster(arr, S.get(i).vector, k[i], radius[i]);
         }
         return new PointSet<>(arr);
     }
@@ -197,7 +197,7 @@ public class PointSetUtils {
     public static String toFilePlot(PointSet<Euclidean> S) {
         String path = toFile(S).replace('\\', '/');
         if(S.get(0).vector.length > 2) return "";
-        return  "library(tidyverse)\n\n" +
+        return  "library(ggplot2)\n\n" +
                 "data <- read.table(\"" + path + "\", header = FALSE)\n" +
                 "plot <- ggplot(data) + geom_point(aes(x=V2, y=V3), colour=\"black\", size=0.5) + \n" +
                 "theme_light() +\n" +
@@ -229,7 +229,7 @@ public class PointSetUtils {
         }
         x += ")";
         y += ")";
-        return  "library(tidyverse)\n\n" +
+        return  "library(ggplot2)\n\n" +
                 "x <- " + x + "\n" +
                 "y <- " + y + "\n" +
                 "data <- data.frame(id = 1:" + S.size() + ", x = x, y = y)\n" +

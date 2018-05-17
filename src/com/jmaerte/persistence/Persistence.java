@@ -191,7 +191,7 @@ public class Persistence {
         groupLabelPos += ")";
         groupLabel += ")";
         String data = "data.frame(x=1:" + length + ", value1=value1, value2=value2)";
-        return "library(tidyverse)\n\n" +
+        return "library(ggplot2)\n\n" +
                 "value1 <- " + value.getFirst() + "\n" +
                 "value2 <- " + value.getSecond() + "\n" +
                 "grouping <- " + grouping + "\n" +
@@ -241,7 +241,7 @@ public class Persistence {
 
     public String toDiagramPlot(int p) {
         String[] fields = getDiagramFrame(p);
-        return "library(tidyverse)\n" +
+        return "library(ggplot2)\n" +
                 "\n" +
                 "value1 <- " + fields[0] + "\n" +
                 "value2 <- " + fields[1] + "\n" +
