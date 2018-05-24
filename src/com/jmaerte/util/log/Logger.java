@@ -1,8 +1,12 @@
 package com.jmaerte.util.log;
 
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.Date;
 
 public class Logger {
+
+    public static final DateFormat dateFormat = new SimpleDateFormat("yyyy.MM.dd - HH mm ss");
 
     public static final Date date = new Date();
     public static final boolean log = true;

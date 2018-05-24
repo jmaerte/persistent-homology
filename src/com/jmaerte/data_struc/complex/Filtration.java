@@ -11,6 +11,7 @@ import com.jmaerte.util.log.Logger;
 import com.jmaerte.util.vector.Vector2D;
 import com.jmaerte.util.vector.Vector3D;
 import com.jmaerte.util.vector.Vector4D;
+import com.jmaerte.visualization.Visualization;
 
 import java.util.*;
 
@@ -55,6 +56,15 @@ public class Filtration implements Iterable<BinaryVector> {
 
     public void insert(int[] path, double valuation) {
 
+    }
+
+    public void draw(PointSet<Euclidean> S, double epsilon, double delta, int width, int height) {
+        Visualization.f = this;
+        Visualization.epsilon = epsilon;
+        Visualization.delta = delta;
+        Visualization.dimension = new Vector2D<>(width, height);
+        Visualization.S = S;
+        Visualization.main(new String[]{"com.jmaerte.visualization.Visualization"});
     }
 
     /**Generates the maximal dimension-k filtration with the recursion formula:
@@ -201,6 +211,10 @@ public class Filtration implements Iterable<BinaryVector> {
 
     public int size() {
         return size;
+    }
+
+    public int vertexSize() {
+        return n;
     }
 
     @Override

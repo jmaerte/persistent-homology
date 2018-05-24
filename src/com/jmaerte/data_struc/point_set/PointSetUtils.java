@@ -174,10 +174,9 @@ public class PointSetUtils {
     }
 
     public static String toFile(PointSet S) {
-        DateFormat dateFormat = new SimpleDateFormat("yyyy.MM.dd - HH mm ss");
-        File file = new File("output/" + dateFormat.format(Logger.date) + "/");
+        File file = new File("output/" + Logger.dateFormat.format(Logger.date) + "/");
         file.mkdirs();
-        File ps = new File("output/" + dateFormat.format(Logger.date) + "/pointset_" + S.id() + ".txt");
+        File ps = new File("output/" + Logger.dateFormat.format(Logger.date) + "/pointset_" + S.id() + ".txt");
         try {
             ps.createNewFile();
             BufferedWriter bw = new BufferedWriter(new FileWriter(ps));

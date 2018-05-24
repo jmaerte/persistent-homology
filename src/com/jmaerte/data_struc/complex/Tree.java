@@ -29,12 +29,20 @@ public class Tree {
         subTrees[j-node-1] = t;
     }
 
+    public Tree getParent() {
+        return parent;
+    }
+
     public int depth() {
         return depth;
     }
 
     public double val() {
         return filteredVal;
+    }
+
+    public int node() {
+        return node;
     }
 
     public String toString() {
