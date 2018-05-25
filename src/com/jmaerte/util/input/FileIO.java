@@ -1,5 +1,6 @@
 package com.jmaerte.util.input;
 
+import com.jmaerte.data_struc.complex.Filtration;
 import com.jmaerte.data_struc.point_set.PointSet;
 import com.jmaerte.util.calc.Function;
 
@@ -71,4 +72,7 @@ public class FileIO {
         return new PointSet<>(elements);
     }
 
+    public static Filtration complexFromFile(String path) {
+        return null;
+    }
 }

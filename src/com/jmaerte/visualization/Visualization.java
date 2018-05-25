@@ -6,6 +6,7 @@ import com.jmaerte.data_struc.point_set.Euclidean;
 import com.jmaerte.data_struc.point_set.PointSet;
 import com.jmaerte.util.log.Logger;
 import com.jmaerte.util.vector.Vector2D;
+import peasy.PeasyCam;
 import processing.core.PApplet;
 import processing.core.PGraphics;
 
@@ -25,6 +26,7 @@ public class Visualization extends PApplet {
     private PGraphics frame;
     private boolean pause;
     private boolean save;
+    private PeasyCam pc;
 
     public void settings() {
         if(S.get(0).vector.length == 2) {
@@ -51,6 +53,9 @@ public class Visualization extends PApplet {
             background(255);
             fill(0);
         }else {
+            pc = new PeasyCam(this, 0, 0, 0, 10);
+            pc.setMinimumDistance(50);
+            pc.setMaximumDistance(500);
             background(0);
         }
     }
@@ -67,15 +72,18 @@ public class Visualization extends PApplet {
     }
 
     public void draw() {
+        int i;
         if(S.get(0).vector.length == 2) {
             background(255);
             frame.beginDraw();
             frame.fill(0);
             frame.translate(width/2, height/2);
+            i = last;
         }else {
             frame = super.g;
+            i = 1;
         }
-        int i = last;
+        background(255);
         Tree t;
         while(i < f.size() && (t = f.get(i)).val() < curr) {
             int[] vertex = new int[t.depth()];
@@ -87,7 +95,11 @@ public class Visualization extends PApplet {
             }
             if(vertex.length == 1) {
                 frame.fill(255, 0, 0);
-                frame.ellipse((float)S.get(vertex[0]).vector[0] * scaleX / 2, (float)S.get(vertex[0]).vector[1] * scaleY / 2, 2, 2);
+                if(S.get(0).vector.length == 2) {
+                    frame.ellipse((float)S.get(vertex[0]).vector[0] * scaleX / 2, (float)S.get(vertex[0]).vector[1] * scaleY / 2, 2, 2);
+                }else {
+                    point((float)S.get(vertex[0]).vector[0], (float)S.get(vertex[0]).vector[1], (float)S.get(vertex[0]).vector[2]);
+                }
             }else {
                 switch(vertex.length) {
                     case 2:
@@ -96,11 +108,9 @@ public class Visualization extends PApplet {
                         frame.fill(0);
                         break;
                     case 3:
-                        frame.strokeWeight(0);
                         frame.fill(0, 255, 0, 50);
                         break;
                     case 4:
-                        frame.strokeWeight(0);
                         frame.fill(0, 0, 255, 50);
                         break;
                 }
@@ -119,13 +129,13 @@ public class Visualization extends PApplet {
         }
         if(S.get(0).vector.length == 2) {
             frame.endDraw();
+            image(frame, 0, 0);
+            text("eps:" + df.format(curr), 10f, 10f);
         }
         last = i;
-        image(frame, 0, 0);
         if(save) {
             saveFrame("output/" + Logger.dateFormat.format(Logger.date) + "/complex_eps-" + curr + ".jpg");
         }
-        text("eps:" + df.format(curr), 10f, 10f);
 
         if(!pause) {
             curr = curr + 0.007;
