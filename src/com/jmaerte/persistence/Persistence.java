@@ -166,6 +166,7 @@ public class Persistence {
     }
 
     public String toBarcodePlot(int m, int n) {
+        n++;
         // Color strings: note that they must be escaped by \" since we also want the rgb-function to be a possible input.
         String segmentColor = "\"black\"";
         String birthColor = "\"chartreuse4\"";

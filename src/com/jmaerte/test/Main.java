@@ -223,22 +223,22 @@ public class Main {
 //        PointSet<Euclidean> S = FileIO.fromCSV("/home/julian/Desktop/data.csv", Double::valueOf,
 //                v -> Euclidean.fromArray(v, ScalarProduct.getStandard(v.size())), '\n', ',', '"');
 
-        PointSet<Euclidean> S = PointSetUtils.getFromMapping(1000, 3, new double[]{2*Math.PI, 2*Math.PI}, PointSetUtils.torusChart(5, 10));
+        PointSet<Euclidean> S = PointSetUtils.getFromMapping(1000, 3, new double[]{2*Math.PI, 2*Math.PI}, PointSetUtils.torusChart( 5, 10));
 //        PointSet<Euclidean> S = PointSetUtils.getSphereData(2, 100, 1, 4);
 //        PointSet<Euclidean> base = PointSetUtils.randomPointSet(2, 2, -100, 100);
 //        PointSet<Euclidean> S = PointSetUtils.getClusteredData(base, new int[]{100000, 100}, new double[]{10d, 10d});
 //        PointSet<Euclidean> S = PointSetUtils.getRoseData(1000, 3, 0.2, 4);
-        Landmarks L = new Landmarks(S, 200, Landmarks.Choice.MINMAX);
+        Landmarks L = new Landmarks(S, 300, Landmarks.Choice.MINMAX);
 //        Landmarks R = new Landmarks(S, 2, Landmarks.Choice.RANDOM);
 //        System.out.println(PointSetUtils.toPlot(L, "firebrick1"));
 //        System.out.println(PointSetUtils.toPlot(R, "blue"));
-        Filtration f = Filtration.cech(L, 2);
-        f.draw(L, 0, f.get(f.size() - 1).val() + 1, 500, 500);
+        Filtration f = Filtration.vietoris(L, 3);
 //        Filtration fr = Filtration.vietoris(R, 2);
-//        Persistence p = new Persistence(f, false);
+        Persistence p = new Persistence(f, false);
 //        Persistence pr = new Persistence(fr, false);
-//        System.out.println(p.toBarcodePlot(0, 2));
+        System.out.println(p.toBarcodePlot(1, 2));
 //        System.out.println(pr.toBarcodePlot(0, 2));
+        f.draw(L, 0, f.get(f.size() - 1).val() + 1, 1000, 1000);
 
 
 

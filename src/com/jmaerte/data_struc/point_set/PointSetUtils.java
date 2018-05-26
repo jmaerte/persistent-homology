@@ -173,6 +173,25 @@ public class PointSetUtils {
         };
     }
 
+    public static Function<double[], double[]> kleinBottleChart(double a, double b, double c) {
+        return v -> {
+            if(v.length != 2) return null;
+            double[] res = new double[3];
+            double r = c * (1 - Math.cos(v[0])/2);
+            if(v[0] < Math.PI) {
+                res[0] = (a * (1 + Math.sin(v[0])) + r * Math.cos(v[1])) * Math.cos(v[0]);
+                res[1] = (b + r * Math.cos(v[1])) * Math.sin(v[0]);
+                res[2] = r * Math.sin(v[1]);
+            }else {
+                res[0] = a * (1 + Math.sin(v[0])) * Math.cos(v[0]) - r * Math.cos(v[1]);
+                res[1] = b * Math.sin(v[0]);
+                res[2] = r * Math.sin(v[1]);
+            }
+
+            return res;
+        };
+    }
+
     public static String toFile(PointSet S) {
         File file = new File("output/" + Logger.dateFormat.format(Logger.date) + "/");
         file.mkdirs();
