@@ -58,12 +58,13 @@ public class Filtration implements Iterable<BinaryVector> {
 
     }
 
-    public void draw(PointSet<Euclidean> S, double epsilon, double delta, int width, int height) {
+    public void draw(PointSet<Euclidean> S, double epsilon, double delta, int width, int height, boolean balls) {
         Visualization.f = this;
         Visualization.epsilon = epsilon;
         Visualization.delta = delta;
         Visualization.dimension = new Vector2D<>(width, height);
         Visualization.S = S;
+        Visualization.balls = balls;
         Visualization.main(new String[]{"com.jmaerte.visualization.Visualization"});
     }
 
