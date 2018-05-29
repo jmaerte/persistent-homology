@@ -166,6 +166,7 @@ public class Visualization extends PApplet {
         last = i;
         if(save) {
             saveFrame("output/" + Logger.dateFormat.format(Logger.date) + "/complex_eps-" + curr + ".jpg");
+            save = false;
         }
         if(!pause) {
             curr = curr + 0.007;
