@@ -1,1 +1,1 @@
-# persistent_homology
+# Persistent Homology of Point Cloud Data
