@@ -1,6 +1,5 @@
 package com.jmaerte.data_struc.complex;
 
-import com.jmaerte.data_struc.graph.WeightedGraph;
 import com.jmaerte.data_struc.point_set.Euclidean;
 import com.jmaerte.data_struc.point_set.Landmarks;
 import com.jmaerte.data_struc.point_set.PointSet;
@@ -9,7 +8,6 @@ import com.jmaerte.util.calc.Function;
 import com.jmaerte.util.calc.Util;
 import com.jmaerte.util.log.Logger;
 import com.jmaerte.util.vector.Vector2D;
-import com.jmaerte.util.vector.Vector3D;
 import com.jmaerte.util.vector.Vector4D;
 import com.jmaerte.visualization.Visualization;
 
