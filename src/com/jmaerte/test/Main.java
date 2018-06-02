@@ -6,6 +6,8 @@ import com.jmaerte.lin_alg.BinaryVector;
 import com.jmaerte.persistence.Persistence;
 import com.jmaerte.util.calc.Util;
 import com.jmaerte.util.input.FileIO;
+import com.jmaerte.util.input.Input;
+import com.jmaerte.util.input.Register;
 
 import java.util.ArrayList;
 
@@ -231,7 +233,7 @@ public class Main {
 //        PointSet<Euclidean> base = PointSetUtils.randomPointSet(2, 2, -100, 100);
 //        PointSet<Euclidean> S = PointSetUtils.getClusteredData(base, new int[]{100000, 100}, new double[]{10d, 10d});
 //        PointSet<Euclidean> S = PointSetUtils.getRoseData(1000, 3, 0.2, 4);
-        Landmarks L = new Landmarks(S, 400, Landmarks.Choice.MINMAX);
+        Landmarks L = new Landmarks(S, 40, Landmarks.Choice.MINMAX);
 //        Landmarks R = new Landmarks(S, 2, Landmarks.Choice.RANDOM);
 //        System.out.println(PointSetUtils.toPlot(L, "firebrick1"));
 //        System.out.println(PointSetUtils.toPlot(R, "blue"));
@@ -241,9 +243,10 @@ public class Main {
 //        Persistence pr = new Persistence(fr, false);
 //        System.out.println(p.toBarcodePlot(0, 2));
 //        System.out.println(pr.toBarcodePlot(0, 2));
-        f.draw(L, 0, f.get(f.size() - 1).val() + 1, 1000, 1000, false);
+//        f.draw(L, 0, f.get(f.size() - 1).val() + 1, 1000, 1000, false);
 
-
+        Register.push("S", "PointSet from mapping", L);
+        Input.main();
 
 //        Landmarks L = new Landmarks(S, 3, Landmarks.Choice.MINMAX);
 ////        System.out.println(L.toPlot());

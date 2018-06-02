@@ -26,6 +26,10 @@ public class Landmarks<T extends Writable & Function<T, Double>> extends PointSe
         this.D = D;
     }
 
+    public Landmarks(PointSet<T> S, int n, boolean isMinmax) {
+        this(S, n, isMinmax ? Choice.MINMAX : Choice.RANDOM);
+    }
+
     public Landmarks(PointSet<T> S, int n, Choice c) {
         this.n = n;
         this.N = S.size() - n;
