@@ -77,13 +77,14 @@ public class Input {
         if(currCommand.length == 0) return;
         switch(currCommand[0]) {
             case "help":
-                HELP();
+                if(currCommand.length == 1) {
+                    HELP();
+                }else {
+                    INFO(currCommand[1]);
+                }
                 break;
             case "free_mem":
                 Register.free();
-                break;
-            case "info":
-                INFO(currCommand[1]);
                 break;
             case "lo":
                 System.out.println(Register.print());
@@ -163,24 +164,25 @@ public class Input {
     }
 
     private static void HELP() {
-        System.out.println("+-------------------+---------------------------------------------+\n" +
-                "|      Syntax       |                 Explanation                 |\n" +
-                "+-------------------+---------------------------------------------+\n" +
-                "| help              | Shows this dialog                           |\n" +
-                "|                   |                                             |\n" +
-                "| info [keyword]    | print out information for a certain command |\n" +
-                "|                   |   (keywords are given in the help overview) |\n" +
-                "|                   |                                             |\n" +
-                "| li                | List all information keywords               |\n" +
-                "|                   |                                             |\n" +
-                "| [var] <- [object] | Assign the [object] to variable name [var]  |\n" +
-                "|                   |   In case you need more information on how  |\n" +
-                "|                   |   to init an object type \"info object\"      |\n" +
-                "|                   |                                             |\n" +
-                "| lo                | List all Objects specified by the user      |\n" +
-                "|                   |                                             |\n" +
-                "| free_mem          | Free Memory by deleting user specified vars |\n" +
-                "+-------------------+---------------------------------------------+");
+        System.out.println("+-------------------+----------------------------------------------+\n" +
+                "|      Syntax       |                 Explanation                  |\n" +
+                "+-------------------+----------------------------------------------+\n" +
+                "| help              | Shows this dialog                            |\n" +
+                "|                   |                                              |\n" +
+                "| help [command]    | Shows a help dialog according to [command],  |\n" +
+                "|                   |     where [command] is one of the following: |\n" +
+                "|                   |     -objects: Help initializing objects      |\n" +
+                "|                   |                                              |\n" +
+                "| li                | List all information keywords                |\n" +
+                "|                   |                                              |\n" +
+                "| [var] <- [object] | Assign the [object] to variable name [var]   |\n" +
+                "|                   |     In case you need more information on how |\n" +
+                "|                   |     to init an object type \"info object\"     |\n" +
+                "|                   |                                              |\n" +
+                "| lo                | List all Objects specified by the user       |\n" +
+                "|                   |                                              |\n" +
+                "| free_mem          | Free Memory by deleting user specified vars  |\n" +
+                "+-------------------+----------------------------------------------+");
     }
     private static void INFO(String subject) {
         switch(subject) {
@@ -192,12 +194,16 @@ public class Input {
                         "|                | i.e. a collection of metric points |       the points in a csv-like manner                  |\n" +
                         "|                |                                    | -sample [type]: generates dummy data, sampled from     |\n" +
                         "|                |                                    |       specified type of structur. For more information |\n" +
-                        "|                |                                    |       type \"info sample\".                              |\n" +
+                        "|                |                                    |       type \"help PointSet\".                            |\n" +
                         "|                |                                    |                                                        |\n" +
                         "| Filtration [k] | Creates the k-Skeleton of          | -t [type]: Filtration type(cech, viet, witness)        |\n" +
                         "|                | a specified Filtration             | -set a PointSet object to build the Filtration from    |\n" +
                         "|                |                                    |                                                        |\n" +
                         "+----------------+------------------------------------+--------------------------------------------------------+");
+                break;
+            case "Filtration":
+
+                break;
         }
     }
 }
