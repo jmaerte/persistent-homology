@@ -3,6 +3,7 @@ package com.jmaerte.util.input;
 import com.jmaerte.data_struc.complex.Filtration;
 import com.jmaerte.data_struc.point_set.Landmarks;
 import com.jmaerte.data_struc.point_set.PointSet;
+import com.jmaerte.util.input.commands.Commands;
 import com.jmaerte.util.vector.Vector2D;
 
 import java.util.ArrayList;
@@ -15,7 +16,7 @@ public class Input {
     private static HashMap<String, String> options;
     private static ArrayList<String> attributes;
 
-    private static final String CSV = "csv", MINMAX = "minmax";
+    public static final String CSV = "csv", MAXMIN = "maxmin";
 
     private static final Scanner scanner;
 
@@ -45,7 +46,7 @@ public class Input {
         options = new HashMap<>();
         attributes = new ArrayList<>();
         options();
-        process();
+        Commands.process(currCommand);
         input();
     }
 
@@ -96,16 +97,20 @@ public class Input {
                 if(currCommand[1].equals("<-")) {
                     try {
                         Vector2D<String, Object> v = processInitialization();
-                        if(v.getSecond() == null) {
+                        if (v.getSecond() == null) {
                             System.out.println("Initialization failed.");
-                        }else {
+                        } else {
                             Register.push(currCommand[0], v.getFirst(), v.getSecond());
                         }
-                    } catch(Exception e) {
+                    } catch (Exception e) {
                         System.out.println(e.getMessage());
                     }
                 }else {
-                    System.out.println("Unknown Command.");
+                    try {
+                        Register.describe(currCommand[0]);
+                    } catch(Exception e) {
+                        System.out.println("Unknown Command or Object.");
+                    }
                 }
         }
     }
@@ -127,12 +132,12 @@ public class Input {
                 Vector2D<Object, Class> w = Register.get(options.get("set"));
                 PointSet M = (PointSet) w.getFirst();
                 int n = Integer.valueOf(currCommand[3]);
-                result = new Vector2D<>(n + " " + (is(MINMAX) ? "per minmax" : "randomly") + " chosen Landmark Points of " + options.get("set"),
-                        new Landmarks(M, n, is(MINMAX)));
+                result = new Vector2D<>(n + " " + (is(MAXMIN) ? "per maxmin" : "randomly") + " chosen Landmark Points of " + options.get("set"),
+                        new Landmarks(M, n, is(MAXMIN)));
                 break;
             case "Filtration":
                 Vector2D<Object, Class> v = Register.get(options.get("set"));
-                PointSet S = (PointSet) v.getFirst();
+                Landmarks S = (Landmarks) v.getFirst();
                 int k = Integer.valueOf(currCommand[3]);
                 switch(options.get("t")) {
                     case "cech":
@@ -142,7 +147,7 @@ public class Input {
                         result = new Vector2D<>(k + "-Skeleton of Viet(" + options.get("set") + ")", Filtration.vietoris(S, k));
                         break;
                     case "witness":
-                        result = new Vector2D<>(k + "-Skeleton of Witness_lazy(" + options.get("set") + ")", Filtration.vietoris(S, k));
+                        result = new Vector2D<>(k + "-Skeleton of Witness_lazy(" + options.get("set") + ")", Filtration.witness_lazy(S, k));
                         break;
                     default:
                         throw new Exception("The program doesn't support " + options.get("t") + " filtrations.");
@@ -156,9 +161,9 @@ public class Input {
         input();
     }
 
-    private static boolean is(String attribute) {
+    public static boolean is(String attribute) {
         for(String att : attributes) {
-            if(att.equals(attributes)) return true;
+            if(att.equals(attribute)) return true;
         }
         return false;
     }

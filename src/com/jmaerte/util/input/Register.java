@@ -42,10 +42,22 @@ public class Register {
         classes.put(name, o.getClass());
     }
 
+    public static void push(String name, Vector2D<String, Object> v) {
+        objects.put(name, v.getSecond());
+        descriptions.put(name, v.getFirst());
+        classes.put(name, v.getSecond().getClass());
+    }
+
     public static Vector2D<Object, Class> get(String name) throws NoSuchElementException {
         Object o = objects.get(name);
         if(o == null) throw new NoSuchElementException("Unknown Object: " + name);
         return new Vector2D<>(objects.get(name), classes.get(name));
+    }
+
+    public static String describe(String name) {
+        String o = descriptions.get(name);
+        if(o == null) throw new NoSuchElementException("Unknown Object: " + name);
+        return o;
     }
 
     public static String print() {

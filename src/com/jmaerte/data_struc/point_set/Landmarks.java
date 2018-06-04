@@ -26,8 +26,8 @@ public class Landmarks<T extends Writable & Function<T, Double>> extends PointSe
         this.D = D;
     }
 
-    public Landmarks(PointSet<T> S, int n, boolean isMinmax) {
-        this(S, n, isMinmax ? Choice.MINMAX : Choice.RANDOM);
+    public Landmarks(PointSet<T> S, int n, boolean isMaxmin) {
+        this(S, n, isMaxmin ? Choice.MAXMIN : Choice.RANDOM);
     }
 
     public Landmarks(PointSet<T> S, int n, Choice c) {
@@ -35,7 +35,7 @@ public class Landmarks<T extends Writable & Function<T, Double>> extends PointSe
         this.N = S.size() - n;
         int[] landmarks = new int[n];
         double[][] D = new double[n][S.size()];
-        if(c == Choice.MINMAX) {
+        if(c == Choice.MAXMIN) {
             int next = ThreadLocalRandom.current().nextInt(0, S.size());
             double[] min = new double[S.size()];
             order = new int[landmarks.length];
@@ -94,19 +94,19 @@ public class Landmarks<T extends Writable & Function<T, Double>> extends PointSe
 
     public double getValuation(int i, int j) {
         int l = 0;
-        double minmax = 0;
+        double maxmin = 0;
         for(int k = 0; k < S.size(); k++) {
             if(l < n && landmarks[l] == k) l++;
             else {
                 double curr = Math.max(D[order[i]][k], D[order[j]][k]);
-                if(k == 0 || curr < minmax) minmax = curr;
+                if(k == 0 || curr < maxmin) maxmin = curr;
             }
         }
-        return minmax;
+        return maxmin;
     }
 
     public static enum Choice {
-        MINMAX, RANDOM;
+        MAXMIN, RANDOM;
     }
 
     public int size() {

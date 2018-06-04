@@ -115,6 +115,10 @@ public class Persistence {
 //        System.out.println(Arrays.toString(low));
 //        System.out.println(Arrays.toString(zeroes));
         Logger.close();
+        // EXPERIMENTAL - TRYING TO FREE UP SPACE AFTER CALC.
+        matrix = null;
+        low = null;
+        zeroes = null;
     }
 
     private void evaluate() {
