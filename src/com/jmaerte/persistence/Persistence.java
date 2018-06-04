@@ -133,6 +133,10 @@ public class Persistence {
         }
     }
 
+    public int dimension() {
+        return f.dimension();
+    }
+
     private void addZero(int i, int p) {
         int k = Util.binarySearch(i, zeroes, 0, occupation_zeroes);
         if(k < occupation_zeroes && zeroes[k] == i) return;

@@ -3,6 +3,7 @@ package com.jmaerte.util.input.initializers;
 import com.jmaerte.util.input.Table;
 import com.jmaerte.util.input.initializers.collection.InitFiltration;
 import com.jmaerte.util.input.initializers.collection.InitLandmarks;
+import com.jmaerte.util.input.initializers.collection.InitPersistence;
 import com.jmaerte.util.vector.Vector2D;
 
 import java.util.HashMap;
@@ -15,6 +16,7 @@ public class Initializers {
     static {
         initializer.put("Filtration", new InitFiltration());
         initializer.put("LandmarkSet", new InitLandmarks());
+        initializer.put("Persistence", new InitPersistence());
     }
 
     public static Vector2D<String, Object> init(String[] params) throws Exception {

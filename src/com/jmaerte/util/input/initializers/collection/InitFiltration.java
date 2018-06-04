@@ -3,6 +3,7 @@ package com.jmaerte.util.input.initializers.collection;
 import com.jmaerte.data_struc.complex.Filtration;
 import com.jmaerte.data_struc.point_set.Landmarks;
 import com.jmaerte.data_struc.point_set.PointSet;
+import com.jmaerte.util.input.Modifier;
 import com.jmaerte.util.input.Register;
 import com.jmaerte.util.input.initializers.Initializer;
 import com.jmaerte.util.vector.Vector2D;
@@ -47,8 +48,8 @@ public class InitFiltration extends Initializer {
         return new String[]{};
     }
 
-    public String[] modifiers() {
-        return new String[]{};
+    public Modifier[] modifiers() {
+        return new Modifier[]{};
     }
 
     public String command() {

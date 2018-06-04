@@ -1,5 +1,6 @@
 package com.jmaerte.util.input.commands.collection;
 
+import com.jmaerte.util.input.Modifier;
 import com.jmaerte.util.input.commands.Command;
 import com.jmaerte.util.input.commands.Commands;
 import com.jmaerte.util.input.initializers.Initializers;
@@ -27,8 +28,8 @@ public class Help extends Command {
         return new String[]{};
     }
 
-    protected String[] modifiers() {
-        return new String[]{};
+    protected Modifier[] modifiers() {
+        return new Modifier[]{};
     }
 
     protected String command() {

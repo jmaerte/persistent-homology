@@ -1,5 +1,6 @@
 package com.jmaerte.util.input.commands.collection;
 
+import com.jmaerte.util.input.Modifier;
 import com.jmaerte.util.input.Register;
 import com.jmaerte.util.input.commands.Command;
 
@@ -21,8 +22,8 @@ public class ListObjects extends Command {
         return new String[]{};
     }
 
-    protected String[] modifiers() {
-        return new String[]{};
+    protected Modifier[] modifiers() {
+        return new Modifier[]{};
     }
 
     protected String command() {

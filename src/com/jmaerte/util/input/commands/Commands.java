@@ -2,9 +2,6 @@ package com.jmaerte.util.input.commands;
 
 import com.jmaerte.util.input.Table;
 import com.jmaerte.util.input.commands.collection.*;
-import com.jmaerte.util.input.initializers.Initializer;
-
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -16,10 +13,12 @@ public class Commands {
         commands.put("help", new Help());
         commands.put("<-", new AssignObject());
         commands.put("lo", new ListObjects());
+        commands.put("clear", new Clear());
+        commands.put("plot", new Plot());
     }
 
     public static void print() {
-        Table t = new Table(new int[]{20, 15, 15, 25}, new String[]{"Syntax", "Options", "Modifiers", "Description"});
+        Table t = new Table(new int[]{20, 15, 15, 40}, new String[]{"Syntax", "Options", "Modifiers", "Description"});
         for(Command in : commands.values()) {
             t.addEntry(new String[]{in.syntax(), in.option(), in.modifier(), in.description()});
             t.addEmpty();

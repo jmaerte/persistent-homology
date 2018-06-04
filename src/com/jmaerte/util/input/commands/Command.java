@@ -1,11 +1,17 @@
 package com.jmaerte.util.input.commands;
 
+import com.jmaerte.util.input.Modifier;
+
 public abstract class Command {
 
+    /**Defines a call. Give all needed parameters to this method.
+     *
+     * @param params parameters.
+     */
     protected abstract void call(String[] params);
     protected abstract String[] params();
     protected abstract String[] options();
-    protected abstract String[] modifiers();
+    protected abstract Modifier[] modifiers();
     protected abstract String command();
     protected abstract String description();
     protected abstract int positionCommand();
@@ -37,7 +43,7 @@ public abstract class Command {
     }
 
     public String modifier() {
-        String[] m = modifiers();
+        Modifier[] m = modifiers();
         String s = "";
         for(int i = 0; i < m.length; i++) {
             s += "--" + m[i] + (i + 1 != m.length ? ", " : "");

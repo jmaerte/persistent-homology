@@ -13,10 +13,8 @@ import java.util.Scanner;
 public class Input {
 
     private static String[] currCommand;
-    private static HashMap<String, String> options;
-    private static ArrayList<String> attributes;
-
-    public static final String CSV = "csv", MAXMIN = "maxmin";
+    public static HashMap<String, String> options;
+    private static ArrayList<Modifier> attributes;
 
     private static final Scanner scanner;
 
@@ -53,7 +51,11 @@ public class Input {
     private static void options() {
         for(int i = 0; i < currCommand.length; i++) {
             if(currCommand[i].startsWith("--")) {
-                attributes.add(currCommand[i].substring(2));
+                try {
+                    attributes.add(getModifier(currCommand[i].substring(2)));
+                }catch(Exception e) {
+                    System.err.println(e.getMessage());
+                }
                 String[] cmd = new String[currCommand.length - 1];
                 System.arraycopy(currCommand, 0, cmd, 0, i);
                 if(i + 1 != currCommand.length) {
@@ -72,6 +74,15 @@ public class Input {
                 currCommand = cmd;
             }
         }
+    }
+
+    private static Modifier getModifier(String mod) throws Exception {
+        for(Modifier m : Modifier.values()) {
+            if(m.equals(mod)) {
+                return m;
+            }
+        }
+        throw new Exception("\"--" + mod + "\" is not a valid modifier.");
     }
 
     private static void process() {
@@ -125,15 +136,15 @@ public class Input {
         switch(currCommand[2]) {
             case "PointSet":
                 result = new Vector2D<>("", null);
-                if(is(CSV)) {
+                if(is(Modifier.CSV)) {
                 }
                 break;
             case "Landmarks":
                 Vector2D<Object, Class> w = Register.get(options.get("set"));
                 PointSet M = (PointSet) w.getFirst();
                 int n = Integer.valueOf(currCommand[3]);
-                result = new Vector2D<>(n + " " + (is(MAXMIN) ? "per maxmin" : "randomly") + " chosen Landmark Points of " + options.get("set"),
-                        new Landmarks(M, n, is(MAXMIN)));
+                result = new Vector2D<>(n + " " + (is(Modifier.MAXMIN) ? "per maxmin" : "randomly") + " chosen Landmark Points of " + options.get("set"),
+                        new Landmarks(M, n, is(Modifier.MAXMIN)));
                 break;
             case "Filtration":
                 Vector2D<Object, Class> v = Register.get(options.get("set"));
@@ -161,9 +172,9 @@ public class Input {
         input();
     }
 
-    public static boolean is(String attribute) {
-        for(String att : attributes) {
-            if(att.equals(attribute)) return true;
+    public static boolean is(Modifier attribute) {
+        for(Modifier att : attributes) {
+            if(att == attribute) return true;
         }
         return false;
     }

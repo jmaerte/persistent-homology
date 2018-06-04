@@ -234,11 +234,11 @@ public class Main {
 //        PointSet<Euclidean> base = PointSetUtils.randomPointSet(2, 2, -100, 100);
 //        PointSet<Euclidean> S = PointSetUtils.getClusteredData(base, new int[]{100000, 100}, new double[]{10d, 10d});
 //        PointSet<Euclidean> S = PointSetUtils.getRoseData(1000, 3, 0.2, 4);
-        Landmarks L = new Landmarks(S, 40, Landmarks.Choice.MAXMIN);
+        Landmarks L = new Landmarks(S, 200, Landmarks.Choice.MAXMIN);
 //        Landmarks R = new Landmarks(S, 2, Landmarks.Choice.RANDOM);
 //        System.out.println(PointSetUtils.toPlot(L, "firebrick1"));
 //        System.out.println(PointSetUtils.toPlot(R, "blue"));
-        Filtration f = Filtration.vietoris(L, 2);
+//        Filtration f = Filtration.vietoris(L, 2);
 //        Filtration fr = Filtration.vietoris(R, 2);
 //        Persistence p = new Persistence(f, false);
 //        Persistence pr = new Persistence(fr, false);

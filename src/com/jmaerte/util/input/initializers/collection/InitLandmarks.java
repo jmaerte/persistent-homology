@@ -3,6 +3,7 @@ package com.jmaerte.util.input.initializers.collection;
 import com.jmaerte.data_struc.point_set.Landmarks;
 import com.jmaerte.data_struc.point_set.PointSet;
 import com.jmaerte.util.input.Input;
+import com.jmaerte.util.input.Modifier;
 import com.jmaerte.util.input.Register;
 import com.jmaerte.util.input.initializers.Initializer;
 import com.jmaerte.util.vector.Vector2D;
@@ -18,8 +19,8 @@ public class InitLandmarks extends Initializer {
         }catch(Exception e) {
             System.out.println(params[1] + " is not fitting here.");
         }
-        return new Vector2D<>("A " + (Input.is(Input.MAXMIN) ? " by maxmin " : " randomly ") + " chosen LandmarkSet of the PointSet " + params[1],
-                new Landmarks(S, n, Input.is(Input.MAXMIN)));
+        return new Vector2D<>("A " + (Input.is(Modifier.MAXMIN) ? " by maxmin " : " randomly ") + " chosen LandmarkSet of the PointSet " + params[1],
+                new Landmarks(S, n, Input.is(Modifier.MAXMIN)));
     }
 
     public String description() {
@@ -35,8 +36,8 @@ public class InitLandmarks extends Initializer {
         return new String[]{};
     }
 
-    public String[] modifiers() {
-        return new String[]{"maxmin"};
+    public Modifier[] modifiers() {
+        return new Modifier[]{Modifier.MAXMIN};
     }
 
     public String command() {

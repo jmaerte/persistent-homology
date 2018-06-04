@@ -10,7 +10,11 @@ import com.jmaerte.util.log.Logger;
 import com.jmaerte.util.vector.Vector2D;
 import com.jmaerte.util.vector.Vector4D;
 import com.jmaerte.visualization.Visualization;
+import processing.awt.PSurfaceAWT;
+import processing.core.PApplet;
+import processing.core.PSurface;
 
+import javax.swing.*;
 import java.util.*;
 
 public class Filtration implements Iterable<BinaryVector> {
@@ -21,6 +25,8 @@ public class Filtration implements Iterable<BinaryVector> {
     private int n;
     private int size;
     private ArrayList<Tree> ordering;
+
+    private PointSet S;
 
     /**Generates a filtration of the k-skeleton of the order-n total complex K^n_{total}.
      * Generate the neighborhood complex of the graph of {@code valuation}.
@@ -57,13 +63,24 @@ public class Filtration implements Iterable<BinaryVector> {
     }
 
     public void draw(PointSet<Euclidean> S, double epsilon, double delta, int width, int height, boolean balls) {
+        this.attachPointSet(S);
+        draw(epsilon, delta, width, height, balls);
+    }
+
+    public void draw(double epsilon, double delta, int width, int height, boolean balls) {
         Visualization.f = this;
         Visualization.epsilon = epsilon;
         Visualization.delta = delta;
         Visualization.dimension = new Vector2D<>(width, height);
-        Visualization.S = S;
+        Visualization.S = this.S;
         Visualization.balls = balls;
-        Visualization.main(new String[]{"com.jmaerte.visualization.Visualization"});
+        Visualization v = new Visualization();
+        PApplet.runSketch(new String[]{"com.jmaerte.visualization.Visualization"}, v);
+        PSurface surface = v.getSurface();
+        PSurfaceAWT.SmoothCanvas smoothCanvas = (PSurfaceAWT.SmoothCanvas)surface.getNative();
+        JFrame frame = (JFrame) smoothCanvas.getFrame();
+        frame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+//        Visualization.main(new String[]{"com.jmaerte.visualization.Visualization"});
     }
 
     /**Generates the maximal dimension-k filtration with the recursion formula:
@@ -216,6 +233,10 @@ public class Filtration implements Iterable<BinaryVector> {
         return n;
     }
 
+    public void attachPointSet(PointSet S) {
+        this.S = S;
+    }
+
     @Override
     public Iterator<BinaryVector> iterator() {
         return new Iterator<BinaryVector>() {
@@ -347,7 +368,9 @@ public class Filtration implements Iterable<BinaryVector> {
 //    }
 
     public static Filtration vietoris(PointSet S, int k) {
-        return new Filtration(S.size(), k, v -> S.d(v.getFirst(), v.getSecond()));
+        Filtration f = new Filtration(S.size(), k, v -> S.d(v.getFirst(), v.getSecond()));
+        f.attachPointSet(S);
+        return f;
     }
 
     /**Generates the k-skeleton of the cech filtration.
@@ -368,6 +391,7 @@ public class Filtration implements Iterable<BinaryVector> {
     public static Filtration cech(PointSet<Euclidean> S, int k) {
         Filtration f = new Filtration(S.size());
         f.generate(k, Util.getCechFunction(S));
+        f.attachPointSet(S);
         return f;
     }
 
@@ -382,12 +406,8 @@ public class Filtration implements Iterable<BinaryVector> {
      * @return W(L)_k
      */
     public static Filtration witness_lazy(Landmarks L, int k) {
-        return new Filtration(L.size(), k, Util.witness(L));
-    }
-
-    public static Filtration example() {
-        Filtration res = new Filtration(3, 2, v -> 0d);
-        res.simplices.getChild(0).getChild(1).getChild(2).filteredVal = 5;
-        return res;
+        Filtration f = new Filtration(L.size(), k, Util.witness(L));
+        f.attachPointSet(L);
+        return f;
     }
 }
