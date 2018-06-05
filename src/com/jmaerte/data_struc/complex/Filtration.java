@@ -75,11 +75,12 @@ public class Filtration implements Iterable<BinaryVector> {
         Visualization.S = this.S;
         Visualization.balls = balls;
         Visualization v = new Visualization();
-        PApplet.runSketch(new String[]{"com.jmaerte.visualization.Visualization"}, v);
-        PSurface surface = v.getSurface();
-        PSurfaceAWT.SmoothCanvas smoothCanvas = (PSurfaceAWT.SmoothCanvas)surface.getNative();
-        JFrame frame = (JFrame) smoothCanvas.getFrame();
-        frame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+        Thread t = new Thread() {
+            public void run() {
+                PApplet.runSketch(new String[]{""}, v);
+            }
+        };
+        t.start();
 //        Visualization.main(new String[]{"com.jmaerte.visualization.Visualization"});
     }
 

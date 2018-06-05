@@ -7,9 +7,12 @@ import com.jmaerte.data_struc.point_set.PointSet;
 import com.jmaerte.util.log.Logger;
 import com.jmaerte.util.vector.Vector2D;
 import peasy.PeasyCam;
+import processing.awt.PSurfaceAWT;
 import processing.core.PApplet;
 import processing.core.PGraphics;
+import processing.core.PSurface;
 
+import javax.swing.*;
 import java.text.DecimalFormat;
 
 public class Visualization extends PApplet {
@@ -61,6 +64,14 @@ public class Visualization extends PApplet {
             pc.setMaximumDistance(500);
             background(0);
         }
+        JFrame jframe = getJFrame();
+        jframe.setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
+    }
+
+    JFrame getJFrame() {
+        PSurfaceAWT surface = (PSurfaceAWT) getSurface();
+        PSurfaceAWT.SmoothCanvas smoothCanvas = (PSurfaceAWT.SmoothCanvas)surface.getNative();
+        return (JFrame) smoothCanvas.getFrame();
     }
 
     public void keyPressed() {
