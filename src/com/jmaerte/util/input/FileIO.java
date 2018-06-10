@@ -4,8 +4,10 @@ import com.jmaerte.data_struc.complex.Filtration;
 import com.jmaerte.data_struc.point_set.PointSet;
 import com.jmaerte.util.calc.Function;
 
+import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileWriter;
 import java.util.ArrayList;
 
 public class FileIO {
@@ -54,10 +56,12 @@ public class FileIO {
                 }
                 isText = !isText;
             }else if(c == delimiter && !isText) {
-                currEl.add(cast.eval(curr));
+                try {
+                    currEl.add(cast.eval(curr));
+                } catch(Exception e) {}
                 curr = "";
             }else if(c == nextElement && !isText) {
-                currEl.add(cast.eval(curr));
+                if(!curr.equals("")) currEl.add(cast.eval(curr));
                 elements.add(packing.eval(currEl));
                 currEl = new ArrayList<>();
                 curr = "";
@@ -72,7 +76,25 @@ public class FileIO {
         return new PointSet<>(elements);
     }
 
-    public static Filtration complexFromFile(String path) {
-        return null;
+    public static <T extends Writable & Function<T, Double>> void toCSV(String path, PointSet<T> S) {
+        toCSV(path, S, "\n");
+    }
+
+    public static <T extends Writable & Function<T, Double>> void toCSV(String path, PointSet<T> S, String nextElement) {
+        try {
+            File f = new File(path);
+            new File(f.getParent()).mkdirs();
+            if(!f.exists()) f.createNewFile();
+            FileWriter fw = new FileWriter(f);
+            BufferedWriter bw = new BufferedWriter(fw);
+            for(int i = 0; i < S.size(); i++) {
+                S.get(i).write(bw);
+                bw.write(nextElement);
+            }
+            bw.flush();
+            bw.close();
+        }catch(Exception e) {
+            e.printStackTrace();
+        }
     }
 }

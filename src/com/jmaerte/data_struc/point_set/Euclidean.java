@@ -36,7 +36,7 @@ public class Euclidean implements Function<Euclidean, Double>, Writable {
 
     public void write(BufferedWriter bw) throws Exception {
         for(int j = 0; j < vector.length; j++) {
-            bw.write((j != 0 ? "\t": "") + vector[j]);
+            bw.write((j != 0 ? ",": "") + vector[j]);
         }
     }
 

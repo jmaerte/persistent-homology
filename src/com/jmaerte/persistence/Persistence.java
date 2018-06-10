@@ -1,16 +1,19 @@
 package com.jmaerte.persistence;
 
 import com.jmaerte.data_struc.complex.Filtration;
+import com.jmaerte.data_struc.point_set.Euclidean;
+import com.jmaerte.data_struc.point_set.Landmarks;
+import com.jmaerte.data_struc.point_set.PointSet;
 import com.jmaerte.lin_alg.BinaryVector;
 import com.jmaerte.util.calc.Util;
 import com.jmaerte.util.log.Logger;
+import com.jmaerte.util.vector.Vector2D;
 import com.jmaerte.util.vector.Vector5D;
 
 import java.text.DecimalFormat;
 import java.text.DecimalFormatSymbols;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Locale;
+import java.util.*;
+import java.util.stream.Collectors;
 
 /**
  * Created by Julian on 27/02/2018.
@@ -116,9 +119,9 @@ public class Persistence {
 //        System.out.println(Arrays.toString(zeroes));
         Logger.close();
         // EXPERIMENTAL - TRYING TO FREE UP SPACE AFTER CALC.
-        matrix = null;
-        low = null;
-        zeroes = null;
+//        matrix = null;
+//        low = null;
+//        zeroes = null;
     }
 
     private void evaluate() {
@@ -358,5 +361,72 @@ public class Persistence {
             }
         }
         return av / amount;
+    }
+
+    /**
+     *
+     * @param S PointSet in Euclidean space.
+     * @param k Amount of observed points
+     * @param z The element of S to look around.
+     * @return
+     */
+    public static Persistence[] dimensionalityReduction(PointSet<Euclidean> S, int k, int z, double[] radii) {
+        Persistence[] res = new Persistence[radii.length];
+        int[] neighbors = getNeighbors(S, k, z);
+        double[] x = new double[S.get(0).vector.length];
+        for(int i = 0; i < x.length; i++) {
+            for(int j = 0; j < neighbors.length; j++) {
+                x[i] += S.get(neighbors[j]).get(i);
+            }
+            x[i] *= 1d/neighbors.length;
+        }
+
+        Euclidean e = Euclidean.fromArray(x, S.get(0).q);
+        for(int i = 0; i < radii.length; i++) {
+            ArrayList<Integer> elements = new ArrayList<>();
+            for(int n : neighbors) {
+                if(e.eval(S.get(n)) > radii[i]) {
+                    elements.add(n);
+                }
+            }
+            int[] outer = elements.stream().mapToInt(Integer::intValue).toArray();
+            System.out.println(outer.length);
+            Landmarks<Euclidean> L = new Landmarks<>(S.getSubSet(outer), (int)(20 * Math.log10(outer.length)), true);
+            Filtration f = Filtration.cech(L, S.get(0).vector.length + 1);
+            res[i] = new Persistence(f, false);
+            System.out.println(res[i].toBarcodePlot(0,3));
+            f.draw(L, 0, f.get(f.size() - 1).val() + 1, 1000, 1000, true);
+        }
+        return res;
+    }
+
+    private static int[] getNeighbors(PointSet<Euclidean> S, int k, int z) {
+        PriorityQueue<Vector2D<Integer, Double>> queue = new PriorityQueue<>(new Comparator<Vector2D<Integer, Double>>() {
+            @Override
+            public int compare(Vector2D<Integer, Double> o1, Vector2D<Integer, Double> o2) {
+                double x = o2.getSecond() - o1.getSecond();
+                return (int) (Math.signum(x) * (Math.ceil(Math.abs(x))));
+            }
+        });
+        double[] d = new double[S.size()];
+        for(int i = 0; i < S.size(); i++) {
+            if(queue.size() < k) {
+                queue.add(new Vector2D<>(i, S.d(i, z)));
+            }else {
+                Vector2D<Integer, Double> root = queue.peek();
+                d[i] = S.d(i, z);
+                if(root.getSecond() > d[i]) {
+                    queue.poll();
+                    queue.add(new Vector2D<>(i, d[i]));
+                }
+            }
+        }
+        double max = queue.peek().getSecond();
+        for(int i = 0; i < S.size(); i++) {
+            if(d[i] == max) {
+                queue.add(new Vector2D<>(i, d[i]));
+            }
+        }
+        return Arrays.stream(queue.toArray((Vector2D<Integer, Double>[]) new Vector2D[queue.size()])).mapToInt(v -> v.getFirst()).toArray();
     }
 }

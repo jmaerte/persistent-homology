@@ -7,26 +7,23 @@ import com.jmaerte.data_struc.point_set.PointSet;
 import com.jmaerte.util.log.Logger;
 import com.jmaerte.util.vector.Vector2D;
 import peasy.PeasyCam;
-import processing.awt.PSurfaceAWT;
 import processing.core.PApplet;
 import processing.core.PGraphics;
-import processing.core.PSurface;
 
-import javax.swing.*;
 import java.text.DecimalFormat;
 
 public class Visualization extends PApplet {
 
     private static DecimalFormat df = new DecimalFormat("#.##");
     public static double epsilon = 0, delta = -1;
-    public static Vector2D<Integer, Integer> dimension = new Vector2D<>(500,500);
+    public static int dimension = 500;
     public static Filtration f = null;
     public static PointSet<Euclidean> S;
     public static boolean balls;
 
     private double curr;
     private int last = 1;
-    private float scaleX, scaleY;
+    private float scale;
     private PGraphics frame;
     private boolean pause = true;
     private boolean save;
@@ -34,7 +31,7 @@ public class Visualization extends PApplet {
 
     public void settings() {
         if(S.get(0).vector.length == 2) {
-            size(dimension.getFirst(), dimension.getSecond());
+            size(dimension, dimension);
             Tree t = f.get(0);
             double maxX = -1;
             double maxY = -1;
@@ -43,10 +40,11 @@ public class Visualization extends PApplet {
                 if(Math.abs(v[0]) > maxX) maxX = Math.abs(v[0]);
                 if(Math.abs(v[1]) > maxY) maxY = Math.abs(v[1]);
             }
-            scaleX = (width - 50) / (float)maxX;
-            scaleY = (height - 50) / (float)maxY;
+            double max = Math.max(maxX, maxY);
+            scale = (dimension - 50) / (float)max;
+            scale /= 3;
         }else {
-            size(dimension.getFirst(), dimension.getSecond(), P3D);
+            size(dimension, dimension, P3D);
         }
     }
 
@@ -60,18 +58,10 @@ public class Visualization extends PApplet {
             fill(0);
         }else {
             pc = new PeasyCam(this, 0, 0, 0, 100);
-            pc.setMinimumDistance(50);
+            pc.setMinimumDistance(0);
             pc.setMaximumDistance(500);
             background(0);
         }
-        JFrame jframe = getJFrame();
-        jframe.setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
-    }
-
-    JFrame getJFrame() {
-        PSurfaceAWT surface = (PSurfaceAWT) getSurface();
-        PSurfaceAWT.SmoothCanvas smoothCanvas = (PSurfaceAWT.SmoothCanvas)surface.getNative();
-        return (JFrame) smoothCanvas.getFrame();
     }
 
     public void keyPressed() {
@@ -111,7 +101,7 @@ public class Visualization extends PApplet {
                 if(S.get(0).vector.length == 2) {
                     frame.stroke(0);
                     frame.strokeWeight(1);
-                    frame.point((float)S.get(vertex[0]).vector[0] * scaleX / 2, (float)S.get(vertex[0]).vector[1] * scaleY / 2);
+                    frame.point((float)S.get(vertex[0]).vector[0] * scale / 2, (float)S.get(vertex[0]).vector[1] * scale / 2);
                 }else {
                     frame.point((float)S.get(vertex[0]).vector[0], (float)S.get(vertex[0]).vector[1], (float)S.get(vertex[0]).vector[2]);
                 }
@@ -136,7 +126,7 @@ public class Visualization extends PApplet {
                     for(j = 0; j < vertex.length; j++) {
                         double[] v = S.get(vertex[j]).vector;
                         if(S.get(0).vector.length == 2) {
-                            frame.vertex((float)v[0] * scaleX / 2, (float)v[1] * scaleY / 2);
+                            frame.vertex((float)v[0] * scale / 2, (float)v[1] * scale / 2);
                         }else {
                             frame.vertex((float)v[0], (float)v[1], (float)v[2]);
                         }
@@ -144,8 +134,8 @@ public class Visualization extends PApplet {
                     frame.endShape();
                 }else {
                     if(S.get(0).vector.length == 2) {
-                        frame.line((float)S.get(vertex[0]).vector[0] * scaleX / 2, (float)S.get(vertex[0]).vector[1] * scaleY / 2,
-                                (float)S.get(vertex[1]).vector[0] * scaleX / 2, (float)S.get(vertex[1]).vector[1] * scaleY / 2);
+                        frame.line((float)S.get(vertex[0]).vector[0] * scale / 2, (float)S.get(vertex[0]).vector[1] * scale / 2,
+                                (float)S.get(vertex[1]).vector[0] * scale / 2, (float)S.get(vertex[1]).vector[1] * scale / 2);
                     }else {
                         frame.line((float)S.get(vertex[0]).vector[0], (float)S.get(vertex[0]).vector[1], (float)S.get(vertex[0]).vector[2],
                                 (float)S.get(vertex[1]).vector[0], (float)S.get(vertex[1]).vector[1], (float)S.get(vertex[1]).vector[2]);
@@ -157,10 +147,10 @@ public class Visualization extends PApplet {
         }
         if(balls) {
             for(int l = 0; l < f.vertexSize(); l++) {
-                fill(255, 0, 0, 30);
+                fill(255, 0, 0, 15);
                 stroke(0);
                 strokeWeight(1);
-                ellipse((float)S.get(l).vector[0] * scaleX / 2, (float)S.get(l).vector[1] * scaleY / 2,scaleX * (float)curr / 2,scaleY * (float)curr / 2);
+                ellipse((float)S.get(l).vector[0] * scale / 2, (float)S.get(l).vector[1] * scale / 2,scale * (float)curr,scale * (float)curr);
             }
         }
         if(S.get(0).vector.length == 2) {

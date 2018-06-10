@@ -144,17 +144,16 @@ public class PointSetUtils {
      * onto the sub-manifold. Examples for such charts are up to a less-dimensional sub-manifold bijective maps of the torus or the sphere.
      *
      * @param n amount of points to generate
-     * @param d dimension of the ambient euclidean space of the target-manifold.
-     * @param boundary the boundary points of the pre-image cuboid.
+     * @param boundary the boundary points of the pre-image cuboid, 2j, 2j+1 is the interval in j-th dimension.
      * @param chart the mapping to use on the generated points
      * @return
      */
-    public static PointSet<Euclidean> getFromMapping(int n, int d, double[] boundary, Function<double[], double[]> chart) {
+    public static PointSet<Euclidean> getFromMapping(int n, double[] boundary, Function<double[], double[]> chart) {
         ArrayList<Euclidean> arr = new ArrayList<>();
         for(int i = 0; i < n; i++) {
-            double[] point = new double[boundary.length];
-            for(int j = 0; j < boundary.length; j++) {
-                point[j] = ThreadLocalRandom.current().nextDouble(0, boundary[j]);
+            double[] point = new double[boundary.length/2];
+            for(int j = 0; j < boundary.length/2; j++) {
+                point[j] = ThreadLocalRandom.current().nextDouble(boundary[2 * j], boundary[2*j + 1]);
             }
             point = chart.eval(point);
             arr.add(Euclidean.fromArray(point, ScalarProduct.getStandard(point.length)));

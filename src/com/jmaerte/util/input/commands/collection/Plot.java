@@ -14,7 +14,7 @@ public class Plot extends Command {
         Vector2D<Object, Class> v = Register.get(params[0]);
         if(v.getSecond().getSimpleName().equals("Filtration")) {
             Filtration f = (Filtration) v.getFirst();
-            f.draw(0, f.get(f.size() - 1).val() + 1, 1000, 1000, Input.is(Modifier.BALLS));
+            f.draw(0, f.get(f.size() - 1).val() + 1, 1000, Input.is(Modifier.BALLS));
         }else if(v.getSecond().getSimpleName().equals("Persistence")) {
             Persistence p = (Persistence) v.getFirst();
             String stK = Input.options.get("k");

@@ -12,12 +12,9 @@ import java.util.ArrayList;
  * will be necessary in further progress.
  *
  */
-public class PointSet<T extends Writable & Function<T, Double>> implements Metric<Integer> {
-
-    private static int ID = 0;
+public abstract class PointSet<T extends Writable> implements Metric<T> {
 
     private ArrayList<T> list;
-    private int id;
 
     public PointSet() {
         this(new ArrayList<>());
@@ -25,7 +22,6 @@ public class PointSet<T extends Writable & Function<T, Double>> implements Metri
 
     public PointSet(ArrayList<T> list) {
         this.list = list;
-        id = ID++;
     }
 
     public T get(int i) {
@@ -37,10 +33,27 @@ public class PointSet<T extends Writable & Function<T, Double>> implements Metri
     }
 
     public double d(Integer i, Integer j) {
-        return list.get(i).eval(list.get(j));
+        return d(get(i), get(j));
     }
 
-    public int id() {
-        return id;
+    public PointSet<T> getSubSet(int[] subset) {
+        ArrayList<T> sub = new ArrayList<>();
+        for(int i = 0; i < subset.length; i++) {
+            sub.add(list.get(subset[i]));
+        }
+        PointSet<T> sup = this;
+        return new PointSet<T>(sub) {
+            public double d(T t, T k) {
+                return sup.d(t, k);
+            }
+
+            @Override
+            public Metadata<T> getMetadata() {
+                return sup.getMetadata();
+            }
+        };
     }
+
+
+    public abstract Metadata<T> getMetadata();
 }

@@ -11,6 +11,8 @@ import com.jmaerte.util.input.Register;
 import com.jmaerte.util.input.commands.Commands;
 
 import java.util.ArrayList;
+import java.util.PriorityQueue;
+import java.util.concurrent.ThreadLocalRandom;
 
 public class Main {
 
@@ -223,18 +225,58 @@ public class Main {
 //        System.out.println(centers);
 //        System.out.println(S);
 
-//        PointSet<Euclidean> S = FileIO.fromCSV("/home/julian/Desktop/data.csv", Double::valueOf,
-//                v -> Euclidean.fromArray(v, ScalarProduct.getStandard(v.size())), '\n', ',', '"');
+//        PointSet<Euclidean> S = FileIO.fromCSV("C:\\Users\\Julian\\Desktop\\data.dat", Double::valueOf,
+//                v -> Euclidean.fromArray(v, ScalarProduct.getStandard(v.size())), '\n', ' ', '"');
+
+
+        // ------------------------ FILE CREATION SECTION ----------------------------------
+//        PointSet<Euclidean> orthogonal = PointSetUtils.getFromMapping(100000, new double[]{-200, 200, -100, 100}, v -> {
+//            if(v[0] < 0) {
+//                return new double[]{v[0] + 100, v[1], 0};
+//            }else {
+//                return new double[]{0, v[1], v[0] - 100};
+//            }
+//        });
+////
+//        FileIO.toCSV("C:\\Users\\Julian\\Desktop\\latex\\Bachelor Arbeit\\new\\dat\\orthogonal\\orthogonal.dat", orthogonal);
+//        System.exit(0);
+
+
+
+        PointSet<Euclidean> parallels = FileIO.fromCSV("C:\\Users\\Julian\\Desktop\\latex\\Bachelor Arbeit\\new\\dat\\parallels\\parallels.dat", Double::valueOf,
+                v -> Euclidean.fromArray(v, ScalarProduct.getStandard(v.size())), '\n', ',', '\"');
+
+        int k = 3400;
+        double[] radii = new double[]{12};
+        Persistence[] p = Persistence.dimensionalityReduction(parallels, k, 0, radii);
+        System.out.println(p[0].toBarcodePlot(0, 3));
+
+//        ArrayList<Euclidean> list = new ArrayList<>();
+//        list.add(Euclidean.fromArray(new double[]{-5.5d, 2d}, ScalarProduct.getStandard(2)));
+//        list.add(Euclidean.fromArray(new double[]{-4.5d, 1d}, ScalarProduct.getStandard(2)));
+//        list.add(Euclidean.fromArray(new double[]{-2.5d, 1d}, ScalarProduct.getStandard(2)));
+//        list.add(Euclidean.fromArray(new double[]{-2.5d, 2.5d}, ScalarProduct.getStandard(2)));
+//        list.add(Euclidean.fromArray(new double[]{-4d, 4d}, ScalarProduct.getStandard(2)));
+//        list.add(Euclidean.fromArray(new double[]{1d, -1d}, ScalarProduct.getStandard(2)));
+//        list.add(Euclidean.fromArray(new double[]{2d, 2.5d}, ScalarProduct.getStandard(2)));
+//        list.add(Euclidean.fromArray(new double[]{3.5d, 1d}, ScalarProduct.getStandard(2)));
+//
+//        PointSet<Euclidean> dummy = new PointSet<>(list);
+//        Filtration f = Filtration.cech(dummy, 3);
+//        f.draw(dummy, 0, f.get(f.size() - 1).val() + 1, 1000, 1000, true);
+
+
+//        Filtration f = Filtration.cech(new Landmarks<>(parallels, 1000, false), 0);
+//        f.draw(parallels, 0, f.get(f.size() - 1).val() + 1, 1000, 1000, true);
 
 //        PointSet<Lexicographic> S = FileIO.fromCSV("/home/julian/Desktop/data.txt", v -> v,
 //                  v -> Lexicographic.fromString(v), '\n', ',', '"');
 
-        PointSet<Euclidean> S = PointSetUtils.getFromMapping(1000, 3, new double[]{2*Math.PI, 2*Math.PI}, PointSetUtils.torusChart( 5, 10));
+//        PointSet<Euclidean> S = PointSetUtils.getFromMapping(1000, 3, new double[]{2*Math.PI, 2*Math.PI}, PointSetUtils.torusChart( 5, 10));
 //        PointSet<Euclidean> S = PointSetUtils.getSphereData(2, 100, 1, 4);
 //        PointSet<Euclidean> base = PointSetUtils.randomPointSet(2, 2, -100, 100);
 //        PointSet<Euclidean> S = PointSetUtils.getClusteredData(base, new int[]{100000, 100}, new double[]{10d, 10d});
 //        PointSet<Euclidean> S = PointSetUtils.getRoseData(1000, 3, 0.2, 4);
-        Landmarks L = new Landmarks(S, 200, Landmarks.Choice.MAXMIN);
 //        Landmarks R = new Landmarks(S, 2, Landmarks.Choice.RANDOM);
 //        System.out.println(PointSetUtils.toPlot(L, "firebrick1"));
 //        System.out.println(PointSetUtils.toPlot(R, "blue"));
@@ -244,9 +286,18 @@ public class Main {
 //        Persistence pr = new Persistence(fr, false);
 //        System.out.println(p.toBarcodePlot(0, 2));
 //        System.out.println(pr.toBarcodePlot(0, 2));
-//        f.draw(L, 0, f.get(f.size() - 1).val() + 1, 1000, 1000, true);
 
-        Register.push("S", "PointSet from mapping", L);
+        // Dimensionality Acknowledge
+//        int k = 1000;
+//        int f = ThreadLocalRandom.current().nextInt(0, parallels.size());
+//        double[] radii = new double[]{10};
+//        Persistence[] p = Persistence.dimensionalityReduction(parallels,k,f, radii);
+//        System.out.println(p[0].toBarcodePlot(0, 3));
+
+//        Landmarks L = new Landmarks(S, 200, Landmarks.Choice.MAXMIN);
+//        Filtration f = Filtration.vietoris(L, 2);
+//        f.draw(L, 0, f.get(f.size() - 1).val() + 1, 1000, 1000, true);
+//        Register.push("S", "PointSet from mapping", L);
         Input.main();
         Commands.print();
 
