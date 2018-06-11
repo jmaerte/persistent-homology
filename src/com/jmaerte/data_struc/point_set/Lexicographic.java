@@ -1,12 +1,12 @@
 package com.jmaerte.data_struc.point_set;
 
 import com.jmaerte.util.calc.Function;
-import com.jmaerte.util.input.Writable;
+import com.jmaerte.util.input.Writer;
 
 import java.io.BufferedWriter;
 import java.util.ArrayList;
 
-public class Lexicographic implements Function<Lexicographic, Double> , Writable {
+public class Lexicographic implements Function<Lexicographic, Double> {
 
     private String s;
 

@@ -1,8 +1,8 @@
 package com.jmaerte.data_struc.point_set;
 
-import com.jmaerte.util.calc.Function;
-import com.jmaerte.util.input.Writable;
+import com.jmaerte.util.input.Writer;
 
+import java.io.BufferedWriter;
 import java.util.ArrayList;
 
 /**
@@ -12,15 +12,19 @@ import java.util.ArrayList;
  * will be necessary in further progress.
  *
  */
-public abstract class PointSet<T extends Writable> implements Metric<T> {
+public abstract class PointSet<T> implements Metric<T>, Writer<T> {
 
     private ArrayList<T> list;
+    private int id;
+
+    private static int ID = 0;
 
     public PointSet() {
         this(new ArrayList<>());
     }
 
     public PointSet(ArrayList<T> list) {
+        id = ID++;
         this.list = list;
     }
 
@@ -30,6 +34,10 @@ public abstract class PointSet<T extends Writable> implements Metric<T> {
 
     public int size() {
         return list.size();
+    }
+
+    public int id() {
+        return id;
     }
 
     public double d(Integer i, Integer j) {
@@ -51,9 +59,19 @@ public abstract class PointSet<T extends Writable> implements Metric<T> {
             public Metadata<T> getMetadata() {
                 return sup.getMetadata();
             }
+
+            @Override
+            public void write(BufferedWriter bw, T t) throws Exception {
+                sup.write(bw, t);
+            }
         };
     }
 
+    public void write(BufferedWriter bw) throws Exception {
+        for(int i = 0; i < size(); i++) {
+            write(bw, list.get(i));
+        }
+    }
 
     public abstract Metadata<T> getMetadata();
 }

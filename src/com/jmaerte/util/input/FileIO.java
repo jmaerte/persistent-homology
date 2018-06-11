@@ -1,6 +1,7 @@
 package com.jmaerte.util.input;
 
-import com.jmaerte.data_struc.complex.Filtration;
+import com.jmaerte.data_struc.point_set.Metadata;
+import com.jmaerte.data_struc.point_set.Metric;
 import com.jmaerte.data_struc.point_set.PointSet;
 import com.jmaerte.util.calc.Function;
 
@@ -29,7 +30,7 @@ public class FileIO {
      * @param <K> T[]-like Object.
      * @return PointSet<K> consisting of the elements described in the file.
      */
-    public static <T, K extends Writable & Function<K, Double>> PointSet<K> fromCSV(String path, Function<String, T> cast, Function<ArrayList<T>, K> packing, char nextElement, char delimiter, char textQualifier) {
+    public static <T, K> PointSet<K> fromCSV(String path, Function<String, T> cast, Function<ArrayList<T>, K> packing, char nextElement, char delimiter, char textQualifier, Function<K, Metric<K>> m, Function<K, Metadata<K>> meta, Function<K, Writer<K>> writer) {
         File f = new File(path);
         byte[] data = null;
         try {
@@ -73,24 +74,30 @@ public class FileIO {
                 }
             }
         }
-        return new PointSet<>(elements);
+        return new PointSet<K>(elements) {
+            public double d(K k, K v) {
+                return m.eval(elements.get(0)).d(k,v);
+            }
+
+            public Metadata<K> getMetadata() {
+                return meta.eval(elements.get(0));
+            }
+
+            @Override
+            public void write(BufferedWriter bw, K k) throws Exception {
+                writer.eval(elements.get(0)).write(bw, k);
+            }
+        };
     }
 
-    public static <T extends Writable & Function<T, Double>> void toCSV(String path, PointSet<T> S) {
-        toCSV(path, S, "\n");
-    }
-
-    public static <T extends Writable & Function<T, Double>> void toCSV(String path, PointSet<T> S, String nextElement) {
+    public static <T extends Writer & Function<T, Double>> void toCSV(String path, PointSet<T> S) {
         try {
             File f = new File(path);
             new File(f.getParent()).mkdirs();
             if(!f.exists()) f.createNewFile();
             FileWriter fw = new FileWriter(f);
             BufferedWriter bw = new BufferedWriter(fw);
-            for(int i = 0; i < S.size(); i++) {
-                S.get(i).write(bw);
-                bw.write(nextElement);
-            }
+            S.write(bw);
             bw.flush();
             bw.close();
         }catch(Exception e) {

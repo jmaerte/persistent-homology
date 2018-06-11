@@ -3,7 +3,7 @@ package com.jmaerte.data_struc.point_set;
 /**
  * Created by Julian on 27/03/2018.
  */
-public abstract class ScalarProduct {
+public abstract class ScalarProduct implements Metric<double[]> {
 
     public abstract double scalar(double[] a, double[] b);
     abstract int dimension();

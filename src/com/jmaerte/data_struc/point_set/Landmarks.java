@@ -2,9 +2,10 @@ package com.jmaerte.data_struc.point_set;
 
 import com.jmaerte.util.calc.Function;
 import com.jmaerte.util.calc.Util;
-import com.jmaerte.util.input.Writable;
+import com.jmaerte.util.input.Writer;
 import com.jmaerte.util.log.Logger;
 
+import java.io.BufferedWriter;
 import java.util.Arrays;
 import java.util.concurrent.ThreadLocalRandom;
 
@@ -12,7 +13,7 @@ import java.util.concurrent.ThreadLocalRandom;
  * equipped with an matrix D of Size l.length x (s.size() - l.length) where D[i,j] = d(l[i], S.get(j)).
  *
  */
-public class Landmarks<T extends Writable & Function<T, Double>> extends PointSet<T> {
+public class Landmarks<T> extends PointSet<T> {
 
     private PointSet<T> S;
     private double[][] D;
@@ -126,11 +127,19 @@ public class Landmarks<T extends Writable & Function<T, Double>> extends PointSe
     }
 
     public double d(T x, T y) {
-        return x.eval(y);
+        return S.d(x, y);
     }
 
     public PointSet<T> pointSet() {
         return S;
+    }
+
+    public void write(BufferedWriter bw, T t) throws Exception {
+        S.write(bw, t);
+    }
+
+    public Metadata<T> getMetadata() {
+        return S.getMetadata();
     }
 
     public int[] landmarks() {

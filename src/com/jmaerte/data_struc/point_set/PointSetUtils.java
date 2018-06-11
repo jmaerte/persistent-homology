@@ -1,14 +1,13 @@
 package com.jmaerte.data_struc.point_set;
 
 import com.jmaerte.util.calc.Function;
+import com.jmaerte.util.input.Writer;
 import com.jmaerte.util.log.Logger;
 
 import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileWriter;
-import java.text.DateFormat;
 import java.text.DecimalFormat;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Random;
 import java.util.concurrent.ThreadLocalRandom;
@@ -50,25 +49,41 @@ public class PointSetUtils {
 //        return ps;
 //    }
 //
-    public static PointSet<Euclidean> randomPointSet(int n, int d, double min, double max) {
-        ArrayList<Euclidean> array = new ArrayList<>();
+    public static PointSet<double[]> randomPointSet(int n, int d, double min, double max) {
+        ArrayList<double[]> array = new ArrayList<>();
         Random r = new Random();
         for(int i = 0; i < n; i++) {
             double[] v = new double[d];
             for(int j = 0; j < d; j++) {
                 v[j] = r.nextDouble() * (max - min) + min;
             }
-            array.add(Euclidean.fromArray(v, ScalarProduct.getStandard(d)));
+            array.add(v);
         }
-        return new PointSet<>(array);
+        return new PointSet<double[]>(array) {
+            Writer writer = Writer.DoubleArray(",", "\n");
+
+            public double d(double[] v, double[] w) {
+                return ScalarProduct.getStandard(d).d(v,w);
+            }
+
+            @Override
+            public Metadata<double[]> getMetadata() {
+                return Metadata.getEuclidean(d);
+            }
+
+            @Override
+            public void write(BufferedWriter bw, double[] doubles) throws Exception {
+                writer.write(bw, doubles);
+            }
+        };
     }
 
     /**Generates sphere-like data for testing purposes.
      *
      * @return
      */
-    public static PointSet<Euclidean> getSphereData(int d, int n, double eps, double radius) {
-        ArrayList<Euclidean> arr = new ArrayList<>();
+    public static PointSet<double[]> getSphereData(int d, int n, double eps, double radius) {
+        ArrayList<double[]> arr = new ArrayList<>();
         for(int i = 0; i < n; i++) {
             double[] point = new double[d];
             double sqSum = 0;
@@ -83,9 +98,25 @@ public class PointSetUtils {
             for(int p = 0; p < d; p++) {
                 point[p] = radius / sum * point[p] + noise[p];
             }
-            arr.add(Euclidean.fromArray(point, ScalarProduct.getStandard(d)));
+            arr.add(point);
         }
-        return new PointSet<>(arr);
+        return new PointSet<double[]>(arr) {
+            Writer writer = Writer.DoubleArray(",", "\n");
+
+            public double d(double[] v, double[] w) {
+                return ScalarProduct.getStandard(d).d(v,w);
+            }
+
+            @Override
+            public Metadata<double[]> getMetadata() {
+                return Metadata.getEuclidean(d);
+            }
+
+            @Override
+            public void write(BufferedWriter bw, double[] doubles) throws Exception {
+                writer.write(bw, doubles);
+            }
+        };
     }
 
     /**Returns a point set in a rose structure with some artificial noise.
@@ -96,8 +127,8 @@ public class PointSetUtils {
      * @param radius the radius of the petals(the norm of the extremal point from origin)
      * @return the described rose set.
      */
-    public static PointSet<Euclidean> getRoseData(int n, int k, double eps, double radius) {
-        ArrayList<Euclidean> arr = new ArrayList<>();
+    public static PointSet<double[]> getRoseData(int n, int k, double eps, double radius) {
+        ArrayList<double[]> arr = new ArrayList<>();
         double theta;
         for(int i = 0; i < n; i++) {
             theta = ThreadLocalRandom.current().nextDouble(0, 2 * Math.PI);
@@ -106,18 +137,48 @@ public class PointSetUtils {
                     factor * Math.cos(theta) + (eps > 0 ? ThreadLocalRandom.current().nextDouble(0, eps) : 0),
                     factor * Math.sin(theta) + (eps > 0 ? ThreadLocalRandom.current().nextDouble(0, eps) : 0)
             };
-            arr.add(Euclidean.fromArray(v, ScalarProduct.getStandard(2)));
+            arr.add(v);
         }
-        return new PointSet<>(arr);
+        return new PointSet<double[]>(arr) {
+            Writer writer = Writer.DoubleArray(",", "\n");
+
+            public double d(double[] v, double[] w) {
+                return ScalarProduct.getStandard(2).d(v,w);
+            }
+
+            @Override
+            public Metadata<double[]> getMetadata() {
+                return Metadata.getEuclidean(2);
+            }
+
+            @Override
+            public void write(BufferedWriter bw, double[] doubles) throws Exception {
+                writer.write(bw, doubles);
+            }
+        };
     }
 
-    public static PointSet getClusteredData(PointSet<Euclidean> S, int[] k, double[] radius) {
+    public static PointSet<double[]> getClusteredData(PointSet<double[]> S, int[] k, double[] radius) {
         int n = S.size();
-        ArrayList<Euclidean> arr = new ArrayList<>();
+        ArrayList<double[]> arr = new ArrayList<>();
         for(int i = 0; i < n; i++) {
-            createCluster(arr, S.get(i).vector, k[i], radius[i]);
+            createCluster(arr, S.get(i), k[i], radius[i]);
         }
-        return new PointSet<>(arr);
+        return new PointSet<double[]>(arr) {
+            public double d(double[] v, double[] w) {
+                return S.d(v, w);
+            }
+
+            @Override
+            public Metadata<double[]> getMetadata() {
+                return S.getMetadata();
+            }
+
+            @Override
+            public void write(BufferedWriter bw, double[] doubles) throws Exception {
+                S.write(bw, doubles);
+            }
+        };
     }
 
     /**Creates a cluster around a given center c with radius r.
@@ -128,14 +189,14 @@ public class PointSetUtils {
      * @param k the magnitude of the cluster.
      * @param r radius of the cluster
      */
-    private static void createCluster(ArrayList<Euclidean> res, double[] center, int k, double r) {
+    private static void createCluster(ArrayList<double[]> res, double[] center, int k, double r) {
         int d = center.length;
         for(int l = 0; l < k; l++) {
             double[] v = new double[d];
             for(int j = 0; j < d; j++) {
                 v[j] = center[j] + ThreadLocalRandom.current().nextDouble(-r, r);
             }
-            res.add(Euclidean.fromArray(v, ScalarProduct.getStandard(d)));
+            res.add(v);
         }
     }
 
@@ -148,17 +209,36 @@ public class PointSetUtils {
      * @param chart the mapping to use on the generated points
      * @return
      */
-    public static PointSet<Euclidean> getFromMapping(int n, double[] boundary, Function<double[], double[]> chart) {
-        ArrayList<Euclidean> arr = new ArrayList<>();
+    public static PointSet<double[]> getFromMapping(int n, double[] boundary, Function<double[], double[]> chart) {
+        ArrayList<double[]> arr = new ArrayList<>();
+        int dim = -1;
         for(int i = 0; i < n; i++) {
             double[] point = new double[boundary.length/2];
             for(int j = 0; j < boundary.length/2; j++) {
                 point[j] = ThreadLocalRandom.current().nextDouble(boundary[2 * j], boundary[2*j + 1]);
             }
             point = chart.eval(point);
-            arr.add(Euclidean.fromArray(point, ScalarProduct.getStandard(point.length)));
+            if(dim < 0) dim = point.length;
+            arr.add(point);
         }
-        return new PointSet(arr);
+        final int dimension = dim;
+        return new PointSet<double[]>(arr) {
+            Writer writer = Writer.DoubleArray(",", "\n");
+
+            public double d(double[] v, double[] w) {
+                return ScalarProduct.getStandard(dimension).d(v,w);
+            }
+
+            @Override
+            public Metadata<double[]> getMetadata() {
+                return Metadata.getEuclidean(dimension);
+            }
+
+            @Override
+            public void write(BufferedWriter bw, double[] doubles) throws Exception {
+                writer.write(bw, doubles);
+            }
+        };
     }
 
     public static Function<double[], double[]> torusChart(double r, double R) {
@@ -198,11 +278,7 @@ public class PointSetUtils {
         try {
             ps.createNewFile();
             BufferedWriter bw = new BufferedWriter(new FileWriter(ps));
-            for(int i = 0; i < S.size(); i++) {
-                bw.write(i + "\t");
-                S.get(i).write(bw);
-                bw.newLine();
-            }
+            S.write(bw);
             bw.flush();
             bw.close();
         }catch(Exception e) {

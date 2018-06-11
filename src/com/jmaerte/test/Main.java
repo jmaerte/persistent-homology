@@ -8,6 +8,7 @@ import com.jmaerte.util.calc.Util;
 import com.jmaerte.util.input.FileIO;
 import com.jmaerte.util.input.Input;
 import com.jmaerte.util.input.Register;
+import com.jmaerte.util.input.Writer;
 import com.jmaerte.util.input.commands.Commands;
 
 import java.util.ArrayList;
@@ -243,8 +244,9 @@ public class Main {
 
 
 
-        PointSet<Euclidean> parallels = FileIO.fromCSV("C:\\Users\\Julian\\Desktop\\latex\\Bachelor Arbeit\\new\\dat\\parallels\\parallels.dat", Double::valueOf,
-                v -> Euclidean.fromArray(v, ScalarProduct.getStandard(v.size())), '\n', ',', '\"');
+        PointSet<double[]> parallels = FileIO.fromCSV("C:\\Users\\Julian\\Desktop\\latex\\Bachelor Arbeit\\new\\dat\\parallels\\parallels.dat", Double::valueOf,
+                list -> list.stream().mapToDouble(d -> d).toArray(), '\n', ',', '\"', d -> ScalarProduct.getStandard(d.length),
+                d -> Metadata.getEuclidean(d.length), d -> Writer.DoubleArray(",", "\n"));
 
         int k = 3400;
         double[] radii = new double[]{12};
