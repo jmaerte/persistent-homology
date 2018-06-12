@@ -394,10 +394,11 @@ public class Persistence {
             }
             int[] outer = elements.stream().mapToInt(Integer::intValue).toArray();
             System.out.println(outer.length);
-            Landmarks<double[]> L = new Landmarks<>(S.getSubSet(outer), (int)(20 * Math.log10(outer.length)), true);
-            Filtration f = Filtration.cech(L, dim + 1);
-            f.draw(L, 0, f.get(f.size() - 1).val() + 1, 1000, true);
+            Landmarks<double[]> L = new Landmarks<>(S.getSubSet(outer), 2 * dim, true);
+            Filtration f = Filtration.vietoris(L, dim);
+//            f.draw(L, 0, f.get(f.size() - 1).val() + 1, 1000, true);
             res[i] = new Persistence(f, false);
+            System.out.println(res[i].toBarcodePlot(0, dim - 1));
         }
         return res;
     }

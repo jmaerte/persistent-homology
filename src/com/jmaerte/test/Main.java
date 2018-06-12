@@ -244,12 +244,12 @@ public class Main {
 
 
 
-        PointSet<double[]> parallels = FileIO.fromCSV("C:\\Users\\Ina\\Desktop\\Julian\\latex\\Bachelor Arbeit\\new\\dat\\parallels\\parallels.dat", Double::valueOf,
+        PointSet<double[]> parallels = FileIO.fromCSV("/home/julian/Desktop/data.csv", Double::valueOf,
                 list -> list.stream().mapToDouble(d -> d).toArray(), '\n', ',', '\"',
                 d -> Metadata.getEuclidean(d.length), d -> Writer.DoubleArray(",", "\n"));
 
-        int k = 3400;
-        double[] radii = new double[]{12};
+        int k = 4000;
+        double[] radii = new double[]{0.0005};
         Persistence[] p = null;
         try {
             p = Persistence.dimensionalityReduction(parallels, k, 0, radii);
