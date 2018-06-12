@@ -127,7 +127,7 @@ public class Landmarks<T> extends PointSet<T> {
     }
 
     public double d(T x, T y) {
-        return S.d(x, y);
+        return S.getMetadata().d(x, y);
     }
 
     public PointSet<T> pointSet() {

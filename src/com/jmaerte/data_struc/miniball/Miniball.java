@@ -1,13 +1,9 @@
 package com.jmaerte.data_struc.miniball;
 
-import com.jmaerte.data_struc.point_set.Euclidean;
 import com.jmaerte.data_struc.point_set.PointSet;
-import com.jmaerte.util.calc.Util;
 import com.jmaerte.util.vector.Vector2D;
 
-import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Stack;
 import java.util.concurrent.ThreadLocalRandom;
 
 /**An abstraction of a smallest enclosing circle.
@@ -15,7 +11,7 @@ import java.util.concurrent.ThreadLocalRandom;
  *
  */
 public class Miniball {
-    public static Ball welzl(PointSet<Euclidean> S) {
+    public static Ball welzl(PointSet<double[]> S) {
         int[] I = new int[S.size()];
         int[] B = new int[S.size()];
         for(int i = 0; i < S.size(); i++) {
@@ -33,8 +29,8 @@ public class Miniball {
      * @param hull the boundary points(defining the ball)
      * @return The smallest enclosing disk of S.
      */
-    public static Ball welzl(PointSet<Euclidean> S, int[] I, int i, AffineHull hull) {
-        int dim = S.get(0).vector.length;
+    public static Ball welzl(PointSet<double[]> S, int[] I, int i, AffineHull hull) {
+        int dim = S.get(0).length;
         Ball D;
         if(i == 0 || (hull != null && hull.size() == dim + 1)) {
             D = hull == null ? Ball.empty() : hull.ball();
@@ -60,7 +56,7 @@ public class Miniball {
         return D;
     }
 
-    public static double miniball(PointSet<Euclidean> S, int iterations) {
+    public static double miniball(PointSet<double[]> S, int iterations) {
         int p = ThreadLocalRandom.current().nextInt(0, S.size());
         double factor = 1 - 1/(double)iterations;
         double d = 1/2d;
@@ -73,21 +69,21 @@ public class Miniball {
                 dist = curr;
             }
         }
-        double[] c = new double[S.get(p).vector.length];
-        System.arraycopy(S.get(p).vector, 0, c, 0, c.length);
-        shift(c, S.get(q).vector, d);
+        double[] c = new double[S.get(p).length];
+        System.arraycopy(S.get(p), 0, c, 0, c.length);
+        shift(c, S.get(q), d);
         d *= factor;
         for(int i = 0; i < iterations; i++) {
             dist = -1;
             q = -1;
             for(int j = 0; j < S.size(); j++) {
-                double curr = S.get(j).eval(Euclidean.fromArray(c, S.get(0).q));
+                double curr = S.getMetadata().d(S.get(j), c);
                 if(curr > dist) {
                     q = j;
                     dist = curr;
                 }
             }
-            shift(c, S.get(q).vector, d);
+            shift(c, S.get(q), d);
             System.out.println(Arrays.toString(c));
             d *= factor;
         }

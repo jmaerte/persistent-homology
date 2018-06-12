@@ -1,6 +1,5 @@
 package com.jmaerte.data_struc.complex;
 
-import com.jmaerte.data_struc.point_set.Euclidean;
 import com.jmaerte.data_struc.point_set.Landmarks;
 import com.jmaerte.data_struc.point_set.PointSet;
 import com.jmaerte.lin_alg.BinaryVector;
@@ -62,7 +61,7 @@ public class Filtration implements Iterable<BinaryVector> {
 
     }
 
-    public void draw(PointSet<Euclidean> S, double epsilon, double delta, int width, int height, boolean balls) {
+    public void draw(PointSet<double[]> S, double epsilon, double delta, int width, boolean balls) {
         this.attachPointSet(S);
         draw(epsilon, delta, width, balls);
     }
@@ -71,15 +70,15 @@ public class Filtration implements Iterable<BinaryVector> {
         Visualization.f = this;
         Visualization.epsilon = epsilon;
         Visualization.delta = delta;
-        Visualization.dimension = dimension;
+        Visualization.frameDim = dimension;
         Visualization.S = this.S;
         Visualization.balls = balls;
         Visualization v = new Visualization();
-        PApplet.runSketch(new String[]{"com.jmaerte.visualization.Visualization"}, v);
-        PSurface surface = v.getSurface();
-        PSurfaceAWT.SmoothCanvas smoothCanvas = (PSurfaceAWT.SmoothCanvas)surface.getNative();
-        JFrame frame = (JFrame) smoothCanvas.getFrame();
-        frame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+        PApplet.runSketch(new String[]{""}, v);
+//        PSurface surface = v.getSurface();
+//        PSurfaceAWT.SmoothCanvas smoothCanvas = (PSurfaceAWT.SmoothCanvas)surface.getNative();
+//        JFrame frame = (JFrame) smoothCanvas.getFrame();
+//        frame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
 //        Visualization.main(new String[]{"com.jmaerte.visualization.Visualization"});
     }
 
@@ -388,7 +387,7 @@ public class Filtration implements Iterable<BinaryVector> {
      * @param k dimension of the resulting filtration.
      * @return The filtration described above.
      */
-    public static Filtration cech(PointSet<Euclidean> S, int k) {
+    public static Filtration cech(PointSet<double[]> S, int k) {
         Filtration f = new Filtration(S.size());
         f.generate(k, Util.getCechFunction(S));
         f.attachPointSet(S);

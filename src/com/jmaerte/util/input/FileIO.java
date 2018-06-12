@@ -30,7 +30,7 @@ public class FileIO {
      * @param <K> T[]-like Object.
      * @return PointSet<K> consisting of the elements described in the file.
      */
-    public static <T, K> PointSet<K> fromCSV(String path, Function<String, T> cast, Function<ArrayList<T>, K> packing, char nextElement, char delimiter, char textQualifier, Function<K, Metric<K>> m, Function<K, Metadata<K>> meta, Function<K, Writer<K>> writer) {
+    public static <T, K> PointSet<K> fromCSV(String path, Function<String, T> cast, Function<ArrayList<T>, K> packing, char nextElement, char delimiter, char textQualifier, Function<K, Metadata<K>> meta, Function<K, Writer<K>> writer) {
         File f = new File(path);
         byte[] data = null;
         try {
@@ -75,10 +75,6 @@ public class FileIO {
             }
         }
         return new PointSet<K>(elements) {
-            public double d(K k, K v) {
-                return m.eval(elements.get(0)).d(k,v);
-            }
-
             public Metadata<K> getMetadata() {
                 return meta.eval(elements.get(0));
             }

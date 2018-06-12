@@ -1,7 +1,6 @@
 package com.jmaerte.persistence;
 
 import com.jmaerte.data_struc.complex.Filtration;
-import com.jmaerte.data_struc.point_set.Euclidean;
 import com.jmaerte.data_struc.point_set.Landmarks;
 import com.jmaerte.data_struc.point_set.PointSet;
 import com.jmaerte.lin_alg.BinaryVector;
@@ -13,7 +12,6 @@ import com.jmaerte.util.vector.Vector5D;
 import java.text.DecimalFormat;
 import java.text.DecimalFormatSymbols;
 import java.util.*;
-import java.util.stream.Collectors;
 
 /**
  * Created by Julian on 27/02/2018.
@@ -370,37 +368,41 @@ public class Persistence {
      * @param z The element of S to look around.
      * @return
      */
-    public static Persistence[] dimensionalityReduction(PointSet<Euclidean> S, int k, int z, double[] radii) {
+    public static Persistence[] dimensionalityReduction(PointSet<double[]> S, int k, int z, double[] radii) throws Exception {
+        int dim;
+        try {
+            dim = S.getMetadata().dimension();
+        }catch(Exception e) {
+            throw new Exception("Sorry, this method is euclidean PointSets only.");
+        }
         Persistence[] res = new Persistence[radii.length];
         int[] neighbors = getNeighbors(S, k, z);
-        double[] x = new double[S.get(0).vector.length];
+        double[] x = new double[dim];
         for(int i = 0; i < x.length; i++) {
             for(int j = 0; j < neighbors.length; j++) {
-                x[i] += S.get(neighbors[j]).get(i);
+                x[i] += S.get(neighbors[j])[i];
             }
             x[i] *= 1d/neighbors.length;
         }
 
-        Euclidean e = Euclidean.fromArray(x, S.get(0).q);
         for(int i = 0; i < radii.length; i++) {
             ArrayList<Integer> elements = new ArrayList<>();
             for(int n : neighbors) {
-                if(e.eval(S.get(n)) > radii[i]) {
+                if(S.getMetadata().d(x, S.get(n)) > radii[i]) {
                     elements.add(n);
                 }
             }
             int[] outer = elements.stream().mapToInt(Integer::intValue).toArray();
             System.out.println(outer.length);
-            Landmarks<Euclidean> L = new Landmarks<>(S.getSubSet(outer), (int)(20 * Math.log10(outer.length)), true);
-            Filtration f = Filtration.cech(L, S.get(0).vector.length + 1);
+            Landmarks<double[]> L = new Landmarks<>(S.getSubSet(outer), (int)(20 * Math.log10(outer.length)), true);
+            Filtration f = Filtration.cech(L, dim + 1);
+            f.draw(L, 0, f.get(f.size() - 1).val() + 1, 1000, true);
             res[i] = new Persistence(f, false);
-            System.out.println(res[i].toBarcodePlot(0,3));
-            f.draw(L, 0, f.get(f.size() - 1).val() + 1, 1000, 1000, true);
         }
         return res;
     }
 
-    private static int[] getNeighbors(PointSet<Euclidean> S, int k, int z) {
+    private static int[] getNeighbors(PointSet<double[]> S, int k, int z) {
         PriorityQueue<Vector2D<Integer, Double>> queue = new PriorityQueue<>(new Comparator<Vector2D<Integer, Double>>() {
             @Override
             public int compare(Vector2D<Integer, Double> o1, Vector2D<Integer, Double> o2) {

@@ -12,7 +12,7 @@ import java.util.ArrayList;
  * will be necessary in further progress.
  *
  */
-public abstract class PointSet<T> implements Metric<T>, Writer<T> {
+public abstract class PointSet<T> implements Writer<T> {
 
     private ArrayList<T> list;
     private int id;
@@ -41,7 +41,7 @@ public abstract class PointSet<T> implements Metric<T>, Writer<T> {
     }
 
     public double d(Integer i, Integer j) {
-        return d(get(i), get(j));
+        return getMetadata().d(get(i), get(j));
     }
 
     public PointSet<T> getSubSet(int[] subset) {
@@ -51,10 +51,6 @@ public abstract class PointSet<T> implements Metric<T>, Writer<T> {
         }
         PointSet<T> sup = this;
         return new PointSet<T>(sub) {
-            public double d(T t, T k) {
-                return sup.d(t, k);
-            }
-
             @Override
             public Metadata<T> getMetadata() {
                 return sup.getMetadata();

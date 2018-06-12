@@ -3,7 +3,6 @@ package com.jmaerte.util.calc;
 import com.jmaerte.data_struc.miniball.AffineHull;
 import com.jmaerte.data_struc.miniball.Ball;
 import com.jmaerte.data_struc.miniball.Miniball;
-import com.jmaerte.data_struc.point_set.Euclidean;
 import com.jmaerte.data_struc.point_set.Landmarks;
 import com.jmaerte.data_struc.point_set.PointSet;
 import com.jmaerte.util.vector.Vector2D;
@@ -77,7 +76,7 @@ public class Util {
                 .toArray();
     }
 
-    public static Function<Vector4D<int[], Ball, Integer, Integer>, Vector2D<Ball, Double>> getCechFunction(PointSet<Euclidean> S) {
+    public static Function<Vector4D<int[], Ball, Integer, Integer>, Vector2D<Ball, Double>> getCechFunction(PointSet<double[]> S) {
         return v -> {
             int[] sigma = v.getFirst();
             Ball seb = v.getSecond();
@@ -93,7 +92,14 @@ public class Util {
             }else {
                 int[] s = new int[d];
                 System.arraycopy(sigma, 0, s, 0, d);
-                Ball nseb = Miniball.welzl(seb.getEuclidean(), s, d, new AffineHull(seb.getEuclidean(), j));
+                AffineHull hull = null;
+                Ball nseb = null;
+                try {
+                    hull = new AffineHull(seb.getEuclidean(), j);
+                    nseb = Miniball.welzl(seb.getEuclidean(), s, d, hull);
+                }catch (Exception e) {
+                    System.exit(0);
+                }
                 return new Vector2D<>(nseb, nseb.radius());
             }
         };

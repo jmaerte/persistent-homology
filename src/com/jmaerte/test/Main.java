@@ -244,13 +244,18 @@ public class Main {
 
 
 
-        PointSet<double[]> parallels = FileIO.fromCSV("C:\\Users\\Julian\\Desktop\\latex\\Bachelor Arbeit\\new\\dat\\parallels\\parallels.dat", Double::valueOf,
-                list -> list.stream().mapToDouble(d -> d).toArray(), '\n', ',', '\"', d -> ScalarProduct.getStandard(d.length),
+        PointSet<double[]> parallels = FileIO.fromCSV("C:\\Users\\Ina\\Desktop\\Julian\\latex\\Bachelor Arbeit\\new\\dat\\parallels\\parallels.dat", Double::valueOf,
+                list -> list.stream().mapToDouble(d -> d).toArray(), '\n', ',', '\"',
                 d -> Metadata.getEuclidean(d.length), d -> Writer.DoubleArray(",", "\n"));
 
         int k = 3400;
         double[] radii = new double[]{12};
-        Persistence[] p = Persistence.dimensionalityReduction(parallels, k, 0, radii);
+        Persistence[] p = null;
+        try {
+            p = Persistence.dimensionalityReduction(parallels, k, 0, radii);
+        }catch (Exception e) {
+            e.printStackTrace();
+        }
         System.out.println(p[0].toBarcodePlot(0, 3));
 
 //        ArrayList<Euclidean> list = new ArrayList<>();

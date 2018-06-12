@@ -2,10 +2,8 @@ package com.jmaerte.visualization;
 
 import com.jmaerte.data_struc.complex.Filtration;
 import com.jmaerte.data_struc.complex.Tree;
-import com.jmaerte.data_struc.point_set.Euclidean;
 import com.jmaerte.data_struc.point_set.PointSet;
 import com.jmaerte.util.log.Logger;
-import com.jmaerte.util.vector.Vector2D;
 import peasy.PeasyCam;
 import processing.core.PApplet;
 import processing.core.PGraphics;
@@ -16,9 +14,9 @@ public class Visualization extends PApplet {
 
     private static DecimalFormat df = new DecimalFormat("#.##");
     public static double epsilon = 0, delta = -1;
-    public static int dimension = 500;
+    public static int frameDim = 500;
     public static Filtration f = null;
-    public static PointSet<Euclidean> S;
+    public static PointSet<double[]> S;
     public static boolean balls;
 
     private double curr;
@@ -28,29 +26,36 @@ public class Visualization extends PApplet {
     private boolean pause = true;
     private boolean save;
     private PeasyCam pc;
+    private int dimension;
 
     public void settings() {
-        if(S.get(0).vector.length == 2) {
-            size(dimension, dimension);
+        try {
+            dimension = S.getMetadata().dimension();
+        }catch(Exception e) {
+            System.out.println("Sorry, only can draw euclidean PointSets.");
+        }
+        System.out.println(dimension);
+        if(dimension == 2) {
+            size(frameDim, frameDim);
             Tree t = f.get(0);
             double maxX = -1;
             double maxY = -1;
             for(int i = 0; i < f.vertexSize(); i++) {
-                double[] v = S.get(t.getChild(i).node()).vector;
+                double[] v = S.get(t.getChild(i).node());
                 if(Math.abs(v[0]) > maxX) maxX = Math.abs(v[0]);
                 if(Math.abs(v[1]) > maxY) maxY = Math.abs(v[1]);
             }
             double max = Math.max(maxX, maxY);
-            scale = (dimension - 50) / (float)max;
+            scale = (frameDim - 50) / (float)max;
             scale /= 3;
         }else {
-            size(dimension, dimension, P3D);
+            size(frameDim, frameDim, P3D);
         }
     }
 
     public void setup() {
         curr = epsilon;
-        if(S.get(0).vector.length == 2) {
+        if(dimension == 2) {
             frame = createGraphics(2000, 2000);
             frame.beginDraw();
             frame.endDraw();
@@ -77,7 +82,7 @@ public class Visualization extends PApplet {
 
     public void draw() {
         int i;
-        if(S.get(0).vector.length == 2) {
+        if(dimension == 2) {
             frame.beginDraw();
             frame.fill(0);
             frame.translate(width/2, height/2);
@@ -98,12 +103,12 @@ public class Visualization extends PApplet {
                 t = t.getParent();
             }
             if(vertex.length == 1) {
-                if(S.get(0).vector.length == 2) {
+                if(dimension == 2) {
                     frame.stroke(0);
                     frame.strokeWeight(1);
-                    frame.point((float)S.get(vertex[0]).vector[0] * scale / 2, (float)S.get(vertex[0]).vector[1] * scale / 2);
+                    frame.point((float)S.get(vertex[0])[0] * scale / 2, (float)S.get(vertex[0])[1] * scale / 2);
                 }else {
-                    frame.point((float)S.get(vertex[0]).vector[0], (float)S.get(vertex[0]).vector[1], (float)S.get(vertex[0]).vector[2]);
+                    frame.point((float)S.get(vertex[0])[0], (float)S.get(vertex[0])[1], (float)S.get(vertex[0])[2]);
                 }
             }else {
                 switch(vertex.length) {
@@ -124,8 +129,8 @@ public class Visualization extends PApplet {
                 if(vertex.length > 2) {
                     frame.beginShape();
                     for(j = 0; j < vertex.length; j++) {
-                        double[] v = S.get(vertex[j]).vector;
-                        if(S.get(0).vector.length == 2) {
+                        double[] v = S.get(vertex[j]);
+                        if(dimension == 2) {
                             frame.vertex((float)v[0] * scale / 2, (float)v[1] * scale / 2);
                         }else {
                             frame.vertex((float)v[0], (float)v[1], (float)v[2]);
@@ -133,12 +138,12 @@ public class Visualization extends PApplet {
                     }
                     frame.endShape();
                 }else {
-                    if(S.get(0).vector.length == 2) {
-                        frame.line((float)S.get(vertex[0]).vector[0] * scale / 2, (float)S.get(vertex[0]).vector[1] * scale / 2,
-                                (float)S.get(vertex[1]).vector[0] * scale / 2, (float)S.get(vertex[1]).vector[1] * scale / 2);
+                    if(dimension == 2) {
+                        frame.line((float)S.get(vertex[0])[0] * scale / 2, (float)S.get(vertex[0])[1] * scale / 2,
+                                (float)S.get(vertex[1])[0] * scale / 2, (float)S.get(vertex[1])[1] * scale / 2);
                     }else {
-                        frame.line((float)S.get(vertex[0]).vector[0], (float)S.get(vertex[0]).vector[1], (float)S.get(vertex[0]).vector[2],
-                                (float)S.get(vertex[1]).vector[0], (float)S.get(vertex[1]).vector[1], (float)S.get(vertex[1]).vector[2]);
+                        frame.line((float)S.get(vertex[0])[0], (float)S.get(vertex[0])[1], (float)S.get(vertex[0])[2],
+                                (float)S.get(vertex[1])[0], (float)S.get(vertex[1])[1], (float)S.get(vertex[1])[2]);
                     }
                 }
 
@@ -150,10 +155,10 @@ public class Visualization extends PApplet {
                 fill(255, 0, 0, 15);
                 stroke(0);
                 strokeWeight(1);
-                ellipse((float)S.get(l).vector[0] * scale / 2, (float)S.get(l).vector[1] * scale / 2,scale * (float)curr,scale * (float)curr);
+                ellipse((float)S.get(l)[0] * scale / 2, (float)S.get(l)[1] * scale / 2,scale * (float)curr,scale * (float)curr);
             }
         }
-        if(S.get(0).vector.length == 2) {
+        if(dimension == 2) {
             frame.endDraw();
             image(frame, -width/2, -height/2);
             fill(0);

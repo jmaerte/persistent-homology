@@ -166,7 +166,7 @@ public class PointSetUtils {
         }
         return new PointSet<double[]>(arr) {
             public double d(double[] v, double[] w) {
-                return S.d(v, w);
+                return S.getMetadata().d(v, w);
             }
 
             @Override
@@ -287,9 +287,9 @@ public class PointSetUtils {
         return ps.getAbsolutePath();
     }
 
-    public static String toFilePlot(PointSet<Euclidean> S) {
+    public static String toFilePlot(PointSet<double[]> S) throws Exception {
         String path = toFile(S).replace('\\', '/');
-        if(S.get(0).vector.length > 2) return "";
+        if(S.getMetadata().dimension() > 2) return "";
         return  "library(ggplot2)\n\n" +
                 "data <- read.table(\"" + path + "\", header = FALSE)\n" +
                 "plot <- ggplot(data) + geom_point(aes(x=V2, y=V3), colour=\"black\", size=0.5) + \n" +
@@ -308,8 +308,8 @@ public class PointSetUtils {
                 "print(plot)";
     }
 
-    public static String toPlot(PointSet<Euclidean> S) {
-        if(S.get(0).vector.length > 2) return "";
+    public static String toPlot(PointSet<double[]> S) throws Exception {
+        if(S.getMetadata().dimension() > 2) return "";
         String x = "c(";
         String y = "c(";
         for(int i = 0; i < S.size(); i++) {
@@ -317,8 +317,8 @@ public class PointSetUtils {
                 x += ", ";
                 y += ", ";
             }
-            x += df4.format(S.get(i).vector[0]).replace(',', '.');
-            y += df4.format(S.get(i).vector[1]).replace(',', '.');
+            x += df4.format(S.get(i)[0]).replace(',', '.');
+            y += df4.format(S.get(i)[1]).replace(',', '.');
         }
         x += ")";
         y += ")";
@@ -341,7 +341,7 @@ public class PointSetUtils {
                 "print(plot)";
     }
 
-    public static String toPlot(Landmarks<Euclidean> L, String color) {
+    public static String toPlot(Landmarks<double[]> L, String color) throws Exception {
         String p = PointSetUtils.toFilePlot(L.pointSet());
         String landmarks = "c(";
         for(int i = 0; i < L.size(); i++) {

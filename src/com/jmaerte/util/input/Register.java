@@ -1,9 +1,8 @@
 package com.jmaerte.util.input;
 
 import com.jmaerte.data_struc.complex.Filtration;
-import com.jmaerte.data_struc.point_set.Euclidean;
 import com.jmaerte.data_struc.point_set.Landmarks;
-import com.jmaerte.data_struc.point_set.Lexicographic;
+import com.jmaerte.data_struc.point_set.Metadata;
 import com.jmaerte.data_struc.point_set.PointSet;
 import com.jmaerte.persistence.Persistence;
 import com.jmaerte.util.vector.Vector2D;
@@ -20,7 +19,7 @@ public class Register {
     private static HashMap<String, String> descriptions = new HashMap<>();
 
     public static final HashMap<Class, String> typeNames;
-    public static final HashMap<String, Class> pointSetTypes;
+//    public static final HashMap<String, Metadata> pointSetTypes;
 
     static {
         // Give every object class a output name
@@ -31,9 +30,7 @@ public class Register {
         typeNames.put(Landmarks.class, "Landmarks/PointSet");
 
         // Init PointSetTypes, i.e. Euclidean, Lexicographic and other formats of metric data
-        pointSetTypes = new HashMap<>();
-        pointSetTypes.put("Euclidean", Euclidean.class);
-        pointSetTypes.put("Lexicographic", Lexicographic.class);
+//        pointSetTypes = new HashMap<>();
     }
 
     public static void push(String name, String description, Object o) {
