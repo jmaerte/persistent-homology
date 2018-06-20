@@ -1,7 +1,5 @@
 package com.jmaerte.util.calc;
 
-import com.jmaerte.data_struc.complex.Simplex;
-
 import java.util.Arrays;
 
 public class NumberShiftable {

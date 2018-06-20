@@ -5,23 +5,29 @@ package com.jmaerte.lin_alg;
  *
  *  @version 1.0
  */
-public class SBVector {
+public class BinaryVector {
 
     public static long timeAdding = 0;
 
+    public int simplexDim;
+    public double filterVal;
+    public int filterInd;
 
     private int dimension;
     private int[] entries;
     private int occupation;
 
-    public SBVector(int dimension) {
-        this(dimension, new int[(int)(dimension*0.05) + 10], 0);
+    public BinaryVector(int dimension, int simplexDim, double filterVal, int filterInd) {
+        this(dimension, new int[(int)(dimension*0.05) + 10], 0, simplexDim, filterVal, filterInd);
     }
 
-    public SBVector(int dimension, int[] entries, int occupation) {
+    public BinaryVector(int dimension, int[] entries, int occupation, int simplexDim, double filterVal, int filterInd) {
         this.dimension = dimension;
         this.entries = entries;
         this.occupation = occupation;
+        this.simplexDim = simplexDim;
+        this.filterVal = filterVal;
+        this.filterInd = filterInd;
     }
 
     public int index(int pos) {
@@ -83,10 +89,8 @@ public class SBVector {
         this.entries = newEntries;
     }
 
-    public void add(SBVector v) throws Exception {
+    public void add(BinaryVector v) throws Exception {
         if(dimension != v.dimension) throw new Exception("Dimensions are incompatible: " + dimension + " - " + v.dimension);
-
-        long ns = System.nanoTime();
 
         int[] newEntries = new int[Math.min(occupation + v.occupation, dimension)];
         int newOccupation = 0;
@@ -106,7 +110,6 @@ public class SBVector {
         }
         entries = newEntries;
         occupation = newOccupation;
-        timeAdding += System.nanoTime() - ns;
     }
 
     public String toString() {

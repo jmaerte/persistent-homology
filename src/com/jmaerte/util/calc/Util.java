@@ -1,5 +1,13 @@
 package com.jmaerte.util.calc;
 
+import com.jmaerte.data_struc.miniball.AffineHull;
+import com.jmaerte.data_struc.miniball.Ball;
+import com.jmaerte.data_struc.miniball.Miniball;
+import com.jmaerte.data_struc.point_set.Landmarks;
+import com.jmaerte.data_struc.point_set.PointSet;
+import com.jmaerte.util.vector.Vector2D;
+import com.jmaerte.util.vector.Vector4D;
+
 import java.util.Arrays;
 
 /**
@@ -68,4 +76,40 @@ public class Util {
                 .toArray();
     }
 
+    public static Function<Vector4D<int[], Ball, Integer, Integer>, Vector2D<Ball, Double>> getCechFunction(PointSet<double[]> S) {
+        return v -> {
+            int[] sigma = v.getFirst();
+            Ball seb = v.getSecond();
+            int d = v.getThird(); // Dimension of the simplex.
+            int j = v.getFourth(); // The added vertex.
+
+            if(d == 0) {
+                return new Vector2D<>(new Ball(S, S.get(j), 0d), 0d);
+            }
+
+            if(seb.contains(j)) {
+                return new Vector2D<>(seb, seb.radius());
+            }else {
+                int[] s = new int[d];
+                System.arraycopy(sigma, 0, s, 0, d);
+                AffineHull hull = null;
+                Ball nseb = null;
+                try {
+                    hull = new AffineHull(seb.getEuclidean(), j);
+                    nseb = Miniball.welzl(seb.getEuclidean(), s, d, hull);
+                }catch (Exception e) {
+                    System.exit(0);
+                }
+                return new Vector2D<>(nseb, nseb.radius());
+            }
+        };
+    }
+
+    public static Function<Vector2D<Integer, Integer>, Double> vietoris(PointSet S) {
+        return v -> S.d(v.getFirst(), v.getSecond());
+    }
+
+    public static Function<Vector2D<Integer, Integer>, Double> witness(Landmarks L) {
+        return v -> L.getValuation(v.getFirst(), v.getSecond());
+    }
 }

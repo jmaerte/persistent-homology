@@ -1,8 +1,5 @@
 package com.jmaerte.data_struc.miniball;
 
-import static com.jmaerte.util.log.Logger.*;
-
-import com.jmaerte.data_struc.point_set.Euclidean;
 import com.jmaerte.data_struc.point_set.PointSet;
 import com.jmaerte.util.calc.Util;
 import com.jmaerte.util.vector.Vector2D;
@@ -25,7 +22,7 @@ public class AffineHull {
 
     private static DecimalFormat df2 = new DecimalFormat("0.##");
 
-    private final Euclidean S;
+    private final PointSet<double[]> S;
 
     private int dim;
     private int size;
@@ -37,11 +34,11 @@ public class AffineHull {
 
     private Ball SED;
 
-    public AffineHull(Euclidean S, int initIndex) {
+    public AffineHull(PointSet<double[]> S, int initIndex) {
         this.S = S;
 
         // init affine hull
-        this.dim = S.dimension();
+        this.dim = S.get(0).length;
         this.size = 1;
         this.A = new int[dim + 1];
         A[0] = initIndex;
@@ -81,14 +78,14 @@ public class AffineHull {
      * For the full construction see chapter <b>Smallest enclosing ball</b>.
      *
      * @param index index of vector to be added in S.
-     * @throws Exception it is either an Exception inherited by {@link com.jmaerte.data_struc.point_set.PointSet#get(int, int)} or a PrecisionReachedException when the value y gets too small(i.e. the vector is too close to the affine hull).
+     * @throws Exception it is either an Exception inherited by {@link PointSet#get(int)} or a PrecisionReachedException when the value y gets too small(i.e. the vector is too close to the affine hull).
      */
     public Vector2D<double[], Double> add(int index) {
         double y;
         double[] mu;
         int m = size - 1;
         for(int i = 0; i < dim; i++) {
-            T[m][i] = S.get(index, i) - S.get(A[0], i);
+            T[m][i] = S.get(index)[i] - S.get(A[0])[i];
         }
         if(m == 0) {
             Tq[0] = q(T[0], T[0]);
@@ -133,7 +130,7 @@ public class AffineHull {
 
     /**An intern function that updates the center and squared radius fields after a vector being added or removed.
      *
-     * @throws Exception inherited by {@link com.jmaerte.data_struc.point_set.PointSet#get(int, int)}(Shouldn't appear anyway)
+     * @throws Exception inherited by {@link PointSet#get(int)}(Shouldn't appear anyway)
      */
     private void calculateBall() {
         double[] lambda = new double[dim];
@@ -151,7 +148,7 @@ public class AffineHull {
         }
         double radius = Math.sqrt(q(c, c));
         for(int i = 0; i < dim; i++) {
-            c[i] += S.get(A[0], i);
+            c[i] += S.get(A[0])[i];
         }
         SED = new Ball(S, c, radius);
     }
@@ -170,7 +167,7 @@ public class AffineHull {
     }
 
     private double q(double[] x, double[] y) {
-        return S.q(x, y);
+        return S.getMetadata().product().scalar(x, y);
     }
 
     public Ball ball() {
@@ -182,7 +179,7 @@ public class AffineHull {
         for(int j = 0; j < dim; j++) {
             for(int i = 0; i < size; i++) {
                 try{
-                    s += df2.format(S.get(A[i], j)) + "\t";
+                    s += df2.format(S.get(A[i])[j]) + "\t";
                 }catch(Exception e) {
                     e.printStackTrace();
                 }

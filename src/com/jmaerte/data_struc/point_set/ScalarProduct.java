@@ -3,9 +3,9 @@ package com.jmaerte.data_struc.point_set;
 /**
  * Created by Julian on 27/03/2018.
  */
-public abstract class ScalarProduct {
+public abstract class ScalarProduct implements Metric<double[]> {
 
-    abstract double scalar(double[] a, double[] b);
+    public abstract double scalar(double[] a, double[] b);
     abstract int dimension();
 
     public double d(double[] a, double[] b) {
@@ -16,7 +16,7 @@ public abstract class ScalarProduct {
         return Math.sqrt(scalar(x,x));
     }
 
-    static ScalarProduct getStandard(int dim) {
+    public static ScalarProduct getStandard(int dim) {
         return new ScalarProduct() {
             @Override
             public double scalar(double[] a, double[] b) {

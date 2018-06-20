@@ -1,17 +1,17 @@
 package com.jmaerte.persistence;
 
 import com.jmaerte.data_struc.complex.Filtration;
-import com.jmaerte.lin_alg.SBVector;
-import com.jmaerte.util.vector.Vector3D;
-import com.jmaerte.util.vector.Vector4D;
+import com.jmaerte.data_struc.point_set.Landmarks;
+import com.jmaerte.data_struc.point_set.PointSet;
+import com.jmaerte.lin_alg.BinaryVector;
 import com.jmaerte.util.calc.Util;
+import com.jmaerte.util.log.Logger;
+import com.jmaerte.util.vector.Vector2D;
 import com.jmaerte.util.vector.Vector5D;
-import com.jmaerte.util.vector.Vector6D;
 
 import java.text.DecimalFormat;
 import java.text.DecimalFormatSymbols;
-import java.util.ArrayList;
-import java.util.Locale;
+import java.util.*;
 
 /**
  * Created by Julian on 27/02/2018.
@@ -19,10 +19,11 @@ import java.util.Locale;
 public class Persistence {
 
     private static final int factor = 10;
+    private static final int initCap = 16;
     private static final DecimalFormat df = new DecimalFormat("#.########", new DecimalFormatSymbols(Locale.US));
 
     private Filtration f;
-    private SBVector[] matrix;
+    private BinaryVector[] matrix;
     private int[] low;
     private int[] zeroes;
     private int occupation_low;
@@ -31,49 +32,62 @@ public class Persistence {
     private int[] zeroCount;
     private Diagram[] diagram;
 
-    public Persistence(Filtration f, int initCap) {
+    public Persistence(Filtration f, boolean reduced) {
         this.f = f;
-        this.matrix = new SBVector[initCap];
+        this.matrix = new BinaryVector[initCap];
         this.low = new int[initCap];
         this.zeroes = new int[initCap];
 
-        this.lowCount = new int[f.dimension() + 2];
-        this.zeroCount = new int[f.dimension() + 2];
-        this.diagram = new Diagram[f.dimension() + 2];
+        this.lowCount = new int[f.dimension() + 3];
+        this.zeroCount = new int[f.dimension() + 3];
+        this.diagram = new Diagram[Math.max(3, f.dimension() + 2)];
         for(int i = 0; i < diagram.length; i++) {
             diagram[i] = new Diagram();
         }
-        generate();
-        System.out.format("%13s | %15s", "Dimension i", "Rank of H_i(K)");
+        generate(reduced);
+        System.out.format("%13s | %15s", "Dimension i", "i-th Betti number");
         System.out.println("\n--------------|------------------");
-        for(int i = 0; i < lowCount.length; i++) {
+        for(int i = 1; i < diagram.length; i++) {
             System.out.format("%13d | %15d", i-1, zeroCount[i] - lowCount[i]);
             System.out.println();
         }
         evaluate();
     }
 
-    private void generate() {
+    /**
+     *
+     * @param reduced ordinary or reduced homology?
+     */
+    private void generate(boolean reduced) {
+        Filtration.reduced(reduced);
+        Logger.log("Now calculating " + (reduced ? "reduced " : "ordinary ") + "homology.");
+        Logger.progress(f.size(), "Termination algorithm");
         int i = 0;
-        while(f.hasNext()) {
-            System.out.print(i + "/" + f.size() + "\r");
-            SBVector v = f.next();
-            int p = v.occupation();
+        BinaryVector missingVertex = null;
+        long ns = 0;
+        for(BinaryVector v : f) {
+//            System.out.println(v);
+            int p = v.simplexDim + 1;
 
             if(v.isZero()) {
-                addZero(i++, p);
+                addZero(v.filterInd, p);
+                i++;
                 continue;
             }
 
             int k = Util.binarySearch(v.getEntry(v.occupation() - 1), low, 0, occupation_low);
             while(k < occupation_low && !v.isZero() && low[k] == v.getEntry(v.occupation() - 1)) {
                 try {
-                    if(v.occupation() < matrix[k].occupation()) {
-                        SBVector temp = matrix[k];
-                        matrix[k] = v;
-                        v = temp;
-                    }
+//                    currSwitches = System.nanoTime();
+//                    if(matrix[k].filterInd > v.filterInd) {
+//                        temp = matrix[k];
+//                        matrix[k] = v;
+//                        v = temp;
+//                        p = v.simplexDim + 1;
+//                    }
+//                    switches += System.nanoTime() - currSwitches;
                     v.add(matrix[k]);
+//                    System.out.println("Added " + matrix[k].filterInd + " to " + v.filterInd);
                 }catch(Exception e) {
                     e.printStackTrace();
                 }
@@ -85,26 +99,27 @@ public class Persistence {
                     System.arraycopy(matrix, k, matrix, k + 1, occupation_low - k);
                     System.arraycopy(low, k, low, k + 1, occupation_low - k);
                 }
-//                for(int i = 0; i < occupation; i++) {
-//                    int m = matrix[i].index(v.getEntry(v.occupation() - 1));
-//                    if(m < matrix[i].occupation() && matrix[i].getEntry(m) == v.getEntry(v.occupation() - 1)) {
-//                        try {
-//                            matrix[i].add(v);
-//                        }catch(Exception e) {
-//                            e.printStackTrace();
-//                        }
-//                    }
-//                }
                 matrix[k] = v;
                 low[k] = v.getEntry( v.occupation() - 1);
                 occupation_low++;
-                lowCount[f.get(low[k]).dim() + 1]++;
-                diagram[f.get(low[k]).dim() + 1].put(f.get(low[k]).getWeight(), f.get(i).getWeight());
             }else {
-                addZero(i, p);
+                addZero(v.filterInd, p);
             }
             i++;
+            if(i % 1000 == 0) Logger.updateProgress(i);
         }
+        System.out.println("Calculation time " + ns + "ns");
+        for(int k = 0; k < occupation_low; k++) {
+            lowCount[f.get(low[k]).depth()]++;
+            diagram[f.get(low[k]).depth()].put(f.get(low[k]).val(), matrix[k].filterVal);
+        }
+//        System.out.println(Arrays.toString(low));
+//        System.out.println(Arrays.toString(zeroes));
+        Logger.close();
+        // EXPERIMENTAL - TRYING TO FREE UP SPACE AFTER CALC.
+//        matrix = null;
+//        low = null;
+//        zeroes = null;
     }
 
     private void evaluate() {
@@ -115,8 +130,12 @@ public class Persistence {
                 continue;
             }
             // add (a_i, inf) to diagram[p]
-            diagram[f.get(zeroes[i]).dim() + 1].put(f.get(zeroes[i]).getWeight());
+            diagram[f.get(zeroes[i]).depth()].put(f.get(zeroes[i]).val());
         }
+    }
+
+    public int dimension() {
+        return f.dimension();
     }
 
     private void addZero(int i, int p) {
@@ -133,7 +152,7 @@ public class Persistence {
 
     private void mkPlace(boolean low) {
         if(low) {
-            SBVector[] vectors = new SBVector[factor * matrix.length];
+            BinaryVector[] vectors = new BinaryVector[factor * matrix.length];
             int[] lows = new int[factor * this.low.length];
             System.arraycopy(matrix, 0, vectors, 0, occupation_low);
             System.arraycopy(this.low, 0, lows, 0, occupation_low);
@@ -156,11 +175,12 @@ public class Persistence {
     }
 
     public String toBarcodePlot(int m, int n) {
+        n++;
         // Color strings: note that they must be escaped by \" since we also want the rgb-function to be a possible input.
         String segmentColor = "\"black\"";
         String birthColor = "\"chartreuse4\"";
         String deathColor = "\"sienna4\"";
-
+        double average = getAverage(m, n);
         Vector5D<String, String, int[], int[], Integer> value = this.getIntervalArrays(m, n);
         int[] nonTrivial = value.getThird();
         int[] groupSize = value.getFourth();
@@ -171,9 +191,9 @@ public class Persistence {
         for(int p = 0; p < nonTrivial.length; p++) {
             grouping += (groupSize[p] + 0.5) + "" + (p + 1 != nonTrivial.length ? ", " : "");
             if(p == 0) {
-                groupLabelPos += (groupSize[0]/2 + 0.5);
+                groupLabelPos += (groupSize[0]/2d + 0.5);
             }else {
-                groupLabelPos += ", " + (0.5 + (double)(groupSize[p - 1] + groupSize[p])/2);
+                groupLabelPos += ", " + (0.5 + (double)(groupSize[p - 1] + groupSize[p])/2d);
             }
             groupLabel += "expression('H'[" + (nonTrivial[p] - 1) + "])" + (p + 1 != nonTrivial.length ? ", " : "");
         }
@@ -181,7 +201,7 @@ public class Persistence {
         groupLabelPos += ")";
         groupLabel += ")";
         String data = "data.frame(x=1:" + length + ", value1=value1, value2=value2)";
-        return "library(tidyverse)\n\n" +
+        return "library(ggplot2)\n\n" +
                 "value1 <- " + value.getFirst() + "\n" +
                 "value2 <- " + value.getSecond() + "\n" +
                 "grouping <- " + grouping + "\n" +
@@ -225,12 +245,13 @@ public class Persistence {
                 "plot <- plot + geom_vline(data=vlines, aes(xintercept=as.numeric(x))) +\n" +
                 "               geom_vline(aes(xintercept=0.5)) +\n" +
                 "               geom_segment(aes(x=0.5, xend=" + (length + 0.5) + ", y=x_min, yend=x_min))\n" +
+                "plot <- plot + geom_hline(aes(yintercept=" + average + "), colour=\"red\")\n" +
                 "print(plot)";
     }
 
     public String toDiagramPlot(int p) {
         String[] fields = getDiagramFrame(p);
-        return "library(tidyverse)\n" +
+        return "library(ggplot2)\n" +
                 "\n" +
                 "value1 <- " + fields[0] + "\n" +
                 "value2 <- " + fields[1] + "\n" +
@@ -323,5 +344,92 @@ public class Persistence {
             gS[i] = groupSize.get(i);
         }
         return new Vector5D<>(value1, value2, nT, gS, length);
+    }
+
+    private double getAverage(int n, int m) {
+        double av = 0d;
+        int amount = 0;
+        for(int i = n + 1; i < m + 1; i++) {
+            for(int j = 0; j < diagram[i].occ; j++) {
+                Diagram.Node node = diagram[i].nodes[j];
+                for(int k = 0; k < node.occ; k++) {
+                    av += node.multiplicity[k] * (node.b[k] - node.a);
+                    amount += node.multiplicity[k];
+                }
+            }
+        }
+        return av / amount;
+    }
+
+    /**
+     *
+     * @param S PointSet in Euclidean space.
+     * @param k Amount of observed points
+     * @param z The element of S to look around.
+     * @return
+     */
+    public static Persistence[] dimensionalityReduction(PointSet<double[]> S, int k, int z, double[] radii) throws Exception {
+        int dim;
+        try {
+            dim = S.getMetadata().dimension();
+        }catch(Exception e) {
+            throw new Exception("Sorry, this method is euclidean PointSets only.");
+        }
+        Persistence[] res = new Persistence[radii.length];
+        int[] neighbors = getNeighbors(S, k, z);
+        double[] x = new double[dim];
+        for(int i = 0; i < x.length; i++) {
+            for(int j = 0; j < neighbors.length; j++) {
+                x[i] += S.get(neighbors[j])[i];
+            }
+            x[i] *= 1d/neighbors.length;
+        }
+
+        for(int i = 0; i < radii.length; i++) {
+            ArrayList<Integer> elements = new ArrayList<>();
+            for(int n : neighbors) {
+                if(S.getMetadata().d(x, S.get(n)) > radii[i]) {
+                    elements.add(n);
+                }
+            }
+            int[] outer = elements.stream().mapToInt(Integer::intValue).toArray();
+            System.out.println(outer.length);
+            Landmarks<double[]> L = new Landmarks<>(S.getSubSet(outer), 2 * dim, true);
+            Filtration f = Filtration.vietoris(L, dim);
+//            f.draw(L, 0, f.get(f.size() - 1).val() + 1, 1000, true);
+            res[i] = new Persistence(f, false);
+            System.out.println(res[i].toBarcodePlot(0, dim - 1));
+        }
+        return res;
+    }
+
+    private static int[] getNeighbors(PointSet<double[]> S, int k, int z) {
+        PriorityQueue<Vector2D<Integer, Double>> queue = new PriorityQueue<>(new Comparator<Vector2D<Integer, Double>>() {
+            @Override
+            public int compare(Vector2D<Integer, Double> o1, Vector2D<Integer, Double> o2) {
+                double x = o2.getSecond() - o1.getSecond();
+                return (int) (Math.signum(x) * (Math.ceil(Math.abs(x))));
+            }
+        });
+        double[] d = new double[S.size()];
+        for(int i = 0; i < S.size(); i++) {
+            if(queue.size() < k) {
+                queue.add(new Vector2D<>(i, S.d(i, z)));
+            }else {
+                Vector2D<Integer, Double> root = queue.peek();
+                d[i] = S.d(i, z);
+                if(root.getSecond() > d[i]) {
+                    queue.poll();
+                    queue.add(new Vector2D<>(i, d[i]));
+                }
+            }
+        }
+        double max = queue.peek().getSecond();
+        for(int i = 0; i < S.size(); i++) {
+            if(d[i] == max) {
+                queue.add(new Vector2D<>(i, d[i]));
+            }
+        }
+        return Arrays.stream(queue.toArray((Vector2D<Integer, Double>[]) new Vector2D[queue.size()])).mapToInt(v -> v.getFirst()).toArray();
     }
 }

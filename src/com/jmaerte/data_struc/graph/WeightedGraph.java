@@ -1,6 +1,7 @@
 package com.jmaerte.data_struc.graph;
 
-import com.jmaerte.data_struc.point_set.VertexFactory;
+import com.jmaerte.data_struc.point_set.PointSet;
+import com.jmaerte.util.log.Logger;
 import com.jmaerte.util.vector.Vector2D;
 import com.jmaerte.util.calc.Function;
 import com.jmaerte.util.calc.Util;
@@ -26,12 +27,15 @@ public class WeightedGraph {
             nodes[i] = new Node(i, n);
         }
         fill = n;
+        Logger.progress(n, "Calculating graph");
         for(int i = 0; i < n; i++) {
             for(int j = 0; j < i; j++) {
                 double w = lambda.eval(new Vector2D<>(i, j));
                 addEdge(i, j, w);
             }
+            Logger.updateProgress(i);
         }
+        Logger.close();
     }
 
     public WeightedGraph(int n) {
@@ -82,6 +86,8 @@ public class WeightedGraph {
     }
 
     public class Node {
+        private static final int initial = 16;
+
         private int[] adjacency;
         private double[] weight;
         private int adjacent;
@@ -90,13 +96,16 @@ public class WeightedGraph {
 
         public Node(int label, int n) {
             this.label = label;
-            adjacency = new int[n];
-            weight = new double[n];
+            adjacency = new int[initial];
+            weight = new double[initial];
         }
 
         public void addAdjacent(int adj, double w) {
             int k = binarySearch(adj);
             if(k == adjacent || adjacency[k] != adj) {
+                if(adjacent >= adjacency.length) {
+                    mkPlace();
+                }
                 assert adjacent < adjacency.length;
                 if(k != adjacent) {
                     System.arraycopy(adjacency, k, adjacency, k+1, adjacent - k);
@@ -106,6 +115,15 @@ public class WeightedGraph {
                 adjacent++;
             }
             weight[k] = w;
+        }
+
+        private void mkPlace() {
+            int[] adj = new int[2 * this.adjacency.length];
+            double[] w = new double[2 * this.weight.length];
+            System.arraycopy(adjacency, 0, adj, 0, adjacent);
+            System.arraycopy(weight, 0, w, 0, adjacent);
+            this.adjacency = adj;
+            this.weight = w;
         }
 
         public int getAdjacent(int i) {
@@ -124,72 +142,5 @@ public class WeightedGraph {
             }
             return min;
         }
-    }
-
-    public static WeightedGraph vietoris(VertexFactory factory) {
-        return new WeightedGraph(factory.size(), new Function<Vector2D<Integer, Integer>, Double>() {
-            @Override
-            public Double eval(Vector2D<Integer, Integer> x) {
-                return factory.d(x.getFirst(), x.getSecond());
-            }
-        });
-    }
-
-    /**Generates the witness graph described in the bachelor thesis with minmax-process.
-     *
-     * @param factory point factory
-     * @return witness graph.
-     */
-    public static WeightedGraph witness(VertexFactory factory, int n) {
-        int[] L = new int[n];
-        L[0] = ThreadLocalRandom.current().nextInt(0, factory.size());
-
-        double[] min = new double[factory.size()];
-        for(int i = 0; i < factory.size(); i++) {
-            if(i != L[0]) min[i] = factory.d(i, L[0]);
-            else min[i] = -1;
-        }
-        for(int i = 1; i < n; i++) {
-            int index = -1;
-            double max = -1;
-            for(int j = 0; j < factory.size(); j++) {
-                if(max < min[j]) {
-                    index = j;
-                    max = min[j];
-                }
-            }
-            int k = Util.binarySearch(index, L, 0, i);
-            System.out.println(index);
-            if(k < i) {
-                System.arraycopy(L, k, L, k + 1, i - k);
-            }
-            L[k] = index;
-            for(int j = 0; j < factory.size(); j++) {
-                if(j != index) {
-                    double d = factory.d(index, j);
-                    if(min[j] > d) min[j] = d;
-                }else {
-                    min[j] = -1;
-                }
-            }
-        }
-        return witness(factory, L);
-    }
-
-    /**Generates the witness graph with given landmarks set.
-     *
-     * @param factory
-     * @param L sorted landmark set.
-     * @return
-     */
-    public static WeightedGraph witness(VertexFactory factory, int[] L) {
-        int[] D = new int[factory.size() - L.length];
-        for(int i = 0, k = 0; i < factory.size(); i++) {
-            if(L[k] == i) k++;
-            else D[i - k] = i;
-        }
-        double[][] dist = new double[L.length][factory.size() - L.length];
-
-        return null;
     }
 }

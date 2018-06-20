@@ -1,25 +1,22 @@
 package com.jmaerte.data_struc.miniball;
 
-import com.jmaerte.data_struc.point_set.Euclidean;
 import com.jmaerte.data_struc.point_set.PointSet;
-
-import java.util.Arrays;
 
 public class Ball {
     private double[] center;
     private double radius;
-    private Euclidean S;
+    private PointSet<double[]> S;
 
-    public Ball(Euclidean S, double[] center, double radius) {
+    public Ball(PointSet<double[]> S, double[] e, double radius) {
         this.S = S;
-        this.center = center;
+        this.center = e;
         this.radius = radius;
     }
 
     private Ball() {}
 
     public boolean contains(int i) {
-        return S != null && S.d(S.get(i), center) <= radius;
+        return S != null && S.getMetadata().d(S.get(i), center) <= radius;
     }
 
     public double radius() {
@@ -31,6 +28,10 @@ public class Ball {
     }
 
     public String toString() {
-        return "[" + Arrays.toString(center) + ", " + radius + "]";
+        return "[" + center.toString() + ", " + radius + "]";
+    }
+
+    public PointSet<double[]> getEuclidean() {
+        return S;
     }
 }

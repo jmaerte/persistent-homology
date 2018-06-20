@@ -1,21 +1,26 @@
 package com.jmaerte.test;
 
-import com.jmaerte.data_struc.complex.*;
-import com.jmaerte.data_struc.graph.WeightedGraph;
-import com.jmaerte.data_struc.miniball.Miniball;
+import com.jmaerte.data_struc.complex.Filtration;
 import com.jmaerte.data_struc.point_set.*;
+import com.jmaerte.lin_alg.BinaryVector;
 import com.jmaerte.persistence.Persistence;
-import com.jmaerte.util.calc.Function;
-import com.jmaerte.util.vector.Vector2D;
+import com.jmaerte.util.calc.Util;
+import com.jmaerte.util.input.FileIO;
+import com.jmaerte.util.input.Input;
+import com.jmaerte.util.input.Register;
+import com.jmaerte.util.input.Writer;
+import com.jmaerte.util.input.commands.Commands;
 
-import java.util.Arrays;
+import java.util.ArrayList;
+import java.util.PriorityQueue;
+import java.util.concurrent.ThreadLocalRandom;
 
 public class Main {
 
     public static void main(String[] args) {
-//        SBVector v = new SBVector(3, new int[]{1,2}, 2);
-//        SBVector w = new SBVector(3, new int[]{0,2}, 2);
-//        SBVector u = new SBVector(3, new int[]{0,1}, 2);
+//        BinaryVector v = new BinaryVector(3, new int[]{1,2}, 2);
+//        BinaryVector w = new BinaryVector(3, new int[]{0,2}, 2);
+//        BinaryVector u = new BinaryVector(3, new int[]{0,1}, 2);
 //        GaussianSBMatrix m = new GaussianSBMatrix(3, 3);
 //        m.add(v);
 //        System.out.println(m);
@@ -43,8 +48,8 @@ public class Main {
 //        long ms = System.currentTimeMillis();
 //        GaussianSBMatrix matrix = new GaussianSBMatrix(n, m);
 //        for(int i = 0; i < n; i++) {
-//            System.out.print("Pushed " + i + "/" + n + " - RunTime: " + (System.currentTimeMillis() - ms) + "ms, Time adding: " + SBVector.timeAdding/1_000_000 + "\r");
-//            matrix.push(new SBVector(m, entries[i], occs[i]));
+//            System.out.print("Pushed " + i + "/" + n + " - RunTime: " + (System.currentTimeMillis() - ms) + "ms, Time adding: " + BinaryVector.timeAdding/1_000_000 + "\r");
+//            matrix.push(new BinaryVector(m, entries[i], occs[i]));
 //        }
 //        try{
 //            matrix.smith();
@@ -179,7 +184,6 @@ public class Main {
 //        long ms = System.currentTimeMillis();
 //        System.out.println(Miniball.welzl(S) + " in " + (System.currentTimeMillis() - ms) + "ms");
 
-
 //        Euclidean S = PointSetUtils.getSphereData(2, 100, 0.5, 4, Metric.EUCLIDEAN);
 //        S.toFile();
 //        System.out.println(S.toPlot());
@@ -192,22 +196,147 @@ public class Main {
 //        System.out.println(pv.toBarcodePlot(1, 2));
 //        System.out.println(pv.toDiagramPlot(1));
 
-//        Euclidean S = PointSetUtils.getRoseData(115, 2, 0.2, 4);
-        Euclidean S = PointSetUtils.getFromMapping(100, 3, new double[]{2 * Math.PI, 2 * Math.PI}, PointSetUtils.torusChart(2, 4));
-        S.toFile();
-        System.out.println(S.toPlot());
-        CechFiltration cf = new CechFiltration(S, 5);
+//        PointSet S = PointSetUtils.getRoseData(10000, 3, 0.2, 4, "Rose");
+//        PointSet centers = PointSetUtils.randomPointSet(3, 10, -100,100, Metric.EUCLIDEAN, "Centers");
+//        PointSet S = PointSetUtils.getClusteredData(centers, 1000000, new double[]{1d, 1d, 1d}, "Cluster");
+//        S.toFile();
+//        System.out.println(S.toPlot());
+//        CechFiltration cf = new CechFiltration(S, 3);
 //        NeighborhoodFiltration vf = new NeighborhoodFiltration(WeightedGraph.vietoris(S), 3, NeighborhoodFiltration.LOGINTERSECTION);
-        Persistence p = new Persistence(cf, 16);
+//        Persistence p = new Persistence(cf, 16);
 //        Persistence pv = new Persistence(vf, 16);
-        System.out.println(p.toBarcodePlot(1,5));
-        System.out.println(p.toDiagramPlot(1));
+//        System.out.println(p.toBarcodePlot(1,2));
+//        System.out.println(p.toDiagramPlot(1));
 //        System.out.println(pv.toBarcodePlot(1, 2));
 //        System.out.println(pv.toDiagramPlot(1));
 
+//        Euclidean S = PointSetUtils.getRoseData(130, 3, 0.1, 4);
+//        System.out.println(S.toPlot());
+//        NeighborhoodFiltration nf = new NeighborhoodFiltration(WeightedGraph.witness(S, 20), 6, NeighborhoodFiltration.LOGINTERSECTION);
+////            for(int i = 0; i < nf.size(); i++) {
+////                System.out.println(i + " -> " + nf.get(i));
+////            }
+//            Persistence p = new Persistence(nf, 20);
+////            System.out.println(p);
+//            System.out.println(p.toBarcodePlot(1, 2));
+
+//        Euclidean S = PointSetUtils.getSphereData(2, 10, 0.5, 4, Metric.EUCLIDEAN);
+
+//        Euclidean S = PointSetUtils.getSphereData(2, 1000, 0.5, 4, Metric.EUCLIDEAN);
+//        System.out.println(centers);
+//        System.out.println(S);
+
+//        PointSet<Euclidean> S = FileIO.fromCSV("C:\\Users\\Julian\\Desktop\\data.dat", Double::valueOf,
+//                v -> Euclidean.fromArray(v, ScalarProduct.getStandard(v.size())), '\n', ' ', '"');
+
+
+        // ------------------------ FILE CREATION SECTION ----------------------------------
+//        PointSet<Euclidean> orthogonal = PointSetUtils.getFromMapping(100000, new double[]{-200, 200, -100, 100}, v -> {
+//            if(v[0] < 0) {
+//                return new double[]{v[0] + 100, v[1], 0};
+//            }else {
+//                return new double[]{0, v[1], v[0] - 100};
+//            }
+//        });
+////
+//        FileIO.toCSV("C:\\Users\\Julian\\Desktop\\latex\\Bachelor Arbeit\\new\\dat\\orthogonal\\orthogonal.dat", orthogonal);
+//        System.exit(0);
+
+
+
+        PointSet<double[]> parallels = FileIO.fromCSV("/home/julian/Desktop/data.csv", Double::valueOf,
+                list -> list.stream().mapToDouble(d -> d).toArray(), '\n', ',', '\"',
+                d -> Metadata.getEuclidean(d.length), d -> Writer.DoubleArray(",", "\n"));
+
+        int k = 4000;
+        double[] radii = new double[]{0.0005};
+        Persistence[] p = null;
+        try {
+            p = Persistence.dimensionalityReduction(parallels, k, 0, radii);
+        }catch (Exception e) {
+            e.printStackTrace();
+        }
+        System.out.println(p[0].toBarcodePlot(0, 3));
+
+//        ArrayList<Euclidean> list = new ArrayList<>();
+//        list.add(Euclidean.fromArray(new double[]{-5.5d, 2d}, ScalarProduct.getStandard(2)));
+//        list.add(Euclidean.fromArray(new double[]{-4.5d, 1d}, ScalarProduct.getStandard(2)));
+//        list.add(Euclidean.fromArray(new double[]{-2.5d, 1d}, ScalarProduct.getStandard(2)));
+//        list.add(Euclidean.fromArray(new double[]{-2.5d, 2.5d}, ScalarProduct.getStandard(2)));
+//        list.add(Euclidean.fromArray(new double[]{-4d, 4d}, ScalarProduct.getStandard(2)));
+//        list.add(Euclidean.fromArray(new double[]{1d, -1d}, ScalarProduct.getStandard(2)));
+//        list.add(Euclidean.fromArray(new double[]{2d, 2.5d}, ScalarProduct.getStandard(2)));
+//        list.add(Euclidean.fromArray(new double[]{3.5d, 1d}, ScalarProduct.getStandard(2)));
+//
+//        PointSet<Euclidean> dummy = new PointSet<>(list);
+//        Filtration f = Filtration.cech(dummy, 3);
+//        f.draw(dummy, 0, f.get(f.size() - 1).val() + 1, 1000, 1000, true);
+
+
+//        Filtration f = Filtration.cech(new Landmarks<>(parallels, 1000, false), 0);
+//        f.draw(parallels, 0, f.get(f.size() - 1).val() + 1, 1000, 1000, true);
+
+//        PointSet<Lexicographic> S = FileIO.fromCSV("/home/julian/Desktop/data.txt", v -> v,
+//                  v -> Lexicographic.fromString(v), '\n', ',', '"');
+
+//        PointSet<Euclidean> S = PointSetUtils.getFromMapping(1000, 3, new double[]{2*Math.PI, 2*Math.PI}, PointSetUtils.torusChart( 5, 10));
+//        PointSet<Euclidean> S = PointSetUtils.getSphereData(2, 100, 1, 4);
+//        PointSet<Euclidean> base = PointSetUtils.randomPointSet(2, 2, -100, 100);
+//        PointSet<Euclidean> S = PointSetUtils.getClusteredData(base, new int[]{100000, 100}, new double[]{10d, 10d});
+//        PointSet<Euclidean> S = PointSetUtils.getRoseData(1000, 3, 0.2, 4);
+//        Landmarks R = new Landmarks(S, 2, Landmarks.Choice.RANDOM);
+//        System.out.println(PointSetUtils.toPlot(L, "firebrick1"));
+//        System.out.println(PointSetUtils.toPlot(R, "blue"));
+//        Filtration f = Filtration.vietoris(L, 2);
+//        Filtration fr = Filtration.vietoris(R, 2);
+//        Persistence p = new Persistence(f, false);
+//        Persistence pr = new Persistence(fr, false);
+//        System.out.println(p.toBarcodePlot(0, 2));
+//        System.out.println(pr.toBarcodePlot(0, 2));
+
+        // Dimensionality Acknowledge
+//        int k = 1000;
+//        int f = ThreadLocalRandom.current().nextInt(0, parallels.size());
+//        double[] radii = new double[]{10};
+//        Persistence[] p = Persistence.dimensionalityReduction(parallels,k,f, radii);
+//        System.out.println(p[0].toBarcodePlot(0, 3));
+
+//        Landmarks L = new Landmarks(S, 200, Landmarks.Choice.MAXMIN);
+//        Filtration f = Filtration.vietoris(L, 2);
+//        f.draw(L, 0, f.get(f.size() - 1).val() + 1, 1000, 1000, true);
+//        Register.push("S", "PointSet from mapping", L);
+        Input.main();
+        Commands.print();
+
+//        Landmarks L = new Landmarks(S, 3, Landmarks.Choice.MINMAX);
+////        System.out.println(L.toPlot());
+//        Filtration f = Filtration.witness_lazy(L, 2);
+//        Filtration cf = Filtration.cech(new Euclidean(L, ScalarProduct.getStandard(10), "Euklid"), 2);
+//        Persistence p = new Persistence(f, false);
+//        Persistence pc = new Persistence(cf, false);
+//        System.out.println(p.toBarcodePlot(0, 2));
+//        System.out.println(pc.toBarcodePlot(0, 2));
+
+
+//        Filtration f = new Filtration(100, 3, v -> S.d(v.getFirst(), v.getSecond()));
+////        Filtration f = Filtration.example();
+//        Persistence p = new Persistence(f, 16);
+////        System.out.println(p.toBarcodePlot(0, 2));
+//        System.out.println(p.toBarcodePlot(1,2));
+
+//        Filtration c = new Filtration(120);
+//        c.generate(3, Util.getCechFunction(S));
+//        Persistence p = new Persistence(c, 16);
+//        System.out.println(p.toBarcodePlot(1, 2));
+
+//        Filtration w = new Filtration(5, 3, Util.witness(L));
+//        Persistence p = new Persistence(w, 16);
+//        System.out.println(p.toBarcodePlot(1, 2));
+
+
 //        Euclidean S = PointSetUtils.getRoseData(100, 3, 0.5, 4);
 //        WeightedGraph g = WeightedGraph.vietoris(S);
-//        Filtratio f = new Filtratio(1000, 3, new Function<Vector2D<Simplex, Integer>, Double>() {
+//        Filtration f = new Filtration(1000, 3, new Function<Vector2D<Simplex, Integer>, Double>() {
 //            public Double eval(Vector2D<Simplex, Integer> v) {
 //                double w = -1;
 //                for(int i = 0; i < v.getFirst().getVertices().length; i++) {

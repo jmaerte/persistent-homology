@@ -1,5 +1,10 @@
 package com.jmaerte.data_struc.point_set;
 
+import com.jmaerte.util.input.Writer;
+
+import java.io.BufferedWriter;
+import java.util.ArrayList;
+
 /**
  * An instance that stores an <i>n</i> point subset of the <i>same</i> euclidean space(meaning that their dimension has
  * to be the same, what is no restriction for our purposes).
@@ -7,39 +12,62 @@ package com.jmaerte.data_struc.point_set;
  * will be necessary in further progress.
  *
  */
-public interface PointSet extends VertexFactory, Metric<double[]> {
+public abstract class PointSet<T> implements Writer<T> {
 
-    /**Get the euclidean dimension of the points.
-     *
-     * @return Dimension of the PointSet
-     */
-    int dimension();
+    private ArrayList<T> list;
+    private int id;
 
-    /**Providing access to the components of the vectors.
-     * The ordering is fixed.
-     *
-     * @param i: Index of the vector.
-     * @param j: Component index.
-     * @return in case the <i>i</i>th vector is (x_k)_{0 <=k < {@code dimension()}} returns x_j.
-     */
-    double get(int i, int j);
+    private static int ID = 0;
 
-    /**Providing access to vector-valued data.
-     *
-     * @param i index of the vector to get
-     * @return the vector as double[]
-     */
-    double[] get(int i);
+    public PointSet() {
+        this(new ArrayList<>());
+    }
 
-    /**Providing an overview on the cardinality of the point point_set.
-     *
-     * @return card(S)
-     */
-    int size();
+    public PointSet(ArrayList<T> list) {
+        id = ID++;
+        this.list = list;
+    }
 
-    /**Gives a plot code for R
-     *
-     * @return plot code
-     */
-    String toPlot();
+    public T get(int i) {
+        return list.get(i);
+    }
+
+    public int size() {
+        return list.size();
+    }
+
+    public int id() {
+        return id;
+    }
+
+    public double d(Integer i, Integer j) {
+        return getMetadata().d(get(i), get(j));
+    }
+
+    public PointSet<T> getSubSet(int[] subset) {
+        ArrayList<T> sub = new ArrayList<>();
+        for(int i = 0; i < subset.length; i++) {
+            sub.add(list.get(subset[i]));
+        }
+        PointSet<T> sup = this;
+        return new PointSet<T>(sub) {
+            @Override
+            public Metadata<T> getMetadata() {
+                return sup.getMetadata();
+            }
+
+            @Override
+            public void write(BufferedWriter bw, T t) throws Exception {
+                sup.write(bw, t);
+            }
+        };
+    }
+
+    public void write(BufferedWriter bw) throws Exception {
+        for(int i = 0; i < size(); i++) {
+            write(bw, list.get(i));
+        }
+    }
+
+    public abstract Metadata<T> getMetadata();
 }
