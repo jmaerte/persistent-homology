@@ -2,7 +2,7 @@
 
 Persistent Homology describes topological development of a filtered simplicial complex in one variable. Since simplicial complexes have potencially exponential growth in the number of vertices calculating Persistent Homology might seem cumbersome but thanks to independent works of Edelsbrunner, Letscher and Zomorodian in 2000 we have a fast algorithm for that task.
 
-It can be used to measure the resolution of a given feature in a point cloud or any other abstract finite metrical space. We note that such spaces correspond to a weighted complete graph.
+It can be used to measure the resolution of a given feature in a point cloud, i.e. a set of points embedded in an euclidean vector space, or more abstract any other finite metrical space. We note that such spaces correspond to a weighted complete graph.
 
 The presented program is an approach to calculating the Persistent Homology of a finite sample of points using heuristics to reduce calculation time on the one hand and on the other hand bypass problems that are getting out of hand when trying to analyze them theoretically.
 
