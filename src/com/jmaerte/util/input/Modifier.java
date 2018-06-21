@@ -6,7 +6,7 @@ public enum Modifier {
     REDUCED("reduced"),
     BALLS("balls");
 
-    private final String mod;
+    public final String mod;
 
     Modifier(final String mod) {
         this.mod = mod;

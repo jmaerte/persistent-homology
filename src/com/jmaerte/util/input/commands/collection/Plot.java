@@ -23,9 +23,9 @@ public class Plot extends Command {
             int l;
             if(stK == null) k = 0;
             else k = Integer.valueOf(stK);
-            if(stL == null) l = p.dimension();
+            if(stL == null) l = p.dimension() - 1;
             else l = Integer.valueOf(stL);
-            p.toBarcodePlot(k, l);
+            System.out.println(p.toBarcodePlot(k, l));
         }
     }
 

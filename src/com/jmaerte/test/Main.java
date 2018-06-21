@@ -244,19 +244,19 @@ public class Main {
 
 
 
-        PointSet<double[]> parallels = FileIO.fromCSV("/home/julian/Desktop/data.csv", Double::valueOf,
-                list -> list.stream().mapToDouble(d -> d).toArray(), '\n', ',', '\"',
-                d -> Metadata.getEuclidean(d.length), d -> Writer.DoubleArray(",", "\n"));
-
-        int k = 4000;
-        double[] radii = new double[]{0.0005};
-        Persistence[] p = null;
-        try {
-            p = Persistence.dimensionalityReduction(parallels, k, 0, radii);
-        }catch (Exception e) {
-            e.printStackTrace();
-        }
-        System.out.println(p[0].toBarcodePlot(0, 3));
+//        PointSet<double[]> parallels = FileIO.fromCSV("/home/julian/Desktop/data.csv", Double::valueOf,
+//                list -> list.stream().mapToDouble(d -> d).toArray(), '\n', ',', '\"',
+//                d -> Metadata.getEuclidean(d.length), d -> Writer.DoubleArray(",", "\n"));
+//
+//        int k = 4000;
+//        double[] radii = new double[]{0.0005};
+//        Persistence[] p = null;
+//        try {
+//            p = Persistence.dimensionalityReduction(parallels, k, 0, radii);
+//        }catch (Exception e) {
+//            e.printStackTrace();
+//        }
+//        System.out.println(p[0].toBarcodePlot(0, 3));
 
 //        ArrayList<Euclidean> list = new ArrayList<>();
 //        list.add(Euclidean.fromArray(new double[]{-5.5d, 2d}, ScalarProduct.getStandard(2)));
@@ -279,7 +279,7 @@ public class Main {
 //        PointSet<Lexicographic> S = FileIO.fromCSV("/home/julian/Desktop/data.txt", v -> v,
 //                  v -> Lexicographic.fromString(v), '\n', ',', '"');
 
-//        PointSet<Euclidean> S = PointSetUtils.getFromMapping(1000, 3, new double[]{2*Math.PI, 2*Math.PI}, PointSetUtils.torusChart( 5, 10));
+        PointSet<double[]> S = PointSetUtils.getFromMapping(1000, new double[]{0, 2*Math.PI, 0, 2*Math.PI}, PointSetUtils.torusChart( 5, 10));
 //        PointSet<Euclidean> S = PointSetUtils.getSphereData(2, 100, 1, 4);
 //        PointSet<Euclidean> base = PointSetUtils.randomPointSet(2, 2, -100, 100);
 //        PointSet<Euclidean> S = PointSetUtils.getClusteredData(base, new int[]{100000, 100}, new double[]{10d, 10d});
@@ -304,7 +304,7 @@ public class Main {
 //        Landmarks L = new Landmarks(S, 200, Landmarks.Choice.MAXMIN);
 //        Filtration f = Filtration.vietoris(L, 2);
 //        f.draw(L, 0, f.get(f.size() - 1).val() + 1, 1000, 1000, true);
-//        Register.push("S", "PointSet from mapping", L);
+        Register.push("T", "PointSet from Torus mapping of size 1000", S, PointSet.class);
         Input.main();
         Commands.print();
 

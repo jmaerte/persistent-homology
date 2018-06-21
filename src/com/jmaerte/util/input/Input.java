@@ -78,7 +78,7 @@ public class Input {
 
     private static Modifier getModifier(String mod) throws Exception {
         for(Modifier m : Modifier.values()) {
-            if(m.equals(mod)) {
+            if(m.mod.equals(mod)) {
                 return m;
             }
         }

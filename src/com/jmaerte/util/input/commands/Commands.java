@@ -15,6 +15,7 @@ public class Commands {
         commands.put("lo", new ListObjects());
         commands.put("clear", new Clear());
         commands.put("plot", new Plot());
+        commands.put("finalize", new FinalizeObject());
     }
 
     public static void print() {

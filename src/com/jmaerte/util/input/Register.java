@@ -39,6 +39,12 @@ public class Register {
         classes.put(name, o.getClass());
     }
 
+    public static void push(String name, String description, Object o, Class c) {
+        objects.put(name, o);
+        descriptions.put(name, description);
+        classes.put(name, c);
+    }
+
     public static void push(String name, Vector2D<String, Object> v) {
         objects.put(name, v.getSecond());
         descriptions.put(name, v.getFirst());
@@ -61,9 +67,15 @@ public class Register {
         String s = "User initialized Objects in Memory = [\n";
         for(Map.Entry<String, Object> e : objects.entrySet()) {
             String name = e.getKey();
-            s += "\t{" + name + " - Type: " + typeNames.get(classes.get(name)) + ", Description: " + descriptions.get(name) + "}\n";
+            s += "\t{" + name + " - Type: " + typeNames.get(classes.get(name)) + " - Description: " + descriptions.get(name) + "}\n";
         }
         return s + "]";
+    }
+
+    public static void finalize(String name) {
+        objects.remove(name);
+        classes.remove(name);
+        descriptions.remove(name);
     }
 
     public static void free() {
