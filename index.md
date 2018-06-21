@@ -26,10 +26,10 @@ or get a 1000 point sample  from a smooth surface like the Torus:
 T <- PointSet mapping Torus 1000
 ```
 
-Distribute 100 Landmarks over it:
+Evenly distribute (by successively maximizing the minimal distance from each landmark to its preceeding landmarks) 100 Landmarks over it:
 
 ```powershell
-L <- LandmarkSet 100 T
+L <- LandmarkSet 100 T --maxmin
 ```
 
 And finally create a 3-Skeleton of the Čech-Filtration of the LandmarkSet L and assign it to the variable name F by executing
@@ -44,7 +44,7 @@ If we want to see what we did, we can run `lo` for "list objects" and get the fo
 User initialized Objects in Memory = [
 	{T - Type: PointSet - Description: PointSet from Torus mapping of size 1000}
 	{F - Type: Filtration - Description: 3-Skeleton of Čech(L)}
-	{L - Type: Landmarks/PointSet - Description: A  randomly  chosen LandmarkSet of the PointSet T}
+	{L - Type: Landmarks/PointSet - Description: A by maxmin chosen LandmarkSet of the PointSet T}
 ]
 ```
 
@@ -58,11 +58,13 @@ That reduction is implemented such that we don't need to hold the complete matri
 
 This is a very important trick we make use of there, because saving the whole matrix at one time, even though it is sparse in general, is already near to impossible for a medium sized filtration.
 
-The reduced matrix gives us persistent homology which is usually visualized as a barcode or a persistence diagram. Here is one of the Torus example from above:
+The reduced matrix gives us persistent homology which is usually visualized as a barcode or a persistence diagram. A barcode plot shows the existence of a homology class to a given point of time in the filtration as a black bar whose length is the persistence of this class. We consider a topological feature to be significant if its corresponding persistence bar has an outstanding length.
+
+Here is one of the Torus example from above:
 
 ![Torus example](.\Torusexample.png)
 
-Anyone familiar with the homology of the torus will directly notice it in here even though we started with 100 points sampled from its surface.
+Anyone familiar with the homology of the torus will directly notice it in here even though we started with 1000 points sampled from its surface and chose 100 evenly spreaded .
 
 
 
