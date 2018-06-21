@@ -66,7 +66,7 @@ Here is one of the Torus example from above created by `plot P -k 1 -l 2`:
 
 ![Torus example](.\Torusexample.png)
 
-Anyone familiar with the homology of the Torus will directly notice it in here even though we started with 1000 points sampled from its surface and chose 100 evenly spreaded landmarks.
+Anyone who encountered the homology of the Torus before will directly notice something familiar here even though we started with 1000 points sampled from its surface and chose 100 evenly spreaded landmarks.
 
 The parameter whose existence one can show using algebraic tools I mentioned at the beginning is somewhere between 4 and 5 as the diagram shows, since thats the interval in which the "living" homology classes are the ones of the homology of the Torus.
 
