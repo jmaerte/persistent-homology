@@ -1,5 +1,5 @@
 # Persistent Homology of Metric Point Sets
-For further information visit the github pages [project page](https://jmaerte.github.io/Persistent-Homology-of-MPS/).
+For further information visit the github pages [project page](https://jmaerte.github.io/persistent-homology/).
 
 This project is licensed under the terms of the MIT license.
 
@@ -21,4 +21,4 @@ Therefore if you want to build this project I advice you to import it in the IDE
 
   
 
-If you just want to use it, you can download a stable version on the [project page](https://jmaerte.github.io/Persistent-Homology-of-MPS/).
+If you just want to use it, you can download a stable version on the [project page](https://jmaerte.github.io/persistent-homology/).
