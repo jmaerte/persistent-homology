@@ -19,7 +19,7 @@ public class InitLandmarks extends Initializer {
         }catch(Exception e) {
             System.out.println(params[1] + " is not fitting here.");
         }
-        return new Vector2D<>("A " + (Input.is(Modifier.MAXMIN) ? " by maxmin " : " randomly ") + " chosen LandmarkSet of the PointSet " + params[1],
+        return new Vector2D<>("A" + (Input.is(Modifier.MAXMIN) ? " by maxmin " : " randomly ") + "chosen LandmarkSet of the PointSet " + params[1],
                 new Landmarks(S, n, Input.is(Modifier.MAXMIN)));
     }
 
