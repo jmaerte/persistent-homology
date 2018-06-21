@@ -1,1 +1,3 @@
-theme: jekyll-theme-minimal
+theme: jekyll-theme-cayman
+title: Persistent Homology
+description: An algebraic tool for topological pattern recognition in metric data sets.
