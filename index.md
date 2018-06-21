@@ -6,7 +6,7 @@ It can be used to measure the resolution of a given feature in a point cloud, i.
 
 The presented program is an approach to calculating the Persistent Homology of a finite sample of points using heuristics to reduce calculation time on the one hand and on the other hand bypass problems that are getting out of hand when trying to analyze them theoretically.
 
-Using algebraic theorems about homotopy types of of nerves and homology one can show, that if the space sampled from and the sample itself is sufficiently nice in some sense we are guaranteed to have atleast one parameter of the filtration in which we restore the homotopy type of the underlying space. Thus mathematical correctness is given.
+Using algebraic theorems about homotopy types of nerves and homology one can show, that if the space sampled from and the sample itself is sufficiently nice in some sense we are guaranteed to have atleast one parameter of the Čech-Filtration (and thus the Vietoris-Filtration) in which we restore the homotopy type of the underlying space. Thus mathematical correctness is given.
 
 # What has the Program to offer?
 
