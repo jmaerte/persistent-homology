@@ -1,9 +1,0 @@
-<component name="libraryTable">
-  <library name="peasy-math">
-    <CLASSES>
-      <root url="jar://$PROJECT_DIR$/lib/peasy-math.jar!/" />
-    </CLASSES>
-    <JAVADOC />
-    <SOURCES />
-  </library>
-</component>
