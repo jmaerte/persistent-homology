@@ -169,6 +169,10 @@ public class Input {
     }
 
     public static void main(String... args) {
+        System.out.println("Copyright 2018, Julian Märte, All rights reserved.\n" +
+                "Calculator for Persistent Homology of Metric Point Sets.\n" +
+                "Having questions or suggestions? Please send them to maertej@students.uni-marburg.de!\n" +
+                "Use `help` for an overview of commands.");
         input();
     }
 
