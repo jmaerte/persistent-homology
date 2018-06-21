@@ -62,6 +62,8 @@ The reduced matrix gives us persistent homology which is usually visualized as a
 
 ![Torus example](.\Torusexample.png)
 
+Anyone familiar with the homology of the torus will directly notice it in here.
+
 
 
 [1] Edelsbrunner, Herbert ; Harer, John: Computational Topology. Providence USA, American Mathematical Society, 2010
