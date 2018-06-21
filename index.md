@@ -62,7 +62,7 @@ The reduced matrix gives us persistent homology which is usually visualized as a
 
 ![Torus example](.\Torusexample.png)
 
-Anyone familiar with the homology of the torus will directly notice it in here.
+Anyone familiar with the homology of the torus will directly notice it in here even tho we started with 100 points sampled from its surface.
 
 
 
