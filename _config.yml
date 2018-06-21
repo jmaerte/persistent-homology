@@ -3,5 +3,5 @@ title: Calculator for Persistent Homology
 description: An algebraic tool for topological pattern recognition in metric data sets.
 show_downloads: true
 github:
-  zip_url: https://example.com/foo.zip
+  zip_url: https://github.com/jmaerte/persistent_homology/zipball/master/
   tar_url: https://example.com/foo.tar.gz
