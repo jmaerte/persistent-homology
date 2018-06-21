@@ -60,7 +60,7 @@ This is a very important trick we make use of there, because saving the whole ma
 
 The reduced matrix gives us Persistent Homology which is usually visualized as a barcode or persistence diagram. A barcode plot shows the existence of a homology class to a given point of time in the filtration as a black bar whose length is the persistence of this class. We consider a topological feature to be significant if its corresponding persistence bar has an outstanding length.
 
-Here is one of the Torus example from above:
+Here is one of the Torus example from above created by `plot P -k 1 -l 2`:
 
 ![Torus example](.\Torusexample.png)
 
