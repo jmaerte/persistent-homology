@@ -1,3 +1,4 @@
 theme: jekyll-theme-cayman
 title: Calculator for Persistent Homology
 description: An algebraic tool for topological pattern recognition in metric data sets.
+show_downloads: true
