@@ -14,6 +14,10 @@ Using algebraic theorems about homotopy types of nerves and homology one can sho
 
 I am representing a filtration using a tree structure causing high memory costs scaling with filtration size (up to filtration exponential in worst case). The advantage of this structure is a significant reduction in calculation time compared to my other approach where the filtration is calculated very quickly but without memorizing it. That approach is very good when we do not want to calculate homology, but that is exactly what we are after. Therefore I stick to the tree approach here.
 
+#### Launch
+
+You can launch the application by executing `java -jar "path/to/jar"`. If you need extra computing power you can add `-Xmx6g` after the path to higher the maximum available memory of the JVM.
+
 #### Usage
 
 One workflow aiding feature is the users variable storage, so he can reference previously defined objects in other method calls. For example loading a euclidean point set from a directory into the variable S by typing
