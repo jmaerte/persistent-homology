@@ -56,13 +56,13 @@ As presented by Edelsbrunner and Harer in [1] we can see that once the filtratio
 
 That reduction is implemented such that we don't need to hold the complete matrix all calculation long. Only if we have a column vector that is still needed, i.e. it having a trailing 1, we save it. Otherwise it is a linear combination of the ones we already saved and can successively be reduced to 0 or a vector with a trailing 1.
 
-This is a very important trick we make use of there, because saving the whole matrix at one time, even tho it is sparse in general, is already near to impossible for a medium sized filtration.
+This is a very important trick we make use of there, because saving the whole matrix at one time, even though it is sparse in general, is already near to impossible for a medium sized filtration.
 
 The reduced matrix gives us persistent homology which is usually visualized as a barcode or a persistence diagram. Here is one of the Torus example from above:
 
 ![Torus example](.\Torusexample.png)
 
-Anyone familiar with the homology of the torus will directly notice it in here even tho we started with 100 points sampled from its surface.
+Anyone familiar with the homology of the torus will directly notice it in here even though we started with 100 points sampled from its surface.
 
 
 
