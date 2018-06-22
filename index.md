@@ -1,6 +1,6 @@
 # What is Persistent Homology?
 
-Persistent Homology describes topological development of a filtered simplicial complex in one variable. Since simplicial complexes have potentially exponential growth in the number of vertices calculating Persistent Homology might seem cumbersome but thanks to work of Edelsbrunner, Letscher and Zomorodian (see [1]) we have a fast algorithm for that task.
+Persistent Homology describes topological development of a filtered simplicial complex in one variable. Since simplicial complexes have potentially exponential growth in the number of vertices calculating Persistent Homology might seem cumbersome but thanks to work of Edelsbrunner, Letscher and Zomorodian we have a fast algorithm for that task, as presented in [1].
 
 It can be used to measure the resolution of a given feature in a point cloud, i.e. a set of points embedded in an euclidean vector space, or more abstract any other finite metrical space. We note that such spaces correspond to a weighted complete graph.
 
