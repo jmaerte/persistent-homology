@@ -4,19 +4,19 @@ Persistent Homology describes topological development of a filtered simplicial c
 
 It can be used to measure the resolution of a given feature in a point cloud, i.e. a set of points embedded in an euclidean vector space, or more abstract any other finite metrical space. We note that such spaces correspond to a weighted complete graph.
 
-The presented program is an approach to calculating the Persistent Homology of a finite sample of points using heuristics to reduce calculation time on the one hand and on the other hand bypass problems that are getting out of hand when trying to analyze them theoretically.
+The presented program is an approach to calculation of the Persistent Homology of a finite sample of points using heuristics to reduce calculation time on the one hand and on the other hand bypass problems that are getting out of hand when trying to analyze them theoretically.
 
-Using algebraic theorems about homotopy types of nerves and homology one can show, that if the space sampled from and the sample itself is sufficiently nice in some sense we are guaranteed to have atleast one parameter of the Čech-Filtration (and thus the Vietoris-Filtration) in which we restore the homotopy type of the underlying space. Thus mathematical correctness is given.
+Using algebraic theorems about homotopy types of nerves and homology one can show, that if the space sampled from and the sample itself is sufficiently nice in some sense we are guaranteed to have atleast one parameter of the Čech-Filtration in which we restore the homotopy type of the underlying space. Thus mathematical correctness is given.
 
 # What has the Program to offer?
 
 #### Approaches and Bottlenecks
 
-I am representing a filtration using a tree structure causing high memory costs scaling with filtration size (up to filtration exponential in worst case). The advantage of this structure is a significant reduction in calculation time compared to my other approach where the filtration is calculated very quickly but without memorizing it. That approach is very good when we do not want to calculate homology, but that is exactly what we are after. Therefore I stick to the tree approach here.
+I am representing a filtration using a tree structure causing high memory costs scaling with filtration size (up to filtration exponential in vertex set size in worst case). The advantage of this structure is a significant reduction in calculation time compared to my other approach where the filtration is calculated very quickly but without memorizing it. That approach is very good when we do not want to calculate homology, but that is exactly what we are after. Therefore I stick to the tree approach here.
 
 #### Launch
 
-You can launch the application by executing `java -jar "path/to/jar"`. If you need extra computing power you can add `-Xmx6g` after the path to higher the maximum available memory of the JVM.
+You can launch the application by executing `java -jar "path/to/jar"`. If you need extra memory size you can add `-Xmx6g` after the path to higher the maximum available memory of the JVM.
 
 #### Usage
 
@@ -53,9 +53,9 @@ A full overview can be found using `help`.
 
 #### Algorithm
 
-As presented by Edelsbrunner and Harer in [2] we can see that once the filtration is calculated, the task of determining persistent homology of it is given through plain matrix reduction over the field of two elements with some restrictions.
+As presented by Edelsbrunner and Harer in [2] we can see that once the filtration is calculated, the task of determining Persistent Homology of it is given through plain matrix reduction over the field of two elements with some restrictions.
 
-That reduction is implemented in such a way that we do not need to hold the complete matrix all calculation long. Only if we have a column vector that is still needed, i.e. it having a trailing 1, we save it. Otherwise it is either a linear combination of the ones we already saved and can be discarded or it can successively be reduced to an independent vector with a trailing 1.
+That reduction is implemented in such a way that we do not need to hold the complete matrix all calculation long. Only if we have a column vector that is still needed, i.e. it having a trailing 1, we save it. Otherwise it is either a linear combination of the ones we already saved and can be discarded or it can successively be reduced to a remaining independent vector with a trailing 1.
 
 This is a very important trick we make use of there, because saving the whole matrix at one time, even though it is sparse in general, is already near to impossible for a medium sized filtration.
 
