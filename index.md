@@ -20,13 +20,8 @@ You can launch the application by executing `java -jar "path/to/jar"`. If you ne
 
 #### Usage
 
-One workflow aiding feature is the users variable storage, so he can reference previously defined objects in other method calls. For example loading a euclidean point set from a directory into the variable S by typing
-
-```powershell
-S <- PointSet euclid "your/data/location.csv"
-```
-
-or get a 1000 point sample  from a smooth surface like the Torus:
+One workflow aiding feature is the users variable storage, so he can reference previously defined objects in other method calls.
+For example getting a 1000 point sample from a smooth surface like the Torus:
 
 ```powershell
 T <- PointSet mapping Torus 1000
