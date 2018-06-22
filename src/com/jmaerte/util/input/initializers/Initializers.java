@@ -4,7 +4,9 @@ import com.jmaerte.util.input.Table;
 import com.jmaerte.util.input.initializers.collection.InitFiltration;
 import com.jmaerte.util.input.initializers.collection.InitLandmarks;
 import com.jmaerte.util.input.initializers.collection.InitPersistence;
+import com.jmaerte.util.input.initializers.collection.InitPointSet;
 import com.jmaerte.util.vector.Vector2D;
+import com.jmaerte.util.vector.Vector3D;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -17,9 +19,10 @@ public class Initializers {
         initializer.put("Filtration", new InitFiltration());
         initializer.put("LandmarkSet", new InitLandmarks());
         initializer.put("Persistence", new InitPersistence());
+        initializer.put("PointSet", new InitPointSet());
     }
 
-    public static Vector2D<String, Object> init(String[] params) throws Exception {
+    public static Vector3D<String, Object, Class> init(String[] params) throws Exception {
         String command = params[0];
         String[] newParams = new String[params.length - 1];
         System.arraycopy(params, 1, newParams, 0, newParams.length);

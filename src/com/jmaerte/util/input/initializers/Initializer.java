@@ -2,10 +2,11 @@ package com.jmaerte.util.input.initializers;
 
 import com.jmaerte.util.input.Modifier;
 import com.jmaerte.util.vector.Vector2D;
+import com.jmaerte.util.vector.Vector3D;
 
 public abstract class Initializer {
 
-    public abstract Vector2D<String, Object> init(String[] params);
+    public abstract Vector3D<String, Object, Class> init(String[] params);
     public abstract String[] params();
     public abstract String[] options();
     public abstract Modifier[] modifiers();

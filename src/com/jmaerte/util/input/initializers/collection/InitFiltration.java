@@ -7,10 +7,11 @@ import com.jmaerte.util.input.Modifier;
 import com.jmaerte.util.input.Register;
 import com.jmaerte.util.input.initializers.Initializer;
 import com.jmaerte.util.vector.Vector2D;
+import com.jmaerte.util.vector.Vector3D;
 
 public class InitFiltration extends Initializer {
 
-    public Vector2D<String, Object> init(String[] params) {
+    public Vector3D<String, Object, Class> init(String[] params) {
         Vector2D<Object, Class> v = Register.get(params[2]);
         int k = Integer.valueOf(params[0]);
         PointSet S = null;
@@ -26,13 +27,13 @@ public class InitFiltration extends Initializer {
         }
         switch(params[1]) {
             case "cech":
-                return new Vector2D<>(k + "-Skeleton of Čech(" + params[2] + ")", Filtration.cech(S, k));
+                return new Vector3D<>(k + "-Skeleton of Čech(" + params[2] + ")", Filtration.cech(S, k), Filtration.class);
             case "vietoris":
-                return new Vector2D<>(k + "-Skeleton of Viet(" + params[2] + ")", Filtration.vietoris(S, k));
+                return new Vector3D<>(k + "-Skeleton of Viet(" + params[2] + ")", Filtration.vietoris(S, k), Filtration.class);
             case "witness":
-                return new Vector2D<>(k + "-Skeleton of Witness(" + params[2] + ")", Filtration.witness_lazy(L, k));
+                return new Vector3D<>(k + "-Skeleton of Witness(" + params[2] + ")", Filtration.witness_lazy(L, k), Filtration.class);
         }
-        return new Vector2D<>("", null);
+        return new Vector3D<>("", null, null);
     }
 
     public String description() {

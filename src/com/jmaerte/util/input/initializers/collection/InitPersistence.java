@@ -7,10 +7,11 @@ import com.jmaerte.util.input.Modifier;
 import com.jmaerte.util.input.Register;
 import com.jmaerte.util.input.initializers.Initializer;
 import com.jmaerte.util.vector.Vector2D;
+import com.jmaerte.util.vector.Vector3D;
 
 public class InitPersistence extends Initializer {
 
-    public Vector2D<String, Object> init(String[] params) {
+    public Vector3D<String, Object, Class> init(String[] params) {
         Vector2D<Object, Class> v = Register.get(params[0]);
         Filtration f = null;
         boolean reduced = Input.is(Modifier.REDUCED);
@@ -19,7 +20,7 @@ public class InitPersistence extends Initializer {
         }catch(Exception e) {
             System.out.println(params[1] + " is not of type Filtration.");
         }
-        return new Vector2D<>("The " + (reduced ? "reduced" : "ordinary") + " Persistent Homology diagrams of " + params[0] + ".", new Persistence(f, reduced));
+        return new Vector3D<>("The " + (reduced ? "reduced" : "ordinary") + " Persistent Homology diagrams of " + params[0] + ".", new Persistence(f, reduced), Persistence.class);
     }
 
     public String description() {

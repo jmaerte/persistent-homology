@@ -6,6 +6,7 @@ import com.jmaerte.data_struc.point_set.Metadata;
 import com.jmaerte.data_struc.point_set.PointSet;
 import com.jmaerte.persistence.Persistence;
 import com.jmaerte.util.vector.Vector2D;
+import com.jmaerte.util.vector.Vector3D;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -26,8 +27,8 @@ public class Register {
         typeNames = new HashMap<>();
         typeNames.put(Filtration.class, "Filtration");
         typeNames.put(PointSet.class, "PointSet");
-        typeNames.put(Persistence.class, "Persistence");
-        typeNames.put(Landmarks.class, "Landmarks/PointSet");
+        typeNames.put(Persistence.class, "PersistenceDiagram");
+        typeNames.put(Landmarks.class, "Landmarks-/Point Set");
 
         // Init PointSetTypes, i.e. Euclidean, Lexicographic and other formats of metric data
 //        pointSetTypes = new HashMap<>();
@@ -49,6 +50,10 @@ public class Register {
         objects.put(name, v.getSecond());
         descriptions.put(name, v.getFirst());
         classes.put(name, v.getSecond().getClass());
+    }
+
+    public static void push(String name, Vector3D<String, Object, Class> v) {
+        push(name, v.getFirst(), v.getSecond(), v.getThird());
     }
 
     public static Vector2D<Object, Class> get(String name) throws NoSuchElementException {
