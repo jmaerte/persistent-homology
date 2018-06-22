@@ -22,3 +22,9 @@ Therefore if you want to build this project I advice you to import it in the IDE
   
 
 If you just want to use it, you can download the repository as zip file on the [project page](https://jmaerte.github.io/persistent-homology/).
+
+### Literature
+
+Zomorodian, Afra. (2005). Topology for Computing (Cambridge Monographs on Applied and Computational Mathematics). Cambridge: Cambridge University Press.
+
+Edelsbrunner, Herbert; Harer, John. (2010). Computational Topology. Providence, USA: American Mathematical Society.
