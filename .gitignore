@@ -8,16 +8,17 @@
 *.ctxt
 
 #IntelliJ project files
+misc.xml
 *.iml
 *.ipr
 *.iws
+*.mf
 .idea/
 
 # Mobile Tools for Java (J2ME)
 .mtj.tmp/
 
 # Package Files #
-*.jar
 *.war
 *.nar
 *.ear
