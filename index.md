@@ -1,6 +1,6 @@
 # What is Persistent Homology?
 
-Persistent Homology describes topological development of a filtered simplicial complex in one variable. Since simplicial complexes have potentially exponential growth in the number of vertices calculating Persistent Homology might seem cumbersome but thanks to independent works of Edelsbrunner, Letscher and Zomorodian in 2000 we have a fast algorithm for that task.
+Persistent Homology describes topological development of a filtered simplicial complex in one variable. Since simplicial complexes have potentially exponential growth in the number of vertices calculating Persistent Homology might seem cumbersome but thanks to work of Edelsbrunner, Letscher and Zomorodian (see [1]) we have a fast algorithm for that task.
 
 It can be used to measure the resolution of a given feature in a point cloud, i.e. a set of points embedded in an euclidean vector space, or more abstract any other finite metrical space. We note that such spaces correspond to a weighted complete graph.
 
@@ -53,7 +53,7 @@ A full overview can be found using `help`.
 
 #### Algorithm
 
-As presented by Edelsbrunner and Harer in [1] we can see that once the filtration is calculated, the task of determining persistent homology of it is given through plain matrix reduction over the field of two elements with some restrictions.
+As presented by Edelsbrunner and Harer in [2] we can see that once the filtration is calculated, the task of determining persistent homology of it is given through plain matrix reduction over the field of two elements with some restrictions.
 
 That reduction is implemented in such a way that we do not need to hold the complete matrix all calculation long. Only if we have a column vector that is still needed, i.e. it having a trailing 1, we save it. Otherwise it is either a linear combination of the ones we already saved and can be discarded or it can successively be reduced to an independent vector with a trailing 1.
 
@@ -77,4 +77,5 @@ The parameter whose existence one can show using algebraic tools I mentioned at 
 
 
 
-[1] Edelsbrunner, Herbert ; Harer, John: Computational Topology. Providence USA, American Mathematical Society, 2010
+[1] Edelsbrunner, Herbert; Letscher, David; Zomorodian, Afra. (2000). Topological persistence and simplification.
+[2] Edelsbrunner, Herbert; Harer, John. (2010). Computational Topology. Providence, USA: American Mathematical Society.
