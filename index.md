@@ -69,6 +69,10 @@ Anyone who encountered the homology of the Torus before will directly notice som
 
 The parameter whose existence one can show using algebraic tools I mentioned at the beginning is somewhere between 4 and 5 as the diagram shows, since thats the interval in which the "living" homology classes are the ones of the homology of the Torus.
 
+#### Todo List
 
+- [ ] A more flexible user input for metrics, point types and mappings onto subspaces of some euclidean space.
+- [ ] Improve R Script output for large barcode plots. (RStudio console crashes on too long vector inputs)
+- [ ] Persistent user home directory for automatically generated images, plot files and more.
 
 [1] Edelsbrunner, Herbert ; Harer, John: Computational Topology. Providence USA, American Mathematical Society, 2010
