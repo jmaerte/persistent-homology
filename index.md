@@ -78,4 +78,5 @@ The parameter whose existence one can show using algebraic tools I mentioned at 
 
 
 [1] Edelsbrunner, Herbert; Letscher, David; Zomorodian, Afra. (2000). Topological persistence and simplification.
+
 [2] Edelsbrunner, Herbert; Harer, John. (2010). Computational Topology. Providence, USA: American Mathematical Society.
