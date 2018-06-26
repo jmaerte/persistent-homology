@@ -67,7 +67,7 @@ Here is one of the Torus example from above created by `plot P -k 1 -l 2` and RS
 
 Anyone who encountered the homology of the Torus before will directly notice something familiar here even though we started with 1000 points sampled from its surface and chose 100 evenly spreaded landmarks.
 
-The homotopy type restoring parameter I mentioned at the beginning is somewhere between 4 and 5 as the diagram shows, since that is the interval in which the "living" homology classes are the ones of the homology of the Torus.
+The homotopy type restoring parameter I mentioned at the beginning lives somewhere between 4 and 5 in this case as the diagram shows that this is the interval in which the "living" homology classes are the ones of the homology of the Torus.
 
 #### Todo List
 
