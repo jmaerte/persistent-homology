@@ -4,13 +4,17 @@ import com.jmaerte.data_struc.complex.Filtration;
 import com.jmaerte.data_struc.point_set.Landmarks;
 import com.jmaerte.data_struc.point_set.PointSet;
 import com.jmaerte.util.input.commands.Commands;
+import com.jmaerte.util.log.Logger;
 import com.jmaerte.util.vector.Vector2D;
 
+import java.io.*;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Scanner;
 
 public class Input {
+
+    public static File HOME;
 
     private static String[] currCommand;
     public static HashMap<String, String> options;
@@ -19,7 +23,30 @@ public class Input {
     private static final Scanner scanner;
 
     static {
+        System.out.println("Copyright 2018, Julian Märte, All rights reserved.\n" +
+                "Calculator for Persistent Homology of Metric Point Sets.\n" +
+                "Found a bug or having questions? Please send a mail to maertej@students.uni-marburg.de!\n" +
+                "Use `help` for an overview of commands.");
         scanner = new Scanner(System.in);
+        File config = new File(System.getProperty("user.home") + File.separator + ".persistent_homology" + File.separator + "config");
+        try {
+            if(!config.exists()) {
+                new File(config.getParent()).mkdirs();
+                config.createNewFile();
+            }
+            BufferedReader r = new BufferedReader(new FileReader(config));
+            String path = r.readLine();
+            if(path == null || path.equals("")) {
+                HOME = new File(config.getParent() + File.separator + "home");
+                Logger.info("No user home directory specified. Now protocoling to " + HOME.getAbsolutePath() + ".");
+            }else {
+                HOME = new File(path);
+            }
+            HOME.mkdirs();
+        } catch(Exception e) {
+            e.printStackTrace();
+        }
+        System.out.println(HOME.getAbsolutePath());
     }
 
     private static void input() {
@@ -169,10 +196,6 @@ public class Input {
     }
 
     public static void main(String... args) {
-        System.out.println("Copyright 2018, Julian Märte, All rights reserved.\n" +
-                "Calculator for Persistent Homology of Metric Point Sets.\n" +
-                "Having questions or suggestions? Please send them to maertej@students.uni-marburg.de!\n" +
-                "Use `help` for an overview of commands.");
         input();
     }
 
