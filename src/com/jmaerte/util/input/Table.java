@@ -1,7 +1,5 @@
 package com.jmaerte.util.input;
 
-import org.omg.IOP.ENCODING_CDR_ENCAPS;
-
 public class Table {
 
     private String s = "";

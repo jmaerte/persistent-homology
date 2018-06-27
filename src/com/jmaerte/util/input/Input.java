@@ -46,7 +46,6 @@ public class Input {
         } catch(Exception e) {
             e.printStackTrace();
         }
-        System.out.println(HOME.getAbsolutePath());
     }
 
     private static void input() {
