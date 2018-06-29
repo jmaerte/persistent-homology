@@ -13,11 +13,9 @@ public class InitPointSet extends Initializer {
         if(params[0].equals("mapping")) {
             switch(params[1]) {
                 case "Torus":
-                    int n = Integer.valueOf(params[2]);
-                    int r = (params.length < 5) ? 5 : Integer.valueOf(params[3]);
-                    int R = (params.length < 5) ? 10 : Integer.valueOf(params[4]);
-                    return new Vector3D<>("A " + n + " points sized sample of the Torus with parameters r=" + r + " and R=" + R + ".", PointSetUtils.getFromMapping(n, new double[]{0, 2*Math.PI, 0, 2 * Math.PI},
-                    PointSetUtils.torusChart(5, 10)), PointSet.class);
+                    return new Vector3D<>("A " + Integer.valueOf(params[2]) + " points sized sample of the Torus with parameters r=" + ((params.length < 5) ? 5 : Integer.valueOf(params[3])) +
+                            " and R=" + ((params.length < 5) ? 10 : Integer.valueOf(params[4])) + ".", PointSetUtils.getFromMapping(Integer.valueOf(params[2]), new double[]{0, 2*Math.PI, 0, 2 * Math.PI},
+                            PointSetUtils.torusChart(5, 10)), PointSet.class);
             }
         }
         return null;

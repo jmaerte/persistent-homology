@@ -47,7 +47,7 @@ public class Visualization extends PApplet {
             }
             double max = Math.max(maxX, maxY);
             scale = (frameDim - 50) / (float)max;
-            scale /= 3;
+            scale /= 1.5;
         }else {
             size(frameDim, frameDim, P3D);
         }

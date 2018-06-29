@@ -367,7 +367,7 @@ public class Filtration implements Iterable<BinaryVector> {
 //    }
 
     public static Filtration vietoris(PointSet S, int k) {
-        Filtration f = new Filtration(S.size(), k, v -> S.d(v.getFirst(), v.getSecond()));
+        Filtration f = new Filtration(S.size(), k, v -> S.d(v.getFirst(), v.getSecond())/2);
         f.attachPointSet(S);
         return f;
     }
