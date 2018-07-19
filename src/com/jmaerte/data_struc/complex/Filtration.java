@@ -19,7 +19,7 @@ import java.util.*;
 public class Filtration implements Iterable<BinaryVector> {
 
     private static boolean reduced = false;
-    private Tree simplices;
+    public Tree simplices;
     private int dim;
     private int n;
     private int size;
@@ -57,8 +57,21 @@ public class Filtration implements Iterable<BinaryVector> {
 //        }
 //    }
 
-    public void insert(int[] path, double valuation) {
-
+    public void insert(int[] path, double valuation, HashMap<Double, LinkedList<Tree>> filteredIndizes) {
+        if(path.length - 1 > dim) dim = path.length - 1;
+        Tree curr = simplices;
+        for(int i = 0; i < path.length; i++) {
+            Tree child = curr.getChild(path[i]);
+            if(child != null) {
+                curr = child;
+            } else {
+                curr.setChild(path[i], new Tree(path[i], curr, 0, curr.depth + 1, n));
+                curr = curr.getChild(path[i]);
+            }
+        }
+        curr.filteredVal = valuation;
+        filteredIndizes.computeIfAbsent(valuation, m -> new LinkedList<>());
+        filteredIndizes.get(valuation).addLast(curr);
     }
 
     public void draw(PointSet<double[]> S, double epsilon, double delta, int width, boolean balls) {
@@ -187,7 +200,7 @@ public class Filtration implements Iterable<BinaryVector> {
         }
     }
 
-    private void pack(HashMap<Double, LinkedList<Tree>> table) {
+    public void pack(HashMap<Double, LinkedList<Tree>> table) {
         this.ordering = new ArrayList<>();
         Set<Double> keySet = table.keySet();
         double[] keys = new double[keySet.size()];

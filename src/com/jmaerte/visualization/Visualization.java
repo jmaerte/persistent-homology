@@ -105,7 +105,7 @@ public class Visualization extends PApplet {
             if(vertex.length == 1) {
                 if(dimension == 2) {
                     frame.stroke(0);
-                    frame.strokeWeight(1);
+                    frame.strokeWeight(3);
                     frame.point((float)S.get(vertex[0])[0] * scale / 2, (float)S.get(vertex[0])[1] * scale / 2);
                 }else {
                     frame.point((float)S.get(vertex[0])[0], (float)S.get(vertex[0])[1], (float)S.get(vertex[0])[2]);

@@ -1,5 +1,7 @@
 package com.jmaerte.util.input;
 
+import com.jmaerte.data_struc.complex.Filtration;
+import com.jmaerte.data_struc.complex.Tree;
 import com.jmaerte.data_struc.point_set.Metadata;
 import com.jmaerte.data_struc.point_set.Metric;
 import com.jmaerte.data_struc.point_set.PointSet;
@@ -9,7 +11,7 @@ import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileWriter;
-import java.util.ArrayList;
+import java.util.*;
 
 public class FileIO {
 
@@ -84,6 +86,85 @@ public class FileIO {
                 writer.eval(elements.get(0)).write(bw, k);
             }
         };
+    }
+
+    public static Filtration fromCSV(String path) {
+        File f = new File(path);
+        byte[] data = null;
+        try {
+            FileInputStream fis = new FileInputStream(f);
+            data = new byte[(int) f.length()];
+            fis.read(data);
+            fis.close();
+        }catch(Exception e) {
+            e.printStackTrace();
+        }
+        int n = getMaximumVertex(data);
+        HashMap<Double, LinkedList<Tree>> table = new HashMap<>();
+        char c;
+        Filtration filtration = new Filtration(n);
+        table.computeIfAbsent(0d, m -> new LinkedList<>());
+        table.get(0d).addLast(filtration.simplices);
+        ArrayList<Integer> currPath = new ArrayList<>();
+        String currIndex = "";
+        String valuation = "";
+        boolean readPath = false;
+        for(int i = 0; i < data.length; i++) {
+            c = (char) data[i];
+            if(readPath) {
+                if(c == '}') {
+                    currPath.add(Integer.valueOf(currIndex));
+                    readPath = false;
+                    currIndex = "";
+                    continue;
+                }
+                if(c == ' ') {
+                    currPath.add(Integer.valueOf(currIndex));
+                    currIndex = "";
+                }else {
+                    currIndex += c;
+                }
+            } else if(c != ' ' && c != '{') {
+                valuation += c;
+            }
+            if(c == '{') readPath = true;
+            if(c == '\n') {
+                int[] patharr = new int[currPath.size()];
+                for(int j = 0; j < patharr.length; j++) patharr[j] = currPath.get(j);
+                currPath = new ArrayList<>();
+                filtration.insert(patharr, Double.valueOf(valuation), table);
+                valuation = "";
+
+            }
+        }
+        filtration.pack(table);
+        return filtration;
+    }
+
+    private static int getMaximumVertex(byte[] data) {
+        char c;
+        PriorityQueue<Integer> pq = new PriorityQueue<>((a,b) -> b - a);
+        String currIndex = "";
+        boolean readPath = false;
+        for(int i = 0; i < data.length; i++) {
+            c = (char) data[i];
+            if(readPath) {
+                if(c == '}') {
+                    pq.add(Integer.valueOf(currIndex));
+                    readPath = false;
+                    currIndex = "";
+                    continue;
+                }
+                if(c == ' ') {
+                    pq.add(Integer.valueOf(currIndex));
+                    currIndex = "";
+                }else {
+                    currIndex += c;
+                }
+            }
+            if(c == '{') readPath = true;
+        }
+        return pq.peek() + 1;
     }
 
     public static <T extends Writer & Function<T, Double>> void toCSV(String path, PointSet<T> S) {
