@@ -19,6 +19,7 @@ public class Commands {
         commands.put("plot", new Plot());
         commands.put("finalize", new FinalizeObject());
         commands.put("save", new SaveObject());
+        commands.put("home", new SetHome());
     }
 
     public static void print() {

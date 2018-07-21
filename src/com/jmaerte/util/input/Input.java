@@ -8,6 +8,7 @@ import com.jmaerte.util.log.Logger;
 import com.jmaerte.util.vector.Vector2D;
 
 import java.io.*;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Scanner;
@@ -39,16 +40,36 @@ public class Input {
             String path = r.readLine();
             if(path == null || path.equals("")) {
                 HOME = new File(config.getParent() + File.separator + "home");
-                Logger.info("No user home directory specified. Now protocoling to " + HOME.getAbsolutePath() + ".");
+                Logger.info("No user home directory specified. Using the standard home directory: " + HOME.getAbsolutePath());
             }else {
                 HOME = new File(path);
+                Logger.info("Home directory is " + HOME.getAbsolutePath() + ".");
             }
             HOME.mkdirs();
             LOG = new File(HOME.getAbsolutePath() + File.separator + "log" + File.separator + Logger.dateFormat.format(Logger.date) + ".log");
             new File(LOG.getParent()).mkdirs();
             LOG.createNewFile();
+            Logger.info("Logging session to " + LOG.getAbsolutePath() + ".");
+            BufferedWriter bw = new BufferedWriter(new FileWriter(LOG, false));
+            SimpleDateFormat date = new SimpleDateFormat("yyyy-MM-dd");
+            SimpleDateFormat time = new SimpleDateFormat("HH:mm:ss");
+            String line1 = " This is a log file of the program session started on " + date.format(Logger.date) + " at " + time.format(Logger.date) + " ";
+            String frame = "";
+            String empty = "";
+            for(int i = 0; i < line1.length() + 2; i++) {
+                frame += "#";
+                empty += " ";
+            }
+            bw.write("#" + frame + "#\r\n");
+            bw.write("#" + empty + "#\r\n");
+            bw.write("# " + line1 + " #\r\n");
+            bw.write("#" + empty + "#\r\n");
+            bw.write("#" + frame + "#\r\n");
+            bw.flush();
+            bw.close();
         } catch(Exception e) {
-            e.printStackTrace();
+            System.err.println("Error while setting up log file. Try to delete the file " + System.getProperty("user.home") + "/" + ".persistent_homology/config.");
+            System.exit(0);
         }
     }
 

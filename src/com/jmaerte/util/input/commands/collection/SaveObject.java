@@ -20,7 +20,7 @@ public class SaveObject extends Command {
         BufferedWriter bw = null;
         String path = null;
         if(Input.is(Modifier.HOME)) {
-            path = Input.HOME + File.separator + params[1];
+            path = Input.HOME + File.separator + "saves" + File.separator + params[1];
         }else {
             path = params[1];
         }
