@@ -7,12 +7,13 @@ import com.jmaerte.util.input.initializers.Initializers;
 
 public class Help extends Command {
 
-    public void call(String[] params) {
+    public String call(String[] params) {
         if(params.length == 0) {
             Commands.print();
         }else if(params[0].equals("init")){
             Initializers.print();
         }
+        return "";
     }
 
     protected String description() {

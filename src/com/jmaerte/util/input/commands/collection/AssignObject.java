@@ -7,13 +7,14 @@ import com.jmaerte.util.input.initializers.Initializers;
 
 public class AssignObject extends Command {
 
-    public void call(String[] params) {
+    public String call(String[] params) {
         String[] initP = new String[params.length - 1];
         System.arraycopy(params, 1, initP, 0, params.length - 1);
         try {
-            Register.push(params[0], Initializers.init(initP));
+            return Register.push(params[0], Initializers.init(initP));
         }catch(Exception e) {
-            System.out.println(e.getMessage());
+            System.out.println(e.toString());
+            return e.getMessage();
         }
     }
 

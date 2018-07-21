@@ -167,7 +167,7 @@ public class FileIO {
         return pq.peek() + 1;
     }
 
-    public static <T extends Writer & Function<T, Double>> void toCSV(String path, PointSet<T> S) {
+    public static <T> void toCSV(String path, PointSet<T> S) {
         try {
             File f = new File(path);
             new File(f.getParent()).mkdirs();

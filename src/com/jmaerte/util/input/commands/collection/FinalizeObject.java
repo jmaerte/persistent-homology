@@ -6,8 +6,9 @@ import com.jmaerte.util.input.commands.Command;
 
 public class FinalizeObject extends Command {
 
-    public void call(String[] params) {
+    public String call(String[] params) {
         Register.finalize(params[0]);
+        return "Finalized " + params[0];
     }
 
     protected String description() {

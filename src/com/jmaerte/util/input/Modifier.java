@@ -4,7 +4,8 @@ public enum Modifier {
     MAXMIN("maxmin"),
     CSV("csv"),
     REDUCED("reduced"),
-    BALLS("balls");
+    BALLS("balls"),
+    HOME("home");
 
     public final String mod;
 

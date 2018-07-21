@@ -1,12 +1,17 @@
 package com.jmaerte.util.log;
 
+import com.jmaerte.util.input.Input;
+
+import java.io.BufferedWriter;
+import java.io.File;
+import java.io.FileWriter;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
 public class Logger {
 
-    public static final DateFormat dateFormat = new SimpleDateFormat("yyyy.MM.dd - HH mm ss");
+    public static final DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH.mm.ss");
 
     public static final Date date = new Date();
     public static final boolean log = true;
@@ -57,5 +62,18 @@ public class Logger {
     public static void close() {
         progressing = false;
         System.out.print("[==========] ~ " + maxProgress + "/" + maxProgress + "\n\n");
+    }
+
+    public static void printToLog(String msg) {
+        if(msg.equals("")) return;
+        try {
+            BufferedWriter bw = new BufferedWriter(new FileWriter(Input.LOG, true));
+            bw.write(msg);
+            bw.newLine();
+            bw.flush();
+            bw.close();
+        }catch(Exception e) {
+            System.out.println("Error while logging!");
+        }
     }
 }

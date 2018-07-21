@@ -1,12 +1,8 @@
 package com.jmaerte.data_struc.graph;
 
-import com.jmaerte.data_struc.point_set.PointSet;
 import com.jmaerte.util.log.Logger;
 import com.jmaerte.util.vector.Vector2D;
 import com.jmaerte.util.calc.Function;
-import com.jmaerte.util.calc.Util;
-
-import java.util.concurrent.ThreadLocalRandom;
 
 public class WeightedGraph {
 

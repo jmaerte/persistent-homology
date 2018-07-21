@@ -6,8 +6,9 @@ import com.jmaerte.util.input.commands.Command;
 
 public class Clear extends Command {
 
-    public void call(String[] params) {
+    public String call(String[] params) {
         Register.free();
+        return "Cleared the memory space.";
     }
 
     protected String description() {

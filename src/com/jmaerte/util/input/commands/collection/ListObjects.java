@@ -6,8 +6,9 @@ import com.jmaerte.util.input.commands.Command;
 
 public class ListObjects extends Command {
 
-    protected void call(String[] params) {
+    protected String call(String[] params) {
         System.out.println(Register.print());
+        return Register.print();
     }
 
     protected String description() {

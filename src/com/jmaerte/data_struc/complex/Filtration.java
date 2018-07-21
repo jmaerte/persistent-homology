@@ -9,14 +9,15 @@ import com.jmaerte.util.log.Logger;
 import com.jmaerte.util.vector.Vector2D;
 import com.jmaerte.util.vector.Vector4D;
 import com.jmaerte.visualization.Visualization;
-import processing.awt.PSurfaceAWT;
 import processing.core.PApplet;
-import processing.core.PSurface;
 
-import javax.swing.*;
+import java.io.BufferedWriter;
+import java.text.DecimalFormat;
 import java.util.*;
 
 public class Filtration implements Iterable<BinaryVector> {
+
+    private static final DecimalFormat numericalErrors = new DecimalFormat("#.############");
 
     private static boolean reduced = false;
     public Tree simplices;
@@ -127,7 +128,7 @@ public class Filtration implements Iterable<BinaryVector> {
         for(int j = simplex.node + 1; j < n; j++) {
             sigma[simplex.depth] = j;
             Vector2D<T, Double> v = valuation.eval(new Vector4D<>(sigma, object, simplex.depth, j));
-            simplex.setChild(j, new Tree(j, simplex, v.getSecond(), simplex.depth + 1, n));
+            simplex.setChild(j, new Tree(j, simplex, Double.valueOf(numericalErrors.format(v.getSecond())), simplex.depth + 1, n));
             table.computeIfAbsent(v.getSecond(), m -> new LinkedList<>());
             table.get(v.getSecond()).addLast(simplex.getChild(j));
             generate(k, simplex.getChild(j), sigma, v.getFirst(), valuation, table);
@@ -135,6 +136,7 @@ public class Filtration implements Iterable<BinaryVector> {
     }
 
     /**Computes the maximal dimension-k filtration with a 1-skeleton such that val({i,j}) = valuation.eval(i,j).
+     * This is the k-skeleton of the clique-filtration of a complete graph, such as the vietoris- or witness-filtration.
      *
      * @param k dimension of the target filtration
      * @param valuation the valuation function on the edges.
@@ -163,7 +165,7 @@ public class Filtration implements Iterable<BinaryVector> {
         HashMap<Double, LinkedList<Tree>> table = new HashMap<>();
         table.put(0d, new LinkedList<>());
         table.get(0d).add(simplices);
-        Logger.progress(n, "Building Neighborhood-Filtration");
+        Logger.progress(n, "Building Clique-Filtration");
         for(int i = 0; i < n; i++) {
             sigma[0] = i;
             table.get(0d).addLast(simplices.getChild(i));
@@ -198,6 +200,14 @@ public class Filtration implements Iterable<BinaryVector> {
             table.get(val).addLast(simplex.getChild(j));
             fill(k, simplex.getChild(j), sigma, table);
         }
+    }
+
+    /**An implementation of the clique filtration for arbitrary graphs.
+     *
+     * @param graph
+     */
+    public void graph() {
+
     }
 
     public void pack(HashMap<Double, LinkedList<Tree>> table) {
@@ -307,6 +317,28 @@ public class Filtration implements Iterable<BinaryVector> {
         };
     }
 
+    public void write(BufferedWriter bw) throws Exception {
+        for(int i = 1; i < size(); i++) {
+            Tree t = get(i);
+            double val = t.filteredVal;
+            int[] path = new int[t.depth];
+            for(int j = t.depth - 1; j >= 0; j--) {
+                path[j] = t.node;
+                t = t.parent;
+            }
+            bw.write("{");
+            for(int j = 0; j < path.length; j++) {
+                bw.write(path[j] + (j + 1 == path.length ? "" : ","));
+            }
+            bw.write("}");
+            bw.write(" ");
+            bw.write("" + val);
+            if(i + 1 != size()) {
+                bw.newLine();
+            }
+        }
+        bw.flush();
+    }
 
 //    @Override
 //    public Iterator<BinaryVector> iterator() {

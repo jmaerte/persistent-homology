@@ -52,8 +52,9 @@ public class Register {
         classes.put(name, v.getSecond().getClass());
     }
 
-    public static void push(String name, Vector3D<String, Object, Class> v) {
+    public static String push(String name, Vector3D<String, Object, Class> v) {
         push(name, v.getFirst(), v.getSecond(), v.getThird());
+        return "Successfully initialized the variable " + name + " of type " + typeNames.get(v.getThird()) + ".";
     }
 
     public static Vector2D<Object, Class> get(String name) throws NoSuchElementException {

@@ -10,22 +10,30 @@ import com.jmaerte.util.vector.Vector2D;
 
 public class Plot extends Command {
 
-    public void call(String[] params) {
-        Vector2D<Object, Class> v = Register.get(params[0]);
-        if(v.getSecond().getSimpleName().equals("Filtration")) {
-            Filtration f = (Filtration) v.getFirst();
-            f.draw(0, f.get(f.size() - 1).val() + 1, 1000, Input.is(Modifier.BALLS));
-        }else if(v.getSecond().getSimpleName().equals("Persistence")) {
-            Persistence p = (Persistence) v.getFirst();
-            String stK = Input.options.get("k");
-            String stL = Input.options.get("l");
-            int k;
-            int l;
-            if(stK == null) k = 0;
-            else k = Integer.valueOf(stK);
-            if(stL == null) l = p.dimension() - 1;
-            else l = Integer.valueOf(stL);
-            System.out.println(p.toBarcodePlot(k, l));
+    public String call(String[] params) {
+        try {
+            Vector2D<Object, Class> v = Register.get(params[0]);
+            if(v.getSecond().getSimpleName().equals("Filtration")) {
+                Filtration f = (Filtration) v.getFirst();
+                f.draw(0, f.get(f.size() - 1).val() + 1, 1000, Input.is(Modifier.BALLS));
+                return "Plotted the Filtration";
+            }else if(v.getSecond().getSimpleName().equals("Persistence")) {
+                Persistence p = (Persistence) v.getFirst();
+                String stK = Input.options.get("k");
+                String stL = Input.options.get("l");
+                int k;
+                int l;
+                if(stK == null) k = 0;
+                else k = Integer.valueOf(stK);
+                if(stL == null) l = p.dimension() - 1;
+                else l = Integer.valueOf(stL);
+                System.out.println(p.toBarcodePlot(k, l));
+                return "Successfully calculated the barcode plot of " + params[0] + ":\n" + p.toBarcodePlot(k, l);
+            }
+        }catch(Exception e) {
+            return "Fatal Error: " + e.getMessage();
+        }finally {
+            return "Couldn't determine what to draw. Probably " + params[0] + " is not a known object or either " + Input.options.get("k") + " or " + Input.options.get("k") + " is not a number.";
         }
     }
 

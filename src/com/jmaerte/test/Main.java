@@ -288,14 +288,22 @@ public class Main {
 //        PointSet<double[]> S = PointSetUtils.getFromMapping(1000, new double[]{0, 2*Math.PI, 0, 2*Math.PI}, PointSetUtils.torusChart( 5, 10));
 
 
-        Filtration f = FileIO.fromCSV("C:\\Users\\Julian\\Desktop\\filtration.txt");
-        PointSet<double[]> S = FileIO.fromCSV("C:\\Users\\Julian\\Desktop\\PointSet.txt", Double::valueOf,
-                list -> list.stream().mapToDouble(d -> d).toArray(), '\n', ',', '\"',
-                d -> Metadata.getEuclidean(d.length), d -> Writer.DoubleArray(",", "\n"));
-        System.out.println(S.size());
+//        Filtration f = FileIO.fromCSV("C:\\Users\\Julian\\Desktop\\filtration.txt");
+//        PointSet<double[]> S = FileIO.fromCSV("C:\\Users\\Julian\\Desktop\\PointSet.txt", Double::valueOf,
+//                list -> list.stream().mapToDouble(d -> d).toArray(), '\n', ',', '\"',
+//                d -> Metadata.getEuclidean(d.length), d -> Writer.DoubleArray(",", "\n"));
+//        System.out.println(S.size());
+//        Persistence p = new Persistence(f, false);
+//        System.out.println(p.toBarcodePlot(0, 2));
+//        f.draw(S, 0, f.get(f.size() - 1).val() + 1, 1000, false);
+
+        PointSet<double[]> S = PointSetUtils.getFromMapping(1000, new double[]{0, 2 * Math.PI, 0, 2 * Math.PI}, PointSetUtils.torusChart(5, 10));
+        FileIO.toCSV("C:\\Users\\Ina\\Desktop\\points.csv", S);
+        Landmarks<double[]> L = new Landmarks<>(S, 80, Landmarks.Choice.MAXMIN);
+        Filtration f = Filtration.cech(L, 3);
         Persistence p = new Persistence(f, false);
-        System.out.println(p.toBarcodePlot(0, 2));
-        f.draw(S, 0, f.get(f.size() - 1).val() + 1, 1000, false);
+        System.out.println(p.toBarcodePlot(1, 2));
+        f.draw(L, 0, f.get(f.size() - 1).val() + 1, 1000, false);
 
 //        PointSet<Euclidean> S = PointSetUtils.getSphereData(2, 100, 1, 4);
 //        PointSet<Euclidean> base = PointSetUtils.randomPointSet(2, 2, -100, 100);

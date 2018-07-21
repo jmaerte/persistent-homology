@@ -15,6 +15,7 @@ import java.util.Scanner;
 public class Input {
 
     public static File HOME;
+    public static File LOG;
 
     private static String[] currCommand;
     public static HashMap<String, String> options;
@@ -43,6 +44,9 @@ public class Input {
                 HOME = new File(path);
             }
             HOME.mkdirs();
+            LOG = new File(HOME.getAbsolutePath() + File.separator + "log" + File.separator + Logger.dateFormat.format(Logger.date) + ".log");
+            new File(LOG.getParent()).mkdirs();
+            LOG.createNewFile();
         } catch(Exception e) {
             e.printStackTrace();
         }
@@ -50,6 +54,7 @@ public class Input {
 
     private static void input() {
         String next = scanner.nextLine();
+        Logger.printToLog(">" + next);
         ArrayList<String> cmd = new ArrayList<>();
         boolean text = false;
         String curr = "";
@@ -104,7 +109,7 @@ public class Input {
 
     private static Modifier getModifier(String mod) throws Exception {
         for(Modifier m : Modifier.values()) {
-            if(m.mod.equals(mod)) {
+            if(m.mod.toLowerCase().equals(mod.toLowerCase())) {
                 return m;
             }
         }

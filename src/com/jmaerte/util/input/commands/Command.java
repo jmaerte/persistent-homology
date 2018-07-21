@@ -8,7 +8,7 @@ public abstract class Command {
      *
      * @param params parameters.
      */
-    protected abstract void call(String[] params);
+    protected abstract String call(String[] params);
     protected abstract String[] params();
     protected abstract String[] options();
     protected abstract Modifier[] modifiers();

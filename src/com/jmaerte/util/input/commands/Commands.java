@@ -2,6 +2,8 @@ package com.jmaerte.util.input.commands;
 
 import com.jmaerte.util.input.Table;
 import com.jmaerte.util.input.commands.collection.*;
+import com.jmaerte.util.log.Logger;
+
 import java.util.HashMap;
 import java.util.Map;
 
@@ -16,6 +18,7 @@ public class Commands {
         commands.put("clear", new Clear());
         commands.put("plot", new Plot());
         commands.put("finalize", new FinalizeObject());
+        commands.put("save", new SaveObject());
     }
 
     public static void print() {
@@ -35,11 +38,13 @@ public class Commands {
                     String[] params = new String[command.length - 1];
                     System.arraycopy(command, 0, params, 0, com.getValue().positionCommand());
                     System.arraycopy(command, com.getValue().positionCommand() + 1, params, com.getValue().positionCommand(), command.length - com.getValue().positionCommand() - 1);
-                    com.getValue().call(params);
+                    Logger.printToLog(com.getValue().call(params));
                     return;
                 }
             }catch(Exception e) {}
         }
+        System.out.println("Unknown command or it does not match any syntax.");
+        Logger.printToLog("Unknown command or it does not match any syntax.");
     }
 
 }
