@@ -17,7 +17,7 @@ import java.util.*;
 
 public class Filtration implements Iterable<BinaryVector> {
 
-    private static final DecimalFormat numericalErrors = new DecimalFormat("#.############");
+    private static final DecimalFormat numericalErrors = new DecimalFormat("#,############");
 
     private static boolean reduced = false;
     public Tree simplices;
@@ -128,7 +128,7 @@ public class Filtration implements Iterable<BinaryVector> {
         for(int j = simplex.node + 1; j < n; j++) {
             sigma[simplex.depth] = j;
             Vector2D<T, Double> v = valuation.eval(new Vector4D<>(sigma, object, simplex.depth, j));
-            simplex.setChild(j, new Tree(j, simplex, Double.valueOf(numericalErrors.format(v.getSecond())), simplex.depth + 1, n));
+            simplex.setChild(j, new Tree(j, simplex, v.getSecond(), simplex.depth + 1, n));
             table.computeIfAbsent(v.getSecond(), m -> new LinkedList<>());
             table.get(v.getSecond()).addLast(simplex.getChild(j));
             generate(k, simplex.getChild(j), sigma, v.getFirst(), valuation, table);
@@ -204,7 +204,6 @@ public class Filtration implements Iterable<BinaryVector> {
 
     /**An implementation of the clique filtration for arbitrary graphs.
      *
-     * @param graph
      */
     public void graph() {
 
@@ -262,20 +261,16 @@ public class Filtration implements Iterable<BinaryVector> {
     @Override
     public Iterator<BinaryVector> iterator() {
         return new Iterator<BinaryVector>() {
-            long ns = 0;
-            long curr = 0;
             int i = (reduced ? 0 : 1);
 
             @Override
             public boolean hasNext() {
-                if(i == ordering.size()) System.out.println("Iterator time: " + ns + "ns");
                 return i < ordering.size();
             }
 
             @Override
             public BinaryVector next() {
                 if(!hasNext()) throw new NoSuchElementException();
-                curr = System.nanoTime();
                 Tree t = ordering.get(i);
                 int depth = t.depth;
                 int[] path = new int[t.depth];
@@ -311,7 +306,6 @@ public class Filtration implements Iterable<BinaryVector> {
                     entries[i] = curr.filteredInd;
                 }
                 Arrays.sort(entries);
-                ns += System.nanoTime() - this.curr;
                 return new BinaryVector(size, entries, entries.length, depth - 1, filteredVal, filteredInd);
             }
         };

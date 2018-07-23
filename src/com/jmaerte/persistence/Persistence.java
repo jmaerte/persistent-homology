@@ -44,7 +44,9 @@ public class Persistence {
         for(int i = 0; i < diagram.length; i++) {
             diagram[i] = new Diagram();
         }
+        long ns = System.nanoTime();
         generate(reduced);
+        System.out.println("Termination done - it took " + (System.nanoTime() - ns) + "ns");
         System.out.format("%13s | %15s", "Dimension i", "i-th Betti number");
         System.out.println("\n--------------|------------------");
         for(int i = 1; i < diagram.length; i++) {
@@ -64,7 +66,6 @@ public class Persistence {
         Logger.progress(f.size(), "Termination algorithm");
         int i = 0;
         BinaryVector missingVertex = null;
-        long ns = 0;
         for(BinaryVector v : f) {
 //            System.out.println(v);
             int p = v.simplexDim + 1;
@@ -108,7 +109,6 @@ public class Persistence {
             i++;
             if(i % 1000 == 0) Logger.updateProgress(i);
         }
-        System.out.println("Calculation time " + ns + "ns");
         for(int k = 0; k < occupation_low; k++) {
             lowCount[f.get(low[k]).depth()]++;
             diagram[f.get(low[k]).depth()].put(f.get(low[k]).val(), matrix[k].filterVal);

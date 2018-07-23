@@ -99,7 +99,10 @@ public class Landmarks<T> extends PointSet<T> {
         for(int k = 0; k < S.size(); k++) {
             if(l < n && landmarks[l] == k) l++;
             else {
-                double curr = Math.max(D[order[i]][k], D[order[j]][k]);
+                double curr;
+                if(order == null) {
+                    curr = Math.max(D[i][k], D[j][k]);
+                }else curr = Math.max(D[order[i]][k], D[order[j]][k]);
                 if(k == 0 || curr < maxmin) maxmin = curr;
             }
         }

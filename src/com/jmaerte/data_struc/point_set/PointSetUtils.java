@@ -291,8 +291,9 @@ public class PointSetUtils {
         String path = toFile(S).replace('\\', '/');
         if(S.getMetadata().dimension() > 2) return "";
         return  "library(ggplot2)\n\n" +
-                "data <- read.table(\"" + path + "\", header = FALSE)\n" +
-                "plot <- ggplot(data) + geom_point(aes(x=V2, y=V3), colour=\"black\", size=0.5) + \n" +
+                "data <- read.table(\"" + path + "\", header = FALSE, sep=\",\")\n" +
+                "data$ID <- seq.int(nrow(data))\n" +
+                "plot <- ggplot(data) + geom_point(aes(x=V1, y=V2), colour=\"black\", size=0.5) + \n" +
                 "theme_light() +\n" +
                 "theme(\n" +
                 "    legend.position = \"none\",\n" +
@@ -349,7 +350,7 @@ public class PointSetUtils {
         }
         return p + "\n" +
                 "landmarks <- " + landmarks + "\n" +
-                "plot <- plot + geom_point(data = subset(data, V1 %in% landmarks), aes(x = V2, y = V3), colour=\"" + color + "\", size=1.5, shape=2, fill = 1)\n" +
+                "plot <- plot + geom_point(data = subset(data, ID %in% landmarks), aes(x = V1, y = V2), colour=\"" + color + "\", size=1.5, shape=2, fill = 1)\n" +
                 "print(plot)";
     }
 }

@@ -46,11 +46,11 @@ public class SaveObject extends Command {
     }
 
     protected String[] params() {
-        return new String[]{""};
+        return new String[]{"path"};
     }
 
     protected String[] options() {
-        return new String[]{"path"};
+        return new String[]{};
     }
 
     protected Modifier[] modifiers() {

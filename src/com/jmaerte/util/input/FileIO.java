@@ -59,9 +59,11 @@ public class FileIO {
                 }
                 isText = !isText;
             }else if(c == delimiter && !isText) {
-                try {
-                    currEl.add(cast.eval(curr));
-                } catch(Exception e) {}
+                if(!curr.equals("")) {
+                    try {
+                        currEl.add(cast.eval(curr));
+                    } catch(Exception e) {}
+                }
                 curr = "";
             }else if(c == nextElement && !isText) {
                 if(!curr.equals("")) currEl.add(cast.eval(curr));
