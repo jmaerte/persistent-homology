@@ -174,14 +174,14 @@ public class Persistence {
         return s + "]";
     }
 
-    public String toBarcodePlot(int m, int n) {
+    public String toBarcodePlot(int m, int n, boolean drawAverage, boolean cut) {
         n++;
         // Color strings: note that they must be escaped by \" since we also want the rgb-function to be a possible input.
         String segmentColor = "\"black\"";
         String birthColor = "\"chartreuse4\"";
         String deathColor = "\"sienna4\"";
         double average = getAverage(m, n);
-        Vector5D<String, String, int[], int[], Integer> value = this.getIntervalArrays(m, n);
+        Vector5D<String, String, int[], int[], Integer> value = this.getIntervalArrays(m, n, cut? average : -1);
         int[] nonTrivial = value.getThird();
         int[] groupSize = value.getFourth();
         int length = value.getFifth();
@@ -245,7 +245,7 @@ public class Persistence {
                 "plot <- plot + geom_vline(data=vlines, aes(xintercept=as.numeric(x))) +\n" +
                 "               geom_vline(aes(xintercept=0.5)) +\n" +
                 "               geom_segment(aes(x=0.5, xend=" + (length + 0.5) + ", y=x_min, yend=x_min))\n" +
-                "plot <- plot + geom_hline(aes(yintercept=" + average + "), colour=\"red\")\n" +
+                (drawAverage ? "plot <- plot + geom_hline(aes(yintercept=" + average + "), colour=\"red\")\n" : "") +
                 "print(plot)";
     }
 
@@ -303,7 +303,7 @@ public class Persistence {
      * the length l of the arrays.
      * @return (a,b,o,g,l)
      */
-    private Vector5D<String, String, int[], int[], Integer> getIntervalArrays(int b, int m) {
+    private Vector5D<String, String, int[], int[], Integer> getIntervalArrays(int b, int m, double minPersistence) {
         String value1 = "c(";
         String value2 = "c(";
         int length = 0;
@@ -320,6 +320,7 @@ public class Persistence {
                 }
                 Diagram.Node n = diagram[p].nodes[i];
                 for(int j = 0; j < n.occ; j++) {
+                    if(n.b[j] - n.a <= minPersistence) continue;
                     for(int k = 0; k < n.multiplicity[j]; k++) {
                         value1 += df.format(n.a) + (j + 1 == n.occ && k + 1 == n.multiplicity[j] && n.infMultiplicity == 0 ? "" : ", ");
                         value2 += df.format(n.b[j]) + (j + 1 == n.occ && k + 1 == n.multiplicity[j] && n.infMultiplicity == 0 ? "" : ", ");
@@ -398,7 +399,7 @@ public class Persistence {
             Filtration f = Filtration.vietoris(L, dim);
 //            f.draw(L, 0, f.get(f.size() - 1).val() + 1, 1000, true);
             res[i] = new Persistence(f, false);
-            System.out.println(res[i].toBarcodePlot(0, dim - 1));
+            System.out.println(res[i].toBarcodePlot(0, dim - 1, false, false));
         }
         return res;
     }

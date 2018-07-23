@@ -27,8 +27,8 @@ public class Plot extends Command {
                 else k = Integer.valueOf(stK);
                 if(stL == null) l = p.dimension() - 1;
                 else l = Integer.valueOf(stL);
-                System.out.println(p.toBarcodePlot(k, l));
-                return "Successfully calculated the barcode plot of " + params[0] + ":\n" + p.toBarcodePlot(k, l);
+                System.out.println(p.toBarcodePlot(k, l, false, false));
+                return "Successfully calculated the barcode plot of " + params[0] + ":\n" + p.toBarcodePlot(k, l, false, false);
             }
         }catch(Exception e) {
             return "Fatal Error: " + e.getMessage();

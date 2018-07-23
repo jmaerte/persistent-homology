@@ -304,10 +304,10 @@ public class Main {
 //        Persistence p = new Persistence(f, false);
 //        System.out.println(p.toBarcodePlot(1, 2));
 //        f.draw(L, 0, f.get(f.size() - 1).val() + 1, 1000, false);
-        PointSet<double[]> S = FileIO.fromCSV("C:\\Users\\Ina\\Desktop\\Julian\\cluster\\cluster - d = 1024.txt", Double::valueOf,
+        PointSet<double[]> S = FileIO.fromCSV("/home/julian/Desktop/latex/Bachelor Arbeit/new/dat/cluster/cluster - d = 1024.txt", Double::valueOf,
                 list -> list.stream().mapToDouble(d -> d).toArray(), '\n', ' ', '\"',
                 d -> Metadata.getEuclidean(d.length), d -> Writer.DoubleArray(",", "\n"));
-        Landmarks<double[]> L = new Landmarks<>(S, 300, Landmarks.Choice.MAXMIN);
+        Landmarks<double[]> L = new Landmarks<>(S, 30, Landmarks.Choice.MAXMIN);
         Filtration F = Filtration.cech(L, 1);
         try {
             System.out.println(PointSetUtils.toPlot(L, "red"));
@@ -315,7 +315,7 @@ public class Main {
             e.printStackTrace();
         }
         Persistence P = new Persistence(F, false);
-        System.out.println(P.toBarcodePlot(0,0));
+        System.out.println(P.toBarcodePlot(0,0, true, true));
 
 //        PointSet<Euclidean> S = PointSetUtils.getSphereData(2, 100, 1, 4);
 //        PointSet<Euclidean> base = PointSetUtils.randomPointSet(2, 2, -100, 100);
