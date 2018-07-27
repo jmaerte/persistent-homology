@@ -223,7 +223,7 @@ public class PointSetUtils {
         }
         final int dimension = dim;
         return new PointSet<double[]>(arr) {
-            Writer writer = Writer.DoubleArray(",", "\n");
+            Writer writer = Writer.DoubleArray(",", "\r\n");
 
             public double d(double[] v, double[] w) {
                 return ScalarProduct.getStandard(dimension).d(v,w);
@@ -249,6 +249,17 @@ public class PointSetUtils {
             res[1] = (R + r * Math.cos(v[0])) * Math.sin(v[1]);
             res[2] = r * Math.sin(v[0]);
             return res;
+        };
+    }
+
+    public static Function<double[], double[]> swissRollMapping() {
+        return v -> {
+            if(v.length != 2) return null;
+            return new double[]{
+                    v[0] * Math.cos(v[0]),
+                    v[1],
+                    v[0] * Math.sin(v[0])
+            };
         };
     }
 

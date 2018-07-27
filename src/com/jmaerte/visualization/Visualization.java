@@ -62,7 +62,7 @@ public class Visualization extends PApplet {
             background(255);
             fill(0);
         }else {
-            pc = new PeasyCam(this, 0, 0, 0, 100);
+            pc = new PeasyCam(this, 0, 0, 0, 30);
             pc.setMinimumDistance(0);
             pc.setMaximumDistance(500);
             background(0);
@@ -108,6 +108,7 @@ public class Visualization extends PApplet {
                     frame.strokeWeight(3);
                     frame.point((float)S.get(vertex[0])[0] * scale / 2, (float)S.get(vertex[0])[1] * scale / 2);
                 }else {
+                    frame.strokeWeight(1);
                     frame.point((float)S.get(vertex[0])[0], (float)S.get(vertex[0])[1], (float)S.get(vertex[0])[2]);
                 }
             }else {

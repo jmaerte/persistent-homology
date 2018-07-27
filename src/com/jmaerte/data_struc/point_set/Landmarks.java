@@ -24,6 +24,7 @@ public class Landmarks<T> extends PointSet<T> {
     public Landmarks(PointSet<T> S, int[] landmarks, double[][] D) {
         this.S = S;
         this.landmarks = landmarks;
+        this.n = landmarks.length;
         this.D = D;
     }
 
@@ -83,7 +84,7 @@ public class Landmarks<T> extends PointSet<T> {
                 for(int j = 0; j < S.size(); j++) {
                     if(l < n && j == landmarks[l]) l++;
                     else {
-                        D[i][j - l] = S.d(i, j);
+                        D[i][j] = S.d(i, j);
                     }
                 }
             }
@@ -95,7 +96,7 @@ public class Landmarks<T> extends PointSet<T> {
 
     public double getValuation(int i, int j) {
         int l = 0;
-        double maxmin = 0;
+        double minmax = 0;
         for(int k = 0; k < S.size(); k++) {
             if(l < n && landmarks[l] == k) l++;
             else {
@@ -103,10 +104,10 @@ public class Landmarks<T> extends PointSet<T> {
                 if(order == null) {
                     curr = Math.max(D[i][k], D[j][k]);
                 }else curr = Math.max(D[order[i]][k], D[order[j]][k]);
-                if(k == 0 || curr < maxmin) maxmin = curr;
+                if(k == 0 || curr < minmax) minmax = curr;
             }
         }
-        return maxmin;
+        return minmax;
     }
 
     public static enum Choice {

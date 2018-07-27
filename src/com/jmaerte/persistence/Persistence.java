@@ -404,7 +404,7 @@ public class Persistence {
         return res;
     }
 
-    private static int[] getNeighbors(PointSet<double[]> S, int k, int z) {
+    public static int[] getNeighbors(PointSet<double[]> S, int k, int z) {
         PriorityQueue<Vector2D<Integer, Double>> queue = new PriorityQueue<>(new Comparator<Vector2D<Integer, Double>>() {
             @Override
             public int compare(Vector2D<Integer, Double> o1, Vector2D<Integer, Double> o2) {
