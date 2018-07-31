@@ -2,6 +2,18 @@ package com.jmaerte.data_struc.point_set;
 
 public abstract class Metadata<T> implements Metric<T> {
 
+    public static Metadata<String> Levehnshtein = new Metadata<String>(false, -1) {
+        @Override
+        public ScalarProduct product() {
+            return null;
+        }
+
+        @Override
+        public double d(String s, String y) {
+            return Metric.Levehnshtein.d(s,y);
+        }
+    };
+
     private boolean isEuclidean;
     private int dimension;
 

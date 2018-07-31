@@ -318,9 +318,131 @@ public class Main {
 //        }
 //        Persistence P = new Persistence(F, false);
 //        System.out.println(P.toBarcodePlot(0,0, true, true));
+
+//-------------------------------------------------------------------------------------------------------------------------------------------------------
+//        PointSet<double[]> S = FileIO.fromCSV("C:\\Users\\Ina\\Desktop\\Julian\\latex\\Bachelor Arbeit\\new\\dat\\moby_word_list.txt", Double::valueOf,
+//                list -> list.stream().mapToDouble(d -> d).toArray(), '\n', ' ', '\"',
+//                d -> Metadata.getEuclidean(d.length), d -> Writer.DoubleArray(",", "\n"));
+
+//        PointSet<String> S = FileIO.fromCSV("C:\\Users\\Ina\\Desktop\\Julian\\latex\\Bachelor Arbeit\\new\\dat\\moby_word_list.txt",
+//                x -> x, x -> x.get(0), '\n', ' ', '"',
+//                d -> Metadata.Levehnshtein, d -> Writer.String());
+//        Landmarks<String> L = new Landmarks<>(S, 800, true);
+//        Filtration f = Filtration.witness_lazy(L, 1);
+//        Persistence p = new Persistence(f, false);
+//        System.out.println(p.toBarcodePlot(0, 0, true, false));
+
         PointSet<double[]> S = FileIO.fromCSV("C:\\Users\\Ina\\Desktop\\Julian\\latex\\Bachelor Arbeit\\new\\dat\\cluster\\density\\s1_set.txt", Double::valueOf,
                 list -> list.stream().mapToDouble(d -> d).toArray(), '\n', ' ', '\"',
                 d -> Metadata.getEuclidean(d.length), d -> Writer.DoubleArray(",", "\n"));
+//        Landmarks<double[]> L = new Landmarks<double[]>(S, 300, true);
+//        Filtration F = Filtration.cech(L, 1);
+//        Persistence p = new Persistence(F, false);
+//        System.out.println(p.toBarcodePlot(0, 0, true, true));
+
+////        Filtration k = Filtration.cech(S, 0);
+////        k.draw(S, 0, 100, 1000, false);
+//
+//
+////        double a = ThreadLocalRandom.current().nextDouble(-1, 1);
+////        PointSet<double[]> S = PointSetUtils.getFromMapping(500, new double[]{-10, 10},
+////                (x) -> new double[]{x[0] + ThreadLocalRandom.current().nextDouble(-1, 1),
+////                    x[0] + ThreadLocalRandom.current().nextDouble(-1, 1)});
+////        try {
+////            System.out.println(PointSetUtils.toFilePlot(S));
+////        }catch(Exception e) {
+////            e.printStackTrace();
+////        }
+//
+//        // General metric case
+//
+        System.out.println(S.size());
+        int[] neighbors = Persistence.getNeighbors(S, 300, 0);
+        int indexZero = 0;
+        for(int i = 0; i < neighbors.length; i++) {
+            if(neighbors[i] == 0) indexZero = i;
+        }
+        S = S.getSubSet(neighbors);
+        double sum = 0;
+        int n = 0;
+        for(int i = 0; i < S.size(); i++) {
+            for(int j = i + 1; j < S.size(); j++) {
+                sum += S.d(i, j);
+                n++;
+            }
+        }
+        sum = sum / n;
+        int max = -1;
+        int index = -1;
+        ArrayList<Integer> others = new ArrayList<>();
+        for(int i = 0; i < S.size(); i++) {
+            int curr = 0;
+            for(int j = 0; j < S.size(); j++) {
+                if(S.d(i, j) < sum) curr++;
+            }
+            if(index < 0 || curr > max) {
+                max = curr;
+                index = i;
+            }
+        }
+
+        System.out.println(index);
+        try {
+            System.out.println(PointSetUtils.toPlot(new Landmarks(S, new int[]{indexZero}, new double[0][0]), "red"));
+        }catch(Exception e) {
+            e.printStackTrace();
+        }
+        try {
+            System.out.println(PointSetUtils.toPlot(new Landmarks(S, new int[]{index}, new double[0][0]), "red"));
+        }catch(Exception e) {
+            e.printStackTrace();
+        }
+
+//
+//
+//
+//        //Euclidean
+////        int[] neighbors = Persistence.getNeighbors(S, 700, 4);
+////        double[] x = new double[3];
+////        for(int i = 0; i < x.length; i++) {
+////            for(int j = 0; j < neighbors.length; j++) {
+////                x[i] += S.get(neighbors[j])[i];
+////            }
+////            x[i] *= 1d/neighbors.length;
+////        }
+//        Filtration test = Filtration.vietoris(new Landmarks<String>(S, 60, true), 4);
+//        Persistence p = new Persistence(test, false);
+//        System.out.println(p.toBarcodePlot(0, 3, false, false));
+//        double[] radii = new double[]{4, 5, 6};
+//        for(int i = 0; i < radii.length; i++) {
+//            ArrayList<Integer> elements = new ArrayList<>();
+//            for(int j = 0; j < S.size(); j++) {
+//                if(S.d(index, j) > radii[i]) {
+//                    elements.add(j);
+//                }
+//            }
+//            int[] outer = elements.stream().mapToInt(Integer::intValue).toArray();
+//            System.out.println(outer.length);
+//            Landmarks<String> L = new Landmarks<>(S.getSubSet(outer), Math.min(60,outer.length), true);
+//            Filtration f = Filtration.vietoris(L, 4);
+////            f.draw(L, 0, f.get(f.size() - 1).val() + 1, 1000, true);
+//            System.out.println(new Persistence(f, false).toBarcodePlot(0, 3, false, false));
+//        }
+
+//------------------------------------------------------------------------------------------------------------------------------------
+
+//        PointSet<double[]> S = FileIO.fromCSV("C:\\Users\\Ina\\Desktop\\Julian\\latex\\Bachelor Arbeit\\new\\dat\\rea16.csv", Double::valueOf,
+//                list -> list.stream().mapToDouble(d -> d).toArray(), '\n', ',', '\"',
+//                d -> Metadata.getEuclidean(d.length), d -> Writer.DoubleArray(",", "\n"));
+//
+//        Landmarks<double[]> L = new Landmarks<>(S, 500, false);
+//        Filtration f = Filtration.cech(L, 1);
+//        Persistence p = new Persistence(f, false);
+//        System.out.println(p.toBarcodePlot(0, 0, true, false));
+
+//        PointSet<String> S = FileIO.fromCSV("C:\\Users\\Ina\\Desktop\\Julian\\latex\\Bachelor Arbeit\\new\\dat\\moby_word_list.txt",
+//                x -> x, x -> x.get(0), '\n', ' ', '"',
+//                d -> Metadata.Levehnshtein, d -> Writer.String());
 //        Filtration k = Filtration.cech(S, 0);
 //        k.draw(S, 0, 100, 1000, false);
 
@@ -336,66 +458,65 @@ public class Main {
 //        }
 
         // General metric case
-        int[] neighbors = Persistence.getNeighbors(S, 300, 291);
-        S = S.getSubSet(neighbors);
-        double sum = 0;
-        int n = 0;
-        for(int i = 0; i < S.size(); i++) {
-            for(int j = i + 1; j < S.size(); j++) {
-                sum += S.d(i, j);
-                n++;
-            }
-        }
-        sum = sum / n;
-        int max = -1;
-        int index = -1;
-        for(int i = 0; i < S.size(); i++) {
-            int curr = 0;
-            for(int j = 0; j < S.size(); j++) {
-                if(S.d(i, j) < sum) curr++;
-            }
-            if(index < 0 || curr > max) {
-                max = curr;
-                index = i;
-            }
-        }
-        Landmarks<double[]> L = new Landmarks<double[]>(S, new int[]{index}, new double[1][1]);
-        try {
-            System.out.println(PointSetUtils.toPlot(L, "red"));
-        }catch(Exception e) {
-            e.printStackTrace();
-        }
+
+//        System.out.println(S.size());
+//        int[] neighbors = Persistence.getNeighbors(S, 300, 0); // 0 = Aale
+//        S = S.getSubSet(neighbors);
+//        double sum = 0;
+//        int n = 0;
+//        for(int i = 0; i < S.size(); i++) {
+//            for(int j = i + 1; j < S.size(); j++) {
+//                sum += S.d(i, j);
+//                n++;
+//            }
+//        }
+//        sum = sum / n;
+//        int max = -1;
+//        int index = -1;
+//        for(int i = 0; i < S.size(); i++) {
+//            int curr = 0;
+//            for(int j = 0; j < S.size(); j++) {
+//                if(S.d(i, j) < sum) curr++;
+//            }
+//            if(index < 0 || curr > max) {
+//                max = curr;
+//                index = i;
+//            }
+//        }
+//
+//        System.out.println(index);
 
 
 
-        //Euclidean
-//        int[] neighbors = Persistence.getNeighbors(S, 700, 4);
-//        double[] x = new double[3];
+//        //Euclidean
+//        int[] neighbors = Persistence.getNeighbors(S, 300, 4);
+//        double[] x = new double[16];
 //        for(int i = 0; i < x.length; i++) {
 //            for(int j = 0; j < neighbors.length; j++) {
 //                x[i] += S.get(neighbors[j])[i];
 //            }
 //            x[i] *= 1d/neighbors.length;
 //        }
-//        Filtration test = Filtration.cech(new Landmarks(S.getSubSet(neighbors), 80, true), 2);
+//        Filtration test = Filtration.vietoris(new Landmarks<double[]>(S, 60, true), 4);
 //        Persistence p = new Persistence(test, false);
-//        System.out.println(p.toBarcodePlot(0, 1, false, false));
-//        double[] radii = new double[]{3};
+//        System.out.println(p.toBarcodePlot(0, 3, false, false));
+//        double[] radii = new double[]{4E-5, 6E-5};
 //        for(int i = 0; i < radii.length; i++) {
 //            ArrayList<Integer> elements = new ArrayList<>();
-//            for(int n : neighbors) {
-//                if(S.getMetadata().d(x, S.get(n)) > radii[i]) {
-//                    elements.add(n);
+//            for(int j = 0; j < S.size(); j++) {
+//                if(S.getMetadata().d(x, S.get(j)) > radii[i]) {
+//                    elements.add(j);
 //                }
 //            }
 //            int[] outer = elements.stream().mapToInt(Integer::intValue).toArray();
 //            System.out.println(outer.length);
-//            Landmarks<double[]> L = new Landmarks<>(S.getSubSet(outer), Math.min(60,S.getSubSet(outer).size()), true);
-//            Filtration f = Filtration.cech(L, 2);
-//            f.draw(L, 0, f.get(f.size() - 1).val() + 1, 1000, true);
-//            System.out.println(new Persistence(f, false).toBarcodePlot(0, 1, false, false));
+//            Landmarks<double[]> L = new Landmarks<>(S.getSubSet(outer), Math.min(60,outer.length), true);
+//            Filtration f = Filtration.vietoris(L, 4);
+////            f.draw(L, 0, f.get(f.size() - 1).val() + 1, 1000, true);
+//            System.out.println(new Persistence(f, false).toBarcodePlot(0, 3, false, false));
 //        }
 
+//------------------------------------------------------------------------------------------------------------
 //        PointSet<Euclidean> S = PointSetUtils.getSphereData(2, 100, 1, 4);
 //        PointSet<Euclidean> base = PointSetUtils.randomPointSet(2, 2, -100, 100);
 //        PointSet<Euclidean> S = PointSetUtils.getClusteredData(base, new int[]{100000, 100}, new double[]{10d, 10d});

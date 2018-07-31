@@ -404,7 +404,7 @@ public class Persistence {
         return res;
     }
 
-    public static int[] getNeighbors(PointSet<double[]> S, int k, int z) {
+    public static int[] getNeighbors(PointSet S, int k, int z) {
         PriorityQueue<Vector2D<Integer, Double>> queue = new PriorityQueue<>(new Comparator<Vector2D<Integer, Double>>() {
             @Override
             public int compare(Vector2D<Integer, Double> o1, Vector2D<Integer, Double> o2) {
@@ -426,6 +426,7 @@ public class Persistence {
             }
         }
         double max = queue.peek().getSecond();
+        System.out.println(max);
         for(int i = 0; i < S.size(); i++) {
             if(d[i] == max) {
                 queue.add(new Vector2D<>(i, d[i]));

@@ -263,7 +263,7 @@ public class PointSetUtils {
         };
     }
 
-    public static Function<double[], double[]> kleinBottleChart(double a, double b, double c) {
+    public static Function<double[], double[]> kleinBottle3Chart(double a, double b, double c) {
         return v -> {
             if(v.length != 2) return null;
             double[] res = new double[3];
@@ -276,6 +276,21 @@ public class PointSetUtils {
                 res[0] = a * (1 + Math.sin(v[0])) * Math.cos(v[0]) - r * Math.cos(v[1]);
                 res[1] = b * Math.sin(v[0]);
                 res[2] = r * Math.sin(v[1]);
+            }
+
+            return res;
+        };
+    }
+
+    public static Function<double[], double[]> kleinBottle4Chart(double a, double b, double c) {
+        return v -> {
+            if(v.length != 2) return null;
+            double[] res = new double[4];
+            if(v[0] < Math.PI) {
+                res[0] = (a + b * Math.cos(v[1])) * Math.cos(v[0]);
+                res[1] = (b + b * Math.cos(v[1])) * Math.sin(v[0]);
+                res[2] = b * Math.sin(v[1]) * Math.cos(v[0] / 2);
+                res[3] = b * Math.sin(v[1]) * Math.sin(v[0] / 2);
             }
 
             return res;

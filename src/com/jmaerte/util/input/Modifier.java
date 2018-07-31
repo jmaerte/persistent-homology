@@ -5,7 +5,8 @@ public enum Modifier {
     CSV("csv"),
     REDUCED("reduced"),
     BALLS("balls"),
-    HOME("home");
+    HOME("home"),
+    MAPPING("mapping");
 
     public final String mod;
 

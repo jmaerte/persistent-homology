@@ -15,4 +15,10 @@ public interface Writer<T> {
             bw.write(next);
         });
     }
+
+    static Writer<String> String() {
+        return ((bw, string) -> {
+            bw.write(string);
+        });
+    }
 }
