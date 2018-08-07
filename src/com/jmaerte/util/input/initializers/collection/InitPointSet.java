@@ -92,7 +92,7 @@ public class InitPointSet extends Initializer {
     }
 
     public String description() {
-        return "Initialize a PointSet. For now this is only working for mapping samples.";
+        return "Initialize a point set from a pre-defined mapping or a csv-file.";
     }
 
     public String[] params() {
