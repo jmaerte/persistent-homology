@@ -23,6 +23,9 @@ Therefore if you want to build this project I advice you to import it in the IDE
 
 If you just want to use it, you can download the repository as zip file on the [project page](https://jmaerte.github.io/persistent-homology/).
 
+### Output
+As stated above the output is sometimes rendered using Processing and PeasyCam. In the other cases the program produces R code that can be executed using the ggplot2-package.
+
 ### Literature
 
 Zomorodian, Afra. (2005). Topology for Computing (Cambridge Monographs on Applied and Computational Mathematics). Cambridge: Cambridge University Press.
