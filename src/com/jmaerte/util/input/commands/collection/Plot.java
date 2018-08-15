@@ -39,7 +39,7 @@ public class Plot extends Command {
 
     protected String description() {
         return "Plots a given plotable Object [P], which is either one of the Type Filtration or Persistence. If you put in" +
-                " a Persistence object, you can specify a type of plot, i.e. \"barcode\" or \"diagram\" and a range -k, -l in which to plot." +
+                " a Persistence object, you can specify a range -k, -l in which to plot." +
                 "I.e. a barcode plot of H_k to H_l. If you put in a Filtration it only gets plotted if the underlying PointSet is embedded in a" +
                 " 2- or 3-dimensional euclidean space. The balls modifier enables drawing the balls in case of the cech filtration.";
     }
@@ -49,7 +49,7 @@ public class Plot extends Command {
     }
 
     protected String[] options() {
-        return new String[]{"k", "l", "type"};
+        return new String[]{"k", "l"};
     }
 
     protected Modifier[] modifiers() {

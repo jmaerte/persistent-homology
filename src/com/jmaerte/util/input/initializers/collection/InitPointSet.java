@@ -96,7 +96,7 @@ public class InitPointSet extends Initializer {
     }
 
     public String[] params() {
-        return new String[]{"type"};
+        return new String[]{"type/path"};
     }
 
     public String[] options() {

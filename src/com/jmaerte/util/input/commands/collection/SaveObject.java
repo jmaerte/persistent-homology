@@ -46,7 +46,7 @@ public class SaveObject extends Command {
     }
 
     protected String[] params() {
-        return new String[]{"path"};
+        return new String[]{"obj", "path"};
     }
 
     protected String[] options() {
