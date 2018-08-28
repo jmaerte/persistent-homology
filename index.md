@@ -24,7 +24,7 @@ One workflow aiding feature is the users variable storage, so he can reference p
 For example getting a 1000 point sample from a smooth surface like the Torus:
 
 ```powershell
-T <- PointSet Torus 1000
+T <- PointSet Torus 1000 ----mapping
 ```
 
 Evenly distribute (by successively maximizing the minimal distance from each landmark to its preceeding landmarks) 100 landmarks over it:
